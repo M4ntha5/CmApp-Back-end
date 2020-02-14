@@ -1,4 +1,4 @@
-﻿using CmApp.Domains;
+﻿using CmApp.Contracts;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;

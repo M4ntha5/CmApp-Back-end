@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using NSubstitute;
-using CmApp.Domains;
 using CmApp.Services;
 
 namespace Tests
