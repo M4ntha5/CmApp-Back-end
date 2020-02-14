@@ -11,6 +11,7 @@ namespace Tests
     public class ScraperTests
     {
         string Vin = string.Empty;
+
         [SetUp]
         public void Setup()
         {
