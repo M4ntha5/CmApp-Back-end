@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using NSubstitute;
-using CmApp.Domains;
 using CmApp.Services;
 
 namespace Tests
@@ -11,6 +10,7 @@ namespace Tests
     public class ScraperTests
     {
         string Vin = string.Empty;
+
         [SetUp]
         public void Setup()
         {
