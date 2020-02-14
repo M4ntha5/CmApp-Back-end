@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CmApp.Domains
+namespace CmApp.Contracts
 {
     public interface IWebScraper
     {
