@@ -12,7 +12,7 @@ namespace CmApp.Services
 {
     public class WebScraper : IWebScraper
     {
-        private readonly string Website = "https://www.mdecoder.com/decode/";
+        private readonly string Endpoint = "https://www.mdecoder.com/decode/";
 
         public Dictionary<string, string> GetVehicleInfo(string vin)
         {
@@ -66,7 +66,7 @@ namespace CmApp.Services
 
         private async Task<List<HtmlNode>> SetUp(string vin)
         {
-            var website = Website + vin;
+            var website = Endpoint + vin;
             HttpClient http = new HttpClient();
             var response = await http.GetByteArrayAsync(website);
             String source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
