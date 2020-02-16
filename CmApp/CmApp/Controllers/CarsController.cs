@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CmApp.Entities;
 using CmApp.Repositories;
-using Microsoft.AspNetCore.Http;
+using CmApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CmApp.Controllers
@@ -13,39 +11,50 @@ namespace CmApp.Controllers
     [ApiController]
     public class CarsController : ControllerBase
     {
+        private readonly CarService carService = new CarService()
+        {
+            CarRepository = new CarRepository(),
+            WebScraper = new WebScraper()
+        };
+
         // GET: api/Cars
         [HttpGet]
         public List<CarEntity> Get()
         {
-            var repo = new CarRepository();             //veikiantis ex su codemash
-
-            var cars = repo.test().Result;
+            var cars = carService.GetAllCars().Result;
             return cars;
         }
 
         // GET: api/Cars/5
         [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        public CarEntity Get(string id)
         {
-            return "value";
+            var car = carService.GetCarById(id).Result;
+            return car;
         }
 
         // POST: api/Cars
         [HttpPost]
-        public void Post([FromBody] string value)
+        public CarEntity Post([FromBody] CarEntity car)
         {
+            var newCar = carService.InsertCarDetailsFromScraper(car).Result;
+            return newCar;
         }
 
         // PUT: api/Cars/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(string id, [FromBody] CarEntity car)
         {
+            await carService.UpdateCar(id, car);
+            return NoContent();
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
+            await carService.DeleteCar(id);
+            return NoContent();
         }
     }
 }

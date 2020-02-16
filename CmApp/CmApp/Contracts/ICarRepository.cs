@@ -1,4 +1,5 @@
 ﻿using CmApp.Entities;
+using Isidos.CodeMash.ServiceContracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,10 @@ namespace CmApp.Contracts
     {
         Task<CarEntity> InsertCar(CarEntity car);
         Task<List<CarEntity>> GetAllCars();
-        Task UpdateCar(CarEntity car);
+        Task UpdateCar(string id, CarEntity car);
         Task DeleteCar(CarEntity car);
         Task<CarEntity> GetCarById(string id);
+        Task<UploadFileResponse> UploadImage(string vin, string fileName);
+        Task AddImageToCar(string carId, Image img);
     }
 }

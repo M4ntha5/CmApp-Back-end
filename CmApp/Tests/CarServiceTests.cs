@@ -52,6 +52,8 @@ namespace Tests
             var par = new Dictionary<string, string> { { "par_key1", "par_val1" } };
             var car = new CarEntity
             {
+                Vin = "123",
+                Images = new List<Image>(),
                 Equipment = new List<Equipment> { new Equipment() },
                 Parameters = new List<Parameter> { new Parameter() },
                 Id = "1"
@@ -67,7 +69,7 @@ namespace Tests
                 WebScraper = scraperMock
             };
 
-            var carDetails = await carService.InsertCarDetailsFromScraper("123");
+            var carDetails = await carService.InsertCarDetailsFromScraper(car);
 
             Assert.AreEqual(eq.Count, carDetails.Equipment.Count);
             Assert.AreEqual(par.Count, carDetails.Parameters.Count);
