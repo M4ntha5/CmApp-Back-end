@@ -4,41 +4,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using CmApp.Entities;
 using CmApp.Repositories;
+using CmApp.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CmApp.Controllers
 {
-    [Route("/api/cars")]
+    [Route("/api/cars/{carId}/repairs")]
     [ApiController]
-    public class CarsController : ControllerBase
+    public class RepairsController : ControllerBase
     {
-        // GET: api/Cars
-       [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly RepairService repairService = new RepairService
         {
-            var repo = new CarRepository();             //veikiantis ex su codemash
+            RepairRepository = new RepairRepository()
+        };
 
-            var cars = repo.test().Result;
-
-            //return cars;
-            return new string[] { "value11", "value21" };
+        // GET: api/Repairs
+        [HttpGet]
+        public List<RepairEntity> Get(string carId)
+        {
+            var repairs = repairService.GetAllCarRepairs(carId).Result;// (carId).Result;
+            return repairs;
         }
 
-        // GET: api/Cars/5
+        // GET: api/Repairs/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public string Get(string carId, string id)
         {
             return "value";
         }
 
-        // POST: api/Cars
+        // POST: api/Repairs
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT: api/Cars/5
+        // PUT: api/Repairs/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
