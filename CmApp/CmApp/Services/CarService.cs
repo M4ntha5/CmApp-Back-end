@@ -19,27 +19,54 @@ namespace CmApp.Services
 
             //matching parameters to entity
             var parResults = WebScraper.GetVehicleInfo(car.Vin);
-            var parameters = new List<Parameter>();
 
-            foreach(var param in parResults)
-                parameters.Add(new Parameter() { Type = param.Key, Name = param.Value });
+            CarEntity carEntity = new CarEntity
+            {
+                Make = "BMW"                //default for this scraper
+            };
+
+            foreach (var param in parResults)
+            {
+                if (param.Key == "Prod. Date")
+                    carEntity.ManufactureDate = Convert.ToDateTime(param.Value);
+                else if (param.Key == "Type")
+                    carEntity.Model = param.Value;
+                else if (param.Key == "Series")
+                    carEntity.Series = param.Value;
+                else if (param.Key == "Body Type")
+                    carEntity.BodyType = param.Value;
+                else if (param.Key == "Steering")
+                    carEntity.Steering = param.Value;
+                else if (param.Key == "Engine")
+                    carEntity.Engine = param.Value;
+                else if (param.Key == "Displacement")
+                    carEntity.Displacement = Double.Parse(param.Value);
+                else if (param.Key == "Power")
+                    carEntity.Power = param.Value;
+                else if (param.Key == "Drive")
+                    carEntity.Drive = param.Value;
+                else if (param.Key == "Transmission")
+                    carEntity.Transmission = param.Value;
+                else if (param.Key == "Colour")
+                    carEntity.Color = param.Value;
+                else if (param.Key == "Upholstery")
+                    carEntity.Interior = param.Value;
+            }
 
             //matching equipment to entity
             var eqResults = WebScraper.GetVehicleEquipment(car.Vin);
             var equipment = new List<Equipment>();
 
             foreach (var eq in eqResults)
-                equipment.Add(new Equipment() { Type = eq.Key, Name = eq.Value });
+                equipment.Add(new Equipment() { Code = eq.Key, Name = eq.Value });
 
-            var newCar = new CarEntity 
-            { 
-                Equipment = equipment, 
-                Parameters = parameters,
-                Vin = car.Vin,
-                Images = car.Images
-            };
+            carEntity.Equipment = equipment;
+            carEntity.Vin = car.Vin;
 
-            var response = await CarRepository.InsertCar(newCar);
+            var response = await CarRepository.InsertCar(carEntity);
+
+            foreach (var image in car.Images)
+                await CarRepository.UploadImage(response.Id, "img.jpg");
 
             return response;
 

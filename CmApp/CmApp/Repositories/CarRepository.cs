@@ -30,9 +30,21 @@ namespace CmApp.Repositories
 
             var entity = new CarEntity
             {
-                Parameters = car.Parameters,
+                BodyType = car.BodyType,
+                Color = car.Color,
+                Displacement = car.Displacement,
+                Drive = car.Drive,
+                ManufactureDate = car.ManufactureDate,
+                Engine = car.Engine,
+                Interior = car.Interior,
+                Make = car.Make,
+                Model = car.Model,
+                Power = car.Power,
+                Series = car.Series,
+                Steering = car.Steering,
+                Transmission = car.Transmission,
                 Equipment = car.Equipment,
-                Images = car.Images,
+                Images = new List<object>(),
                 Vin = car.Vin
             };
             var response = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
@@ -79,33 +91,32 @@ namespace CmApp.Repositories
 
         }
 
-        public async Task<UploadFileResponse> UploadImage(string vin, string fileName)
+        public async Task<UploadRecordFileResponse> UploadImage(string recordId, string fileName)
         {
             var filesService = new CodeMashFilesService(Client);
 
             var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var filePath = $"{directory}\\{fileName}";
-              
-            using (var fsSource = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-            {
-                var response = await filesService.UploadFileAsync(fsSource, "2.jpg",
-                    new UploadFileRequest
-                    {                     
-                        Path = $"system/db/images/{vin}"
-                    }
-                );
-                return response;
-            }
+
+            using var fsSource = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            var response = await filesService.UploadRecordFileAsync(fsSource, recordId+"_image.jpg",
+                new UploadRecordFileRequest
+                {
+                CollectionName = "cars",
+                UniqueFieldName = "images",
+                RecordId = recordId
+                });
+            return response;
         }
 
-        public async Task AddImageToCar(string carId, Image img)
+       /* public async Task AddImageToCar(string carId, Image img)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
 
             var result = await repo.UpdateOneAsync(x => x.Id == carId,
                        Builders<CarEntity>.Update.AddToSet($"images", img), null);
 
-        }
+        }*/
 
         // bandymas su controleriu
         public async Task<List<CarEntity>> test()
