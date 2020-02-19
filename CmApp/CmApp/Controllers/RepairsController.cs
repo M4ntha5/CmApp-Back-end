@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CmApp.Controllers
@@ -19,37 +17,44 @@ namespace CmApp.Controllers
             RepairRepository = new RepairRepository()
         };
 
-        // GET: api/Repairs
+        // GET: api/cars/{carId}/Repairs
         [HttpGet]
         public List<RepairEntity> Get(string carId)
         {
-            var repairs = repairService.GetAllCarRepairs(carId).Result;// (carId).Result;
+            var repairs = repairService.GetAllSelectedCarRepairs(carId).Result;
             return repairs;
         }
 
-        // GET: api/Repairs/5
-        [HttpGet("{id}")]
-        public string Get(string carId, string id)
+        // GET: api/cars/{carId}/Repairs/5
+        [HttpGet("{repairId}")]
+        public RepairEntity Get(string carId, string repairId)
         {
-            return "value";
+            var repair = repairService.GetSelectedCarRepairById(carId, repairId).Result;
+            return repair;
         }
 
-        // POST: api/Repairs
+        // POST: api/cars/{carId}/Repairs
         [HttpPost]
-        public void Post([FromBody] string value)
+        public RepairEntity Post(string carId, [FromBody] RepairEntity repair)
         {
+            var newRepair = repairService.InsertCarRepair(carId, repair).Result;
+            return newRepair;
         }
 
-        // PUT: api/Repairs/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT: api/cars/{carId}/Repairs/5
+        [HttpPut("{repairId}")]
+        public async Task<IActionResult> Put(string carId, string repairId, [FromBody] RepairEntity repair)
         {
+            await repairService.UpdateSelectedCarRepair(repairId, carId, repair);
+            return NoContent();
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{repairId}")]
+        public async Task<IActionResult> Delete(string carId, string repairId)
         {
+            await repairService.DeleteSelectedCarRepair(carId, repairId);
+            return NoContent();
         }
     }
 }

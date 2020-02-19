@@ -1,5 +1,4 @@
 ﻿using CmApp.Contracts;
-using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Utils;
 using CodeMash.Client;
@@ -8,7 +7,6 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Repositories
@@ -17,7 +15,7 @@ namespace CmApp.Repositories
     {
         private static CodeMashClient Client => new CodeMashClient(Settings.ApiKey, Settings.ProjectId);
 
-        public async Task<RepairEntity> InsertRepair(Repair repair)
+        public async Task<RepairEntity> InsertRepair(RepairEntity repair)
         {
             if (repair == null)
             {
@@ -26,23 +24,10 @@ namespace CmApp.Repositories
 
             var repo = new CodeMashRepository<RepairEntity>(Client);
 
-            var entity = new RepairEntity
-            {
-                Name = repair.Name,
-                Price = repair.Price,
-                Car = repair.Car.Id
-            };
-            var response = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
+            var response = await repo.InsertOneAsync(repair, new DatabaseInsertOneOptions());
             return response;
         }
 
-        public async Task<List<RepairEntity>> GetAllRepairs()
-        {
-            var repo = new CodeMashRepository<RepairEntity>(Client);
-
-            var repairs = await repo.FindAsync(x => true, new DatabaseFindOptions());
-            return repairs.Items;
-        }
         public async Task<List<RepairEntity>> GetAllRepairsByCarId(string carId)
         {
             var repo = new CodeMashRepository<RepairEntity>(Client);
@@ -52,39 +37,48 @@ namespace CmApp.Repositories
             return repairs.Items;
         }
 
-        public async Task<RepairEntity> GetRepairById(string repairId)
+
+        public async Task<RepairEntity> GetCarRepairById(string carId, string repairId)
         {
             var repo = new CodeMashRepository<RepairEntity>(Client);
 
-            var repair = await repo.FindOneAsync(x => x.Id == repairId, new DatabaseFindOneOptions());
+            FilterDefinition<RepairEntity>[] filters =
+            {
+                Builders<RepairEntity>.Filter.Eq("car",  BsonObjectId.Create(carId)),
+                Builders<RepairEntity>.Filter.Eq("_id",  BsonObjectId.Create(repairId))               
+            };
+
+            var filter = Builders<RepairEntity>.Filter.And(filters);
+
+            var repair = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
             return repair;
         }
-        public async Task UpdateRepair(string repairId, Repair repair)
+        public async Task<DatabaseDeleteOneResponse> DeleteRepair(string carId, string repairId)
         {
             var repo = new CodeMashRepository<RepairEntity>(Client);
 
-            var entity = new RepairEntity
+            FilterDefinition<RepairEntity>[] filters =
             {
-                Name = repair.Name,
-                Price = repair.Price,
-                Car = repair.Car.Id
+                Builders<RepairEntity>.Filter.Eq("_id",  BsonObjectId.Create(repairId)),
+                Builders<RepairEntity>.Filter.Eq("car",  BsonObjectId.Create(carId))
             };
+
+            var filter = Builders<RepairEntity>.Filter.And(filters);
+
+            var response = await repo.DeleteOneAsync(filter);
+            return response;
+        }
+
+        public async Task UpdateRepair(string repairId, RepairEntity repair)
+        {
+            var repo = new CodeMashRepository<RepairEntity>(Client);
+            repair.Id = repairId;
 
             await repo.ReplaceOneAsync(
                 x => x.Id == repairId,
-                entity,
+                repair,
                 new DatabaseReplaceOneOptions()
             );
-
         }
-
-        public async Task DeleteRepair(string id)
-        {
-            var repo = new CodeMashRepository<RepairEntity>(Client);
-
-            await repo.DeleteOneAsync(x => x.Id == id);
-
-        }
-
     }
 }
