@@ -5,7 +5,7 @@ using NUnit.Framework;
 using NSubstitute;
 using CmApp.Services;
 
-namespace Tests
+namespace Tests.CarsTests
 {
     public class ScraperTests
     {

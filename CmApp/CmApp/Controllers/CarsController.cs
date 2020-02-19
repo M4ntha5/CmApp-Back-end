@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CmApp.Controllers
 {
-    [Route("api/cars")]
+    [Route("/api/cars")]
     [ApiController]
     public class CarsController : ControllerBase
     {
@@ -18,8 +18,8 @@ namespace CmApp.Controllers
         };
 
         // GET: api/Cars
-        [HttpGet]
-        public List<CarEntity> Get()
+       [HttpGet]
+        public IEnumerable<string> Get()
         {
             var cars = carService.GetAllCars().Result;
             return cars;
