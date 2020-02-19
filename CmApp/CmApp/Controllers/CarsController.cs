@@ -19,7 +19,7 @@ namespace CmApp.Controllers
 
         // GET: api/Cars
        [HttpGet]
-        public IEnumerable<string> Get()
+        public List<CarEntity> Get()
         {
             var cars = carService.GetAllCars().Result;
             return cars;
