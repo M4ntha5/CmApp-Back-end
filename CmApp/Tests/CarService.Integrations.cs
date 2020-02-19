@@ -1,5 +1,6 @@
 ﻿using CmApp.Entities;
 using CmApp.Repositories;
+using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,19 @@ namespace Tests
     class CarServiceIntegrtations
     {
         CarRepository carRepo;
-
+        CarService carService;
+        WebScraper scraperService;
         [SetUp]
         public void Setup()
         {
             carRepo = new CarRepository();
+            scraperService = new WebScraper();
+            carService = new CarService()
+            {
+                CarRepository = carRepo,
+                WebScraper = scraperService
+            };
+
         }
 
         [Test]
@@ -29,48 +38,82 @@ namespace Tests
         [Test]
         public async Task TestInsertCar()
         {
-            var eq = new Equipment() { Name = "test1", Type = "test2" };
-            var param = new Parameter() { Name = "test11", Type = "test22" };
+            string vin = "WBAGE11070DJ00378";
+            //var file = await carRepo.UploadImage(vin, "img.jpg");
 
-            var list1 = new List<Parameter> { param };
-            var list2 = new List<Equipment> { eq };
-
-            var car = new CarEntity()
+            var car = new CarEntity
             {
-                Equipment= list2,
-                Parameters = list1
+                Images = new List<object>() { "", ""},
+                Vin = vin
             };
-            var response = await carRepo.InsertCar(car);
+            var response = await carService.InsertCarDetailsFromScraper(car);
 
-            Assert.AreEqual(eq.Name, response.Equipment[0].Name);
+            Assert.AreEqual(vin, response.Vin);
         }
 
         [Test]
         public async Task TestUpdateCar()
         {
-            var oldCar = await carRepo.GetCarById("5e46e9d376fdd200014383cb");
+            var carId = "5e4c2dfac0ae1700011a2c38";
 
-            var param = new Parameter() { Name = "test33", Type = "test44" };
-            var eq = new Equipment() { Name = "test3", Type = "test4" };
-
-            var list1 = new List<Parameter> { param };
+            var eq = new Equipment() { Name = "test3", Code = "test4" };
             var list2 = new List<Equipment> { eq };
 
             var newCar = new CarEntity()
             {
-                Id = oldCar.Id,
+                BodyType = "BodyType",
+                Color = "Color",
+                Displacement = 2,
+                Drive = "Drive",
+                ManufactureDate = DateTime.Now,
+                Engine = "Engine",
+                Interior = "Interior",
+                Make = "Make",
+                Model = "Model",
+                Power = "Power",
+                Series = "Series",
+                Steering = "Steering",
+                Transmission = "Transmission",
                 Equipment = list2,
-                Parameters = list1
+                Images = new List<object>(),
+                Vin = "123"
+
             };
-            await carRepo.UpdateCar(newCar);
+            await carRepo.UpdateCar(carId, newCar);
         }
 
         [Test]
         public async Task TestDeleteCar()
         {
-            var oldCar = await carRepo.GetCarById("5e46e9d376fdd200014383cb");
+            var oldCar = await carRepo.GetCarById("5e4c2dfac0ae1700011a2c38");
 
             await carRepo.DeleteCar(oldCar);
+        }
+
+        [Test]
+        public async Task TestFileUpload()
+        {
+            string recordId = "5e4c2d3bc0ae17000119da0b";
+
+            var result = await carRepo.UploadImage(recordId, "img.jpg");
+            Assert.AreNotEqual(null, result);
+        }
+
+     /*   [Test]
+        public async Task TestAddImageToCar()
+        {
+            var img = new Image { Name = "lajsfhj" };
+
+            await carRepo.AddImageToCar("5e4810c976fdd2000162938b", img);
+        }*/
+
+
+        [Test]
+        public async Task TestGetFile()
+        {
+            var repo = new FileRepository();
+            var response = await repo.GetFile("3e682f57-fbe5-4229-ab07-2cab908ca693");
+            Assert.AreNotEqual(null, response);
         }
     }
 }
