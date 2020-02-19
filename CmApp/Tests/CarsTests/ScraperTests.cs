@@ -10,18 +10,19 @@ namespace Tests.CarsTests
     public class ScraperTests
     {
         string Vin = string.Empty;
+        WebScraper scraperService;
 
         [SetUp]
         public void Setup()
         {
             Vin = "wba3b1g58ens79736";
+            scraperService = new WebScraper();
         }
 
         [Test]
         public void TestGetVehicleInfo()
         {
-            var scraper = new WebScraper();
-            var equipment = scraper.GetVehicleInfo(Vin);
+            var equipment = scraperService.GetVehicleInfo(Vin);
 
             Assert.AreNotEqual(null, equipment);
         }
@@ -29,8 +30,7 @@ namespace Tests.CarsTests
         [Test]
         public void TestGetVehicleEquipment()
         {
-            var scraper = new WebScraper();
-            var equipment = scraper.GetVehicleEquipment(Vin);
+            var equipment = scraperService.GetVehicleEquipment(Vin);
 
             Assert.AreNotEqual(null, equipment);
         }
