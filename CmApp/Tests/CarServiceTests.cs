@@ -26,13 +26,12 @@ namespace Tests
         [Test]
         public void TestGetAllCars()
         {
-            var list1 = new List<Parameter> { new Parameter { Name = "F30", Type = "series" } };
-            var list2 = new List<Equipment> { new Equipment { Name = "S4NE", Type = "Blow-by heater" } };
+            var list2 = new List<Equipment> { new Equipment { Name = "S4NE", Code = "Blow-by heater" } };
 
             var cars = new List<CarEntity>
             {
-                new CarEntity() { Parameters = list1, Equipment = list2, Id = "1" },
-                new CarEntity() { Parameters = list1, Equipment = list2, Id = "1" }
+                new CarEntity() { Model = "330", Equipment = list2, Id = "1" },
+                new CarEntity() { Model = "320", Equipment = list2, Id = "2" }
             };
 
             carMock.GetAllCars().Returns(cars);
@@ -41,7 +40,7 @@ namespace Tests
 
             carMock.Received().GetAllCars();
             Assert.AreEqual(cars.Count, response.Count);
-            Assert.AreEqual(cars[0].Parameters[0].Name, response[0].Parameters[0].Name);
+            Assert.AreEqual(cars[0].Model, response[0].Model);
             
         }
 
@@ -49,11 +48,13 @@ namespace Tests
         public async Task TestInsertScrapedData()
         {
             var eq = new Dictionary<string, string> { { "eq_key1", "eq_val1" } };
-            var par = new Dictionary<string, string> { { "par_key1", "par_val1" } };
+            var par = new Dictionary<string, string> { { "Type", "328" } };
             var car = new CarEntity
             {
+                Vin = "123",
+                Images = new List<object>(),
                 Equipment = new List<Equipment> { new Equipment() },
-                Parameters = new List<Parameter> { new Parameter() },
+                Model = "328",
                 Id = "1"
             };
 
@@ -67,10 +68,9 @@ namespace Tests
                 WebScraper = scraperMock
             };
 
-            var carDetails = await carService.InsertCarDetailsFromScraper("123");
+            var carDetails = await carService.InsertCarDetailsFromScraper(car);
 
             Assert.AreEqual(eq.Count, carDetails.Equipment.Count);
-            Assert.AreEqual(par.Count, carDetails.Parameters.Count);
             await carMock.Received().InsertCar(Arg.Any<CarEntity>());
         }
     }
