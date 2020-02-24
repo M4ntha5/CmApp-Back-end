@@ -118,16 +118,5 @@ namespace CmApp.Repositories
 
         }*/
 
-        // bandymas su controleriu
-        public async Task<List<CarEntity>> test()
-        {
-            var repo = new CarRepository();
-
-            var cars = await repo.GetAllCars();
-            return cars;
-        }
-
-
-
     }
 }

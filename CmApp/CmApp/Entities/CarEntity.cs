@@ -13,6 +13,8 @@ namespace CmApp.Entities
         public string Model { get; set; }
         [Field("vin")]
         public string Vin { get; set; }
+        [Field("created_at")]
+        public DateTime DateCreated { get; set; } = DateTime.Now;
         [Field("manufacture_date")]
         public DateTime ManufactureDate { get; set; }
         [Field("series")]
