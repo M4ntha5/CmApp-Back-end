@@ -43,7 +43,7 @@ namespace CmApp.Controllers
             return NoContent();
         }
 
-        // DELETE: /api/cars/{carId}/summary/{id}
+        // DELETE: /api/cars/{carId}/summary/{summaryId}
         [HttpDelete("{summaryId}")]
         public async Task<IActionResult> Delete(string carid, string summaryId)
         {
