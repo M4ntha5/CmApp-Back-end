@@ -36,7 +36,7 @@ namespace CmApp.Controllers
         }
 
         // PUT: /api/cars/{carId}/summary/{id}
-        [HttpPut("{id}")]
+        [HttpPut("{summaryId}")]
         public async Task<IActionResult> Put(string carId, string summaryId, [FromBody] SummaryEntity summary)
         {
             await summaryService.UpdateSummary(carId, summaryId, summary);
@@ -44,7 +44,7 @@ namespace CmApp.Controllers
         }
 
         // DELETE: /api/cars/{carId}/summary/{id}
-        [HttpDelete("{id}")]
+        [HttpDelete("{summaryId}")]
         public async Task<IActionResult> Delete(string carid, string summaryId)
         {
             await summaryService.DeleteSummary(carid, summaryId);
