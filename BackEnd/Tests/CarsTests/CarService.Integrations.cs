@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tests.CarsTests
+namespace CarsTests.Integration
 {
     class CarServiceIntegrtations
     {
