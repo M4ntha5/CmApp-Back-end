@@ -40,7 +40,7 @@ namespace CmApp.Repositories
             return summary;
         }
 
-        public async Task DeleteCarSummary(string carId, string summaryId)
+        public async Task<int> DeleteCarSummary(string carId, string summaryId)
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
 
@@ -52,14 +52,16 @@ namespace CmApp.Repositories
 
             var filter = Builders<SummaryEntity>.Filter.And(filters);
 
-            await repo.DeleteOneAsync(filter);
+            var response = await repo.DeleteOneAsync(filter);
+
+            return (int)response.DeletedCount;
         }
 
         public async Task UpdateCarSummary(SummaryEntity summary)
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
 
-            await repo.ReplaceOneAsync(
+            var response = await repo.ReplaceOneAsync(
                 x => x.Id == summary.Id,
                 summary,
                 new DatabaseReplaceOneOptions()
