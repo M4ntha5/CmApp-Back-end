@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Tests.RepairsTests
 {
-    class RepairServiceTests
+    class RepairServiceTestsIntegration
     {
         [SetUp]
         public void Setup()
