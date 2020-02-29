@@ -8,11 +8,9 @@ namespace CmApp.Services
     {
         public ISummaryRepository SummaryRepository { get; set; }
 
-        public async Task<int> DeleteSummary(string carId, string summaryId)
+        public async Task DeleteSummary(string carId, string summaryId)
         {
-            var result = await SummaryRepository.DeleteCarSummary(carId, summaryId);
-            return result;
-           
+            await SummaryRepository.DeleteCarSummary(carId, summaryId);
         }
 
         public async Task UpdateSummary(string carId, string summaryId, SummaryEntity summary)

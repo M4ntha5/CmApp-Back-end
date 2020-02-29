@@ -35,7 +35,7 @@ namespace CmApp.Controllers
             return newSummary;
         }
 
-        // PUT: /api/cars/{carId}/summary/{summaryId}
+        // PUT: /api/cars/{carId}/summary/{id}
         [HttpPut("{summaryId}")]
         public async Task<IActionResult> Put(string carId, string summaryId, [FromBody] SummaryEntity summary)
         {
