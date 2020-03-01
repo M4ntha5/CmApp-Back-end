@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CmApp.Services
 {
-    public class TrackingService
+    public class TrackingService : ITrackingService
     {
         public ITrackingRepository TrackingRepository { get; set; }
 

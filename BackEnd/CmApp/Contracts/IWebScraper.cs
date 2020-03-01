@@ -9,5 +9,6 @@ namespace CmApp.Contracts
     {
         Dictionary<string, string> GetVehicleInfo(string vin);
         Dictionary<string, string> GetVehicleEquipment(string vin);
+        Task TrackingScraper(string vin);
     }
 }

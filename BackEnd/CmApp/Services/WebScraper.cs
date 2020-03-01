@@ -171,7 +171,7 @@ namespace CmApp.Services
 
         }
 
-        public Image DownloadImageFromUrl(string imageUrl)
+        private Image DownloadImageFromUrl(string imageUrl)
         {
             Image image;
             try
