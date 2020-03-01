@@ -64,10 +64,7 @@ namespace SummaryTests.Integration
         [Test]
         public async Task DeleteSummary()
         {
-
-
-            var result = await serviceRepo.DeleteSummary(carId, summaryId);
-            Assert.AreEqual(1, result);
+            await serviceRepo.DeleteSummary(carId, summaryId);
         }
     }
 }

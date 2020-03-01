@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using NSubstitute;
 using CmApp.Services;
+using System.Threading.Tasks;
 
 namespace ScraperTests
 {
@@ -33,6 +34,17 @@ namespace ScraperTests
             var equipment = scraperService.GetVehicleEquipment(Vin);
 
             Assert.AreNotEqual(null, equipment);
+        }
+
+        [Test]
+        public async Task TestTrackingScraper()
+        {
+            var service = new WebScraper();
+
+            var vin = "WBA7E2C37HG740629";
+            vin = "wba3n9c56ek245582";
+            await service.TrackingScraper(vin);
+
         }
     }
 }
