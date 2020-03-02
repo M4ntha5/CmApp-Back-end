@@ -8,8 +8,9 @@ namespace CmApp.Contracts
 {
     public interface ITrackingService
     {
-        Task DeleteTracking(string carId, string trackingId);
-        Task UpdateTracking(string strackingId, TrackingEntity tracking);
-        Task<TrackingEntity> GetTracking(string carId, string trackingId);
+        Task DeleteTracking(string carId);
+        Task UpdateTracking(string carId, TrackingEntity tracking);
+        Task<TrackingEntity> GetTracking(string carId);
+        Task<TrackingEntity> InsertTracking(string carId, TrackingEntity tracking);
     }
 }

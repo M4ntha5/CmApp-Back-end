@@ -167,8 +167,6 @@ namespace CmApp.Services
                 var imgResponse = await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
                 counter++;
             }
-
-
         }
 
         private Image DownloadImageFromUrl(string imageUrl)

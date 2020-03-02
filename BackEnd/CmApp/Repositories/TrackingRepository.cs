@@ -45,17 +45,11 @@ namespace CmApp.Repositories
             return response;
         }
 
-        public async Task DeleteCarTracking(string carId, string trackingId)
+        public async Task DeleteCarTracking(string carId)
         {
             var repo = new CodeMashRepository<TrackingEntity>(Client);
 
-            FilterDefinition<TrackingEntity>[] filters =
-            {
-                Builders<TrackingEntity>.Filter.Eq("car",  BsonObjectId.Create(carId)),
-                Builders<TrackingEntity>.Filter.Eq("_id",  BsonObjectId.Create(trackingId))
-            };
-
-            var filter = Builders<TrackingEntity>.Filter.And(filters);
+            var filter = Builders<TrackingEntity>.Filter.Eq("car", BsonObjectId.Create(carId));
 
             await repo.DeleteOneAsync(filter);
         }
@@ -71,21 +65,16 @@ namespace CmApp.Repositories
                 new DatabaseReplaceOneOptions()
             );
         }
-        public async Task<TrackingEntity> GetCarTracking(string carId, string trackingId)
+        public async Task<TrackingEntity> GetTrackingByCar(string carId)
         {
             var repo = new CodeMashRepository<TrackingEntity>(Client);
 
-            FilterDefinition<TrackingEntity>[] filters =
-            {
-                Builders<TrackingEntity>.Filter.Eq("car",  BsonObjectId.Create(carId)),
-                Builders<TrackingEntity>.Filter.Eq("_id",  BsonObjectId.Create(trackingId))
-            };
+            var filter = Builders<TrackingEntity>.Filter.Eq("car", BsonObjectId.Create(carId));
 
-            var filter = Builders<TrackingEntity>.Filter.And(filters);
-
-            var repair = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
-            return repair;
+            var response = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
+            return response;
         }
+
 
     }
 }

@@ -26,7 +26,7 @@ namespace CmApp.Controllers
         }
 
         // GET: api/Cars/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}", Name ="Get")]
         public CarEntity Get(string id)
         {
             var car = carService.GetCarById(id).Result;

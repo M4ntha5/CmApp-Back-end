@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SummaryTests.Integration
+namespace Summary.Integration
 {
     class SummaryServiceTests
     {

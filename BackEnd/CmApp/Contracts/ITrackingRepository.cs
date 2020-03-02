@@ -12,9 +12,9 @@ namespace CmApp.Contracts
     {
         Task<TrackingEntity> InsertTracking(TrackingEntity tracking);
         Task<UploadRecordFileResponse> UploadImageToTracking(string recordId, byte[] bytes, string imgName);
-        Task DeleteCarTracking(string carId, string trackingId);
+        Task DeleteCarTracking(string carId);
         Task UpdateCarTracking(string trackingId, TrackingEntity tracking);
-        Task<TrackingEntity> GetCarTracking(string carId, string trackingId);
+        Task<TrackingEntity> GetTrackingByCar(string carId);
 
     }
 }

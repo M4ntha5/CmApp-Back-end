@@ -10,19 +10,28 @@ namespace CmApp.Services
     public class TrackingService : ITrackingService
     {
         public ITrackingRepository TrackingRepository { get; set; }
+        public ICarRepository CarRepository { get; set; }
 
-        public async Task DeleteTracking(string carId, string trackingId)
+        public async Task DeleteTracking(string carId)
         {
-            await TrackingRepository.DeleteCarTracking(carId, trackingId);
+            await TrackingRepository.DeleteCarTracking(carId);
         }
-        public async Task UpdateTracking(string strackingId, TrackingEntity tracking)
+        public async Task UpdateTracking(string carId, TrackingEntity tracking)
         {
-            await TrackingRepository.UpdateCarTracking(strackingId, tracking);
+            tracking.Car = carId;
+            var trackingId = TrackingRepository.GetTrackingByCar(carId).Result.Id;
+            await TrackingRepository.UpdateCarTracking(trackingId, tracking);
         }
-        public async Task<TrackingEntity> GetTracking(string carId, string trackingId)
+        public async Task<TrackingEntity> GetTracking(string carId)
         {
-            var cars = await TrackingRepository.GetCarTracking(carId, trackingId);
-            return cars;
+            var tracking = await TrackingRepository.GetTrackingByCar(carId);
+            return tracking;
+        }
+        public async Task<TrackingEntity> InsertTracking(string carId, TrackingEntity tracking)
+        {
+            tracking.Car = carId;
+            var newTracking = await TrackingRepository.InsertTracking(tracking);
+            return newTracking;
         }
     }
 }

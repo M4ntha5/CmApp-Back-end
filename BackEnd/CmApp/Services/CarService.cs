@@ -96,7 +96,7 @@ namespace CmApp.Services
         {
             var car = await CarRepository.GetCarById(id);
 
-            var fileId = GetFileId(car.Images[0]);
+           /* var fileId = GetFileId(car.Images[0]);
 
             var fileRepo = new FileRepository();
 
@@ -110,7 +110,7 @@ namespace CmApp.Services
 
             base64 = "data:image/jpeg;base64,"+base64;
 
-            car.Base64images.Add(base64);
+            car.Base64images.Add(base64);*/
 
             return car;
         }
