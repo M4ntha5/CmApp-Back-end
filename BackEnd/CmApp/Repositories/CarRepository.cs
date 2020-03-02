@@ -100,7 +100,22 @@ namespace CmApp.Repositories
 
         }
 
-        public async Task<UploadRecordFileResponse> UploadImageToCar(string recordId, string fileName)
+        public async Task<UploadRecordFileResponse> UploadImageToCar(string recordId, byte[] bytes, string imgName)
+        {
+            var filesService = new CodeMashFilesService(Client);
+
+            var response = await filesService.UploadRecordFileAsync(bytes, imgName,
+                new UploadRecordFileRequest
+                {
+                    RecordId = recordId,
+                    CollectionName = "cars",
+                    UniqueFieldName = "images"
+
+                });
+            return response;
+        }
+
+      /*  public async Task<UploadRecordFileResponse> UploadImageToCar(string recordId, string fileName)
         {
             var filesService = new CodeMashFilesService(Client);
 
@@ -117,7 +132,7 @@ namespace CmApp.Repositories
                 });
             return response;
         }
-
+        */
        /* public async Task AddImageToCar(string carId, Image img)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);

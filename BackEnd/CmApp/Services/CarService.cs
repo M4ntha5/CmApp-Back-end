@@ -14,6 +14,7 @@ namespace CmApp.Services
     {
         public ICarRepository CarRepository { get; set; }
         public IWebScraper WebScraper { get; set; }
+        public ISummaryRepository SummaryRepository { get; set; }
         public IFileRepository FileRepository { get; set; }
 
         public async Task<CarEntity> InsertCarDetailsFromScraper(CarEntity car)
@@ -67,12 +68,36 @@ namespace CmApp.Services
             carEntity.Equipment = equipment;
             carEntity.Vin = car.Vin;
 
-            var response = await CarRepository.InsertCar(carEntity);
+            //inserting vehicle data
+            var insertedCar = await CarRepository.InsertCar(carEntity);
 
-            foreach (var image in car.Images)
-                await CarRepository.UploadImageToCar(response.Id, "img.jpg");
+            //image upload here
+            if(car.Base64images != null && car.Base64images.Count > 0)
+            {
+                int count = 1;
+                foreach (var image in car.Base64images)
+                {
+                    //spliting base64 front and getting image format and base64 string 
+                    var split = image.Split(';');
+                    var imageType = split[0].Split('/')[1];
+                    var base64 = split[1].Split(',')[1];
+                    var imgName = insertedCar.Id + "_image" + count + "." + imageType;
 
-            return response;
+                    var bytes = FileRepository.Base64ToByteArray(base64);
+                    await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    count++;
+                }
+            }
+
+            //create summary
+            var summaryEntity = new SummaryEntity 
+            { 
+                BoughtPrice = car.BoughtPrice, 
+                Car = insertedCar.Id 
+            };
+            var summary = await SummaryRepository.InsertSummary(summaryEntity);
+
+            return insertedCar;
 
         }
 

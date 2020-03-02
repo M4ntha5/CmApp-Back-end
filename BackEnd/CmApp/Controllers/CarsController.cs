@@ -14,7 +14,9 @@ namespace CmApp.Controllers
         private readonly CarService carService = new CarService()
         {
             CarRepository = new CarRepository(),
-            WebScraper = new WebScraper()
+            WebScraper = new WebScraper(),
+            SummaryRepository = new SummaryRepository(),
+            FileRepository = new FileRepository()
         };
 
         // GET: api/Cars

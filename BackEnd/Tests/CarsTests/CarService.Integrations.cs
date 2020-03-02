@@ -8,7 +8,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarsTests.Integration
+namespace Cars.Integration
 {
     class CarServiceIntegrtations
     {
@@ -106,8 +106,17 @@ namespace CarsTests.Integration
         {
             string recordId = "5e4c2d3bc0ae17000119da0b";
 
-            var result = await carRepo.UploadImageToCar(recordId, "img.png");
-            Assert.AreNotEqual(null, result);
+            var fileRepo = new FileRepository();
+            var stream = await fileRepo.GetFile("265b0467-f1fc-4579-8f87-9dae7877c45a");
+            var mem = new MemoryStream();
+            stream.CopyTo(mem);
+
+            var bytes = fileRepo.StreamToByteArray(mem);
+
+
+
+            var result = await carRepo.UploadImageToCar(recordId, bytes, "img.png");
+            //Assert.AreNotEqual(null, result);
         }
 
      /*   [Test]
