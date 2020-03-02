@@ -26,10 +26,10 @@ namespace CmApp.Controllers
         }
 
         // GET: api/Cars/5
-        [HttpGet("{id}", Name ="Get")]
-        public CarEntity Get(string id)
+        [HttpGet("{carId}")]
+        public CarEntity Get(string carId)
         {
-            var car = carService.GetCarById(id).Result;
+            var car = carService.GetCarById(carId).Result;
             return car;
         }
 
@@ -42,18 +42,18 @@ namespace CmApp.Controllers
         }
 
         // PUT: api/Cars/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody] CarEntity car)
+        [HttpPut("{carId}")]
+        public async Task<IActionResult> Put(string carId, [FromBody] CarEntity car)
         {
-            await carService.UpdateCar(id, car);
+            await carService.UpdateCar(carId, car);
             return NoContent();
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpDelete("{carId}")]
+        public async Task<IActionResult> Delete(string carId)
         {
-            await carService.DeleteCar(id);
+            await carService.DeleteCar(carId);
             return NoContent();
         }
     }

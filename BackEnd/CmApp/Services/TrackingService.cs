@@ -10,7 +10,6 @@ namespace CmApp.Services
     public class TrackingService : ITrackingService
     {
         public ITrackingRepository TrackingRepository { get; set; }
-        public ICarRepository CarRepository { get; set; }
 
         public async Task DeleteTracking(string carId)
         {
