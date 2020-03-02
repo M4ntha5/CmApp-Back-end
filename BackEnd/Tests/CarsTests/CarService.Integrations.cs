@@ -4,6 +4,7 @@ using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -85,9 +86,19 @@ namespace CarsTests.Integration
         [Test]
         public async Task TestDeleteCar()
         {
+
             var oldCar = await carRepo.GetCarById("5e4c2dfac0ae1700011a2c38");
 
             await carRepo.DeleteCar(oldCar);
+        }
+
+        [Test]
+        public async Task TestGetCarById()
+        {
+            var service = new CarService() { CarRepository = carRepo, WebScraper = new WebScraper() };
+
+            var car = await service.GetCarById("5e4c2d3bc0ae17000119da0b");
+
         }
 
         [Test]
@@ -95,7 +106,7 @@ namespace CarsTests.Integration
         {
             string recordId = "5e4c2d3bc0ae17000119da0b";
 
-            var result = await carRepo.UploadImage(recordId, "img.jpg");
+            var result = await carRepo.UploadImageToCar(recordId, "img.png");
             Assert.AreNotEqual(null, result);
         }
 
@@ -112,7 +123,28 @@ namespace CarsTests.Integration
         public async Task TestGetFile()
         {
             var repo = new FileRepository();
-            var response = await repo.GetFile("3e682f57-fbe5-4229-ab07-2cab908ca693");
+            var response = await repo.GetFile("265b0467-f1fc-4579-8f87-9dae7877c45a");
+
+            var mem = new MemoryStream();
+
+            response.CopyTo(mem);
+
+            if (mem.Length != 0)
+            {
+                mem.Seek(0, SeekOrigin.Begin);
+                int count = 0;
+                byte[] byteArray = new byte[mem.Length];
+                while (count < mem.Length)
+                {
+                    byteArray[count++] = Convert.ToByte(mem.ReadByte());
+                }
+                var base64 = Convert.ToBase64String(byteArray);
+            }
+
+
+            
+            
+
             Assert.AreNotEqual(null, response);
         }
     }

@@ -2,6 +2,7 @@
 <div>
       <div class="container pt-5">
             cars here
+            
             <button class="btn btn-primary" 
                         data-toggle="modal" 
                         data-target="#add">Pridėti</button>
@@ -103,7 +104,7 @@ export default {
       },
       methods: {
             fetchCars() {
-                  fetch('https://localhost:44373/api/cars')
+                  fetch('https://localhost:44348/api/cars')
                   .then(res => res.json())
                   .then(res => {
                         this.cars = res;

@@ -1,7 +1,10 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
+using CmApp.Repositories;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,6 +14,7 @@ namespace CmApp.Services
     {
         public ICarRepository CarRepository { get; set; }
         public IWebScraper WebScraper { get; set; }
+        public IFileRepository FileRepository { get; set; }
 
         public async Task<CarEntity> InsertCarDetailsFromScraper(CarEntity car)
         {
@@ -66,7 +70,7 @@ namespace CmApp.Services
             var response = await CarRepository.InsertCar(carEntity);
 
             foreach (var image in car.Images)
-                await CarRepository.UploadImage(response.Id, "img.jpg");
+                await CarRepository.UploadImageToCar(response.Id, "img.jpg");
 
             return response;
 
@@ -91,7 +95,39 @@ namespace CmApp.Services
         public async Task<CarEntity> GetCarById(string id)
         {
             var car = await CarRepository.GetCarById(id);
+
+           /* var fileId = GetFileId(car.Images[0]);
+
+            var fileRepo = new FileRepository();
+
+            var stream = await fileRepo.GetFile(fileId);
+
+            var mem = new MemoryStream();
+            stream.CopyTo(mem);
+
+            var bytes = FileRepository.StreamToByteArray(mem);
+            string base64 = FileRepository.ByteArrayToBase64String(bytes);
+
+            base64 = "data:image/jpeg;base64,"+base64;
+
+            car.Base64images.Add(base64);*/
+
             return car;
+        }
+
+        public string GetFileId(object file)
+        {
+            //all file names list
+            var names = file;
+            // converting one of the file to string
+            var source = names.ToString();
+            //parsing formated string json
+            dynamic data = JObject.Parse(source);
+            //accessing json fields
+            string fileId = data.id;
+            string fileType = data.originalFileName;
+
+            return fileId;
         }
 
     }

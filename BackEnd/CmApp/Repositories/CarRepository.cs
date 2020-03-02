@@ -72,6 +72,15 @@ namespace CmApp.Repositories
 
             return car;
         }
+
+        public async Task<CarEntity> GetCarByVin(string vin)
+        {
+            var repo = new CodeMashRepository<CarEntity>(Client);
+
+            var car = await repo.FindOneAsync(x => x.Vin == vin, new DatabaseFindOneOptions());
+
+            return car;
+        }
         public async Task UpdateCar(string id, CarEntity car)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
@@ -91,7 +100,7 @@ namespace CmApp.Repositories
 
         }
 
-        public async Task<UploadRecordFileResponse> UploadImage(string recordId, string fileName)
+        public async Task<UploadRecordFileResponse> UploadImageToCar(string recordId, string fileName)
         {
             var filesService = new CodeMashFilesService(Client);
 
@@ -99,12 +108,12 @@ namespace CmApp.Repositories
             var filePath = $"{directory}\\{fileName}";
 
             using var fsSource = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            var response = await filesService.UploadRecordFileAsync(fsSource, recordId+"_image.jpg",
+            var response = await filesService.UploadRecordFileAsync(fsSource, recordId+"_image.png",
                 new UploadRecordFileRequest
                 {
-                CollectionName = "cars",
-                UniqueFieldName = "images",
-                RecordId = recordId
+                    CollectionName = "cars",
+                    UniqueFieldName = "images",
+                    RecordId = recordId
                 });
             return response;
         }

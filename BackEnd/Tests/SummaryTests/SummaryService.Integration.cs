@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SummaryTests.Integration
+namespace Summary.Integration
 {
     class SummaryServiceTests
     {
@@ -64,10 +64,7 @@ namespace SummaryTests.Integration
         [Test]
         public async Task DeleteSummary()
         {
-
-
-            var result = await serviceRepo.DeleteSummary(carId, summaryId);
-            Assert.AreEqual(1, result);
+            await serviceRepo.DeleteSummary(carId, summaryId);
         }
     }
 }

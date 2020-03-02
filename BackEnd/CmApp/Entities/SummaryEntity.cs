@@ -18,8 +18,6 @@ namespace CmApp.Entities
         public bool Sold { get; set; }
         [Field("car")]
         public string Car { get; set; }
-        [Field("transportation")]
-        public List<object> TransportationFile { get; set; }
 
     }
 }

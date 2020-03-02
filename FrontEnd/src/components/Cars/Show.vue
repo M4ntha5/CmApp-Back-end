@@ -3,6 +3,7 @@
       show one car here
       <div class="pt-5">
             <div class="col-8">
+                  <img class="img-thumbnail" :src='car.base64images[0]'>
                   <h1>{{car.make}} {{car.model}} </h1>
                   <h2>{{car.power}} {{car.bodyType}}</h2>
                   <h2><b>{{car.series}}</b></h2>
@@ -35,7 +36,8 @@ export default {
                         interior:'',
                         created_at:'',
                         images:'',
-                        equipment: ''
+                        equipment: '',
+                        base64images: []
                   }
             }
             
@@ -54,7 +56,7 @@ export default {
 
 
             fetchCars() {
-                  fetch(`https://localhost:44373/api/cars/${this.$route.params.id}`)
+                  fetch(`https://localhost:44348/api/cars/5e4c2d3bc0ae17000119da0b`)//${this.$route.params.id}`)
                   .then(res => res.json())
                   .then(res => {
                         this.car = res;
