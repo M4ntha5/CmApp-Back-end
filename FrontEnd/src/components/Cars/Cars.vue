@@ -34,19 +34,27 @@
                   <div class="modal-dialog" role="document">
                         <div class="modal-content">
                               <div class="modal-header">
-                              <h4 class="modal-title" id="myModalLabel">Pridėti komentarą</h4>
+                              <h4 class="modal-title" id="myModalLabel">Pridėti automobili</h4>
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                               
                               </div>
-                              <div class="modal-body">
+                              <div class="modal-body" enctype="multipart/form-data">
                                     <div class="form-group">
                                           <label for="comm">Vin</label>
                                           <input type ="text" name="vin" id="vin" class="form-control"  v-model="insert.vin" />
                                     </div>
+                                    <div class="form-group">
+                                          <label for="comm">Price</label>
+                                          <input type ="number" name="price" min=0 id="price" class="form-control"  v-model="insert.boughtPrice" />
+                                    </div>
+                                    <div class="form-group">
+                                          <label for="comm">Images</label>
+                                          <input type ="file" multiple name="price" min=0 id="price" class="form-control" @change="onFileSelected" />
+                                    </div>
                               </div>
                               <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Uždaryti</button>
-                                    <button @click="addCar(vin)" class="btn btn-primary">Išsaugoti</button>
+                                    <button @click="addCar()" class="btn btn-primary">Išsaugoti</button>
                               </div>
                         </div>
                   </div>
@@ -87,7 +95,8 @@ export default {
                   },
                   insert: {
                         vin: '',
-                        images: []
+                        boughtPrice: '',
+                        Base64images: []
                   }
             }
             
@@ -114,17 +123,24 @@ export default {
 
             addCar()
             {
-                  console.log(this.car);
-                  console.log(this.car.vin);
-                  axios.post('https://localhost:44373/api/cars', this.insert)
-                  .then(function (response) {
-                        console.log(response);
-                  })
-                  .catch(function (error) {
-                        console.log(error);
-                  });
+                  console.log(this.insert);
+                  axios.post('https://localhost:44348/api/cars', this.insert)
+                        .then(function (response) {
+                              console.log(response);
+                        })
+                        .catch(function (error) {
+                              console.log(error);
+                        });
             },
 
+            onFileSelected(e) {
+                  var reader = new FileReader();
+                  reader.readAsDataURL(e.target.files[0]);
+                  reader.onload = (e) => {
+                        this.insert.Base64images[0] = e.target.result;
+                  }
+                  console.log(this.insert);
+            }, 
 
             goHome() {
                   this.$router.push('/');
