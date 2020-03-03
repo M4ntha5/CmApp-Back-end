@@ -159,11 +159,11 @@ namespace CmApp.Services
             foreach (var img in imgLinks)
             {
                 Image image = DownloadImageFromUrl(img.Trim());
-                string imageName = counter+".png";
+                string imageName = counter+".jpeg";
                 var stream = new MemoryStream();
-                image.Save(stream, ImageFormat.Png);        
+                image.Save(stream, ImageFormat.Jpeg);        
                 var bytes = FileRepository.StreamToByteArray(stream);
-                //need to insert here
+                //insert here
                 var imgResponse = await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
                 counter++;
             }
