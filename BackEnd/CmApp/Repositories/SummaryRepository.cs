@@ -65,5 +65,17 @@ namespace CmApp.Repositories
                 new DatabaseReplaceOneOptions()
             );
         }
+        public async Task InsertTotalShippingCostByCar(string summaryId, double totalPrice)
+        {
+            var repo = new CodeMashRepository<SummaryEntity>(Client);
+
+            var update = Builders<SummaryEntity>.Update.Set("total_shipping", totalPrice);
+
+            await repo.UpdateOneAsync(
+                x => x.Id == summaryId,
+                update,
+                new DatabaseUpdateOneOptions()
+            );
+        }
     }
 }

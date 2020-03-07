@@ -152,11 +152,10 @@ namespace CmApp.Services
                 {
                     website += "&g-recaptcha-response=" + recaptchaToken;
                     response = null;
-                    result = null;
+                    result = new HtmlDocument();
                     response = await http.GetByteArrayAsync(website);
                     source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
                     source = WebUtility.HtmlDecode(source);
-                    result.OptionFixNestedTags = true;
                     result.LoadHtml(source);
                 }
             }

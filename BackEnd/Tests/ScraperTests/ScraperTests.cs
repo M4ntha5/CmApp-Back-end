@@ -48,7 +48,7 @@ namespace ScraperTests
         public async Task TestTrackingScraper()
         {
             var vin = "WBA7E2C37HG740629";
-            //vin = "wba3n9c56ek245582";
+            vin = "wba3n9c56ek245582";
             //vin = "WBS1J5C56JVD36905";
             //vin = "WBA3A9G51FNT09002";
 

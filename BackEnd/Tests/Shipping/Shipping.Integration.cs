@@ -8,20 +8,22 @@ namespace Shipping.Integration
 {
     class Shipping
     {
+        ShippingService shippingService;
+
         [SetUp]
         public void Setup()
         {
-
+            shippingService = new ShippingService()
+            {
+                ShippingRepository = new ShippingRepository(),
+                SummaryRepository = new SummaryRepository(),
+                ExchangesRepository = new ExchangeRatesRepository()
+            };
         }
 
         [Test]
         public async Task TestGetShipping()
         {
-            var shippingService = new ShippingService()
-            {
-                ShippingRepository = new ShippingRepository()
-            };
-
             var carId = "5e563002ac98df000158536f";
 
             var shipping = await shippingService.GetShipping(carId);
@@ -32,17 +34,13 @@ namespace Shipping.Integration
         [Test]
         public async Task TestInsertShipping()
         {
-            var shippingService = new ShippingService()
-            {
-                ShippingRepository = new ShippingRepository()
-            };
 
             var entity = new ShippingEntity
             {
                 AuctionFee = 1,
                 Customs = 2,
                 TransferFee = 3,
-                TransportationFee = 4
+                TransportationFee = 4,
             };
 
             var carId = "5e563002ac98df000158536f";
@@ -55,10 +53,6 @@ namespace Shipping.Integration
         [Test]
         public async Task TestDeleteShipping()
         {
-            var shippingService = new ShippingService()
-            {
-                ShippingRepository = new ShippingRepository()
-            };
 
             var carId = "5e563002ac98df000158536f";
 
@@ -68,11 +62,6 @@ namespace Shipping.Integration
         [Test]
         public async Task TestUpdateShipping()
         {
-            var shippingService = new ShippingService()
-            {
-                ShippingRepository = new ShippingRepository()
-            };
-
             var entity = new ShippingEntity
             {
                 AuctionFee = 11,

@@ -12,5 +12,6 @@ namespace CmApp.Contracts
         Task<SummaryEntity> GetSummaryByCarId(string carId);
         Task DeleteCarSummary(string carId, string summaryId);
         Task UpdateCarSummary(SummaryEntity summary);
+        Task InsertTotalShippingCostByCar(string summaryId, double totalPrice);
     }
 }

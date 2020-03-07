@@ -13,6 +13,7 @@ namespace CmApp.Controllers
         private readonly ShippingService shippingService = new ShippingService
         {
             ShippingRepository = new ShippingRepository(),
+            SummaryRepository = new SummaryRepository()
         };
 
         // GET: api/cars/{carId}/shipping
