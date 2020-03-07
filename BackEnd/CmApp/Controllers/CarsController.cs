@@ -39,7 +39,7 @@ namespace CmApp.Controllers
         [HttpPost]
         public CarEntity Post([FromBody] CarEntity car)
         {
-            var newCar = carService.InsertCarDetailsFromScraper(car).Result;
+            var newCar = carService.InsertCarDetailsFromScraperBMW(car).Result;
             return newCar;
         }
 

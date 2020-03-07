@@ -47,7 +47,7 @@ namespace Cars.Integration
                 Images = new List<object>() { "", ""},
                 Vin = vin
             };
-            var response = await carService.InsertCarDetailsFromScraper(car);
+            var response = await carService.InsertCarDetailsFromScraperBMW(car);
 
             Assert.AreEqual(vin, response.Vin);
         }

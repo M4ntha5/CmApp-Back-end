@@ -44,7 +44,6 @@ namespace CmApp.Repositories
                 Steering = car.Steering,
                 Transmission = car.Transmission,
                 Equipment = car.Equipment,
-                Images = new List<object>(),
                 Vin = car.Vin
             };
             var response = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
