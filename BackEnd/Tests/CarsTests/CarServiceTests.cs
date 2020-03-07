@@ -58,8 +58,8 @@ namespace CarsTests
                 Id = "1"
             };
 
-            scraperMock.GetVehicleEquipment(Arg.Any<string>()).Returns(eq);
-            scraperMock.GetVehicleInfo(Arg.Any<string>()).Returns(par);
+            scraperMock.GetVehicleEquipment(Arg.Any<string>(), Arg.Any<string>()).Returns(eq);
+            scraperMock.GetVehicleInfo(Arg.Any<string>(), Arg.Any<string>()).Returns(par);
             carMock.InsertCar(Arg.Any<CarEntity>()).Returns(car);
 
             var carService = new CarService
@@ -68,7 +68,7 @@ namespace CarsTests
                 WebScraper = scraperMock
             };
 
-            var carDetails = await carService.InsertCarDetailsFromScraper(car);
+            var carDetails = await carService.InsertCarDetailsFromScraperBMW(car);
 
             Assert.AreEqual(eq.Count, carDetails.Equipment.Count);
             await carMock.Received().InsertCar(Arg.Any<CarEntity>());

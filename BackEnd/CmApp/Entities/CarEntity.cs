@@ -18,21 +18,21 @@ namespace CmApp.Entities
         [Field("manufacture_date")]
         public DateTime ManufactureDate { get; set; }
         [Field("series")]
-        public string Series { get; set; }
+        public string Series { get; set; } = string.Empty;
         [Field("body_type")]
-        public string BodyType { get; set; }
+        public string BodyType { get; set; } = string.Empty;
         [Field("steering")]
-        public string Steering { get; set; }
+        public string Steering { get; set; } = string.Empty;
         [Field("engine")]
-        public string Engine { get; set; }
+        public string Engine { get; set; } = string.Empty;
         [Field("displacement")]
-        public double Displacement { get; set; }
+        public double Displacement { get; set; } = 0;
         [Field("power")]
-        public string Power { get; set; }
+        public string Power { get; set; } = string.Empty;
         [Field("drive")]
-        public string Drive { get; set; }
+        public string Drive { get; set; } = string.Empty;
         [Field("transmission")]
-        public string Transmission { get; set; }
+        public string Transmission { get; set; } = string.Empty;
         [Field("color")]
         public string Color { get; set; }
         [Field("interior")]
@@ -40,7 +40,9 @@ namespace CmApp.Entities
         [Field("equipment")]
         public List<Equipment> Equipment { get; set; }
         [Field("images")]
-        public List<object> Images { get; set; }
+        public List<object> Images { get; set; } = new List<object>();
+        public List<string> Base64images { get; set; } = new List<string>();
+        public double BoughtPrice { get; set; }
     }
     //nested form
     public class Equipment

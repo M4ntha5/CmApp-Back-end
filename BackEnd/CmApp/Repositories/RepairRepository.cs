@@ -53,6 +53,7 @@ namespace CmApp.Repositories
             var repair = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
             return repair;
         }
+
         public async Task<DatabaseDeleteOneResponse> DeleteRepair(string carId, string repairId)
         {
             var repo = new CodeMashRepository<RepairEntity>(Client);

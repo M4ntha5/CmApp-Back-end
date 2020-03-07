@@ -7,7 +7,8 @@ namespace CmApp.Contracts
 {
     public interface IWebScraper
     {
-        Dictionary<string, string> GetVehicleInfo(string vin);
-        Dictionary<string, string> GetVehicleEquipment(string vin);
+        Dictionary<string, string> GetVehicleInfo(string vin, string make);
+        Dictionary<string, string> GetVehicleEquipment(string vin, string make);
+        Task TrackingScraper(string vin);
     }
 }

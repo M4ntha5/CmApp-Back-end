@@ -22,15 +22,15 @@ namespace CmApp.Services
 
         public async Task<SummaryEntity> GetSummaryByCarId(string carId)
         {
-            var car = await SummaryRepository.GetSummaryByCarId(carId);
-            return car;
+            var summary = await SummaryRepository.GetSummaryByCarId(carId);
+            return summary;
         }
 
         public async Task<SummaryEntity> InsertCarSummary(string carId, SummaryEntity summary)
         {
             summary.Car = carId;
-            var car = await SummaryRepository.InsertSummary(summary);
-            return car;
+            var newSummary = await SummaryRepository.InsertSummary(summary);
+            return newSummary;
         }
     }
 }

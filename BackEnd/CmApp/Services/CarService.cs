@@ -1,7 +1,10 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
+using CmApp.Repositories;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,18 +14,22 @@ namespace CmApp.Services
     {
         public ICarRepository CarRepository { get; set; }
         public IWebScraper WebScraper { get; set; }
+        public ISummaryRepository SummaryRepository { get; set; }
+        public IFileRepository FileRepository { get; set; }
 
-        public async Task<CarEntity> InsertCarDetailsFromScraper(CarEntity car)
+        public async Task<CarEntity> InsertCarDetailsFromScraperBMW(CarEntity car)
         {
             if (car == null || car.Vin == "" || car.Vin == null)
                 throw new ArgumentNullException("Vin number cannot be null or empty!");
+            if (car.Make != "BMW")
+                throw new ArgumentNullException("Bad vin for this make!");
 
             //matching parameters to entity
-            var parResults = WebScraper.GetVehicleInfo(car.Vin);
+            var parResults = WebScraper.GetVehicleInfo(car.Vin, car.Make);
 
             CarEntity carEntity = new CarEntity
             {
-                Make = "BMW"                //default for this scraper
+                Make = car.Make                //default for this scraper
             };
 
             foreach (var param in parResults)
@@ -54,7 +61,7 @@ namespace CmApp.Services
             }
 
             //matching equipment to entity
-            var eqResults = WebScraper.GetVehicleEquipment(car.Vin);
+            var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make);
             var equipment = new List<Equipment>();
 
             foreach (var eq in eqResults)
@@ -63,12 +70,106 @@ namespace CmApp.Services
             carEntity.Equipment = equipment;
             carEntity.Vin = car.Vin;
 
-            var response = await CarRepository.InsertCar(carEntity);
+            //inserting vehicle data
+            var insertedCar = await CarRepository.InsertCar(carEntity);
 
-            foreach (var image in car.Images)
-                await CarRepository.UploadImage(response.Id, "img.jpg");
+            //image upload here
+            if(car.Base64images != null && car.Base64images.Count > 0)
+            {
+                int count = 1;
+                foreach (var image in car.Base64images)
+                {
+                    //spliting base64 front and getting image format and base64 string 
+                    var split = image.Split(';');
+                    var imageType = split[0].Split('/')[1];
+                    var base64 = split[1].Split(',')[1];
+                    var imgName = insertedCar.Id + "_image" + count + "." + imageType;
 
-            return response;
+                    var bytes = FileRepository.Base64ToByteArray(base64);
+                    await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    count++;
+                }
+            }
+
+            //create summary
+            var summaryEntity = new SummaryEntity 
+            { 
+                BoughtPrice = car.BoughtPrice, 
+                Car = insertedCar.Id 
+            };
+            var summary = await SummaryRepository.InsertSummary(summaryEntity);
+
+            return insertedCar;
+
+        }
+
+        public async Task<CarEntity> InsertCarDetailsFromScraperMB(CarEntity car)
+        {
+            if (car == null || car.Vin == "" || car.Vin == null)
+                throw new ArgumentNullException("Vin number cannot be null or empty!");
+            if (car.Make != "Mercedes-benz")
+                throw new ArgumentNullException("Bad vin for this make!");
+
+            //matching parameters to entity
+            var parResults = WebScraper.GetVehicleInfo(car.Vin, car.Make);
+
+            CarEntity carEntity = new CarEntity
+            {
+                Make = car.Make             //default for this scraper
+            };
+
+            foreach (var param in parResults)
+            {
+                if (param.Key == "Production Date")
+                    carEntity.ManufactureDate = Convert.ToDateTime(param.Value);
+                else if (param.Key == "Model")
+                    carEntity.Model = param.Value;   
+                else if (param.Key == "Colour")
+                    carEntity.Color = param.Value;
+                else if (param.Key == "Upholstery")
+                    carEntity.Interior = param.Value;
+            }
+
+            //matching equipment to entity
+            var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make);
+            var equipment = new List<Equipment>();
+
+            foreach (var eq in eqResults)
+                equipment.Add(new Equipment() { Code = eq.Key, Name = eq.Value });
+
+            carEntity.Equipment = equipment;
+            carEntity.Vin = car.Vin;
+
+            //inserting vehicle data
+            var insertedCar = await CarRepository.InsertCar(carEntity);
+
+            //image upload here
+            if (car.Base64images != null && car.Base64images.Count > 0)
+            {
+                int count = 1;
+                foreach (var image in car.Base64images)
+                {
+                    //spliting base64 front and getting image format and base64 string 
+                    var split = image.Split(';');
+                    var imageType = split[0].Split('/')[1];
+                    var base64 = split[1].Split(',')[1];
+                    var imgName = insertedCar.Id + "_image" + count + "." + imageType;
+
+                    var bytes = FileRepository.Base64ToByteArray(base64);
+                    await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    count++;
+                }
+            }
+
+            //create summary
+            var summaryEntity = new SummaryEntity
+            {
+                BoughtPrice = car.BoughtPrice,
+                Car = insertedCar.Id
+            };
+            var summary = await SummaryRepository.InsertSummary(summaryEntity);
+
+            return insertedCar;
 
         }
 
@@ -91,7 +192,39 @@ namespace CmApp.Services
         public async Task<CarEntity> GetCarById(string id)
         {
             var car = await CarRepository.GetCarById(id);
+
+           /* var fileId = GetFileId(car.Images[0]);
+
+            var fileRepo = new FileRepository();
+
+            var stream = await fileRepo.GetFile(fileId);
+
+            var mem = new MemoryStream();
+            stream.CopyTo(mem);
+
+            var bytes = FileRepository.StreamToByteArray(mem);
+            string base64 = FileRepository.ByteArrayToBase64String(bytes);
+
+            base64 = "data:image/jpeg;base64,"+base64;
+
+            car.Base64images.Add(base64);*/
+
             return car;
+        }
+
+        public string GetFileId(object file)
+        {
+            //all file names list
+            var names = file;
+            // converting one of the file to string
+            var source = names.ToString();
+            //parsing formated string json
+            dynamic data = JObject.Parse(source);
+            //accessing json fields
+            string fileId = data.id;
+            string fileType = data.originalFileName;
+
+            return fileId;
         }
 
     }

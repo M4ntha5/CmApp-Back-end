@@ -2,9 +2,10 @@
 <div>
       <div class="container pt-5">
             cars here
+            
             <button class="btn btn-primary" 
                         data-toggle="modal" 
-                        data-target="#add">Pridėti</button>
+                        data-target="#BMWModal">Add new</button>
             <div class="pt-5" v-for="car in cars" v-bind:key="car._id">
                   <div class="card" >
                         <div class="card-body" >
@@ -27,25 +28,106 @@
             </div>
       </div>
 
-      <!-- modal -->
+      <!-- BMW modal -->
       <div>
-            <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" id="BMWModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" :class="{'is-active' : modalShow}">
                   <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                              <div class="modal-header">
-                              <h4 class="modal-title" id="myModalLabel">Pridėti komentarą</h4>
+                              <div class="modal-header">                                  
+                              <h4 class="modal-title" id="myModalLabel">Add new car</h4>
+
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              
+
                               </div>
-                              <div class="modal-body">
+                              <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                          <ul class="nav nav-tabs">
+                                                <li class="nav-item">
+                                                      <a class="nav-link active" href="">BMW</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                      <a class="nav-link" data-dismiss="modal" data-toggle="modal" data-target="#MBModal" href="">
+                                                            Mercedes-benz
+                                                      </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                      <a class="nav-link" data-dismiss="modal" data-toggle="modal" data-target="#OtherModal" href="">
+                                                            Other
+                                                      </a>
+                                                </li>
+                                          </ul>
+                                    </div>
+                              </nav>
+                              <div class="modal-body" enctype="multipart/form-data">
                                     <div class="form-group">
                                           <label for="comm">Vin</label>
                                           <input type ="text" name="vin" id="vin" class="form-control"  v-model="insert.vin" />
                                     </div>
+                                    <div class="form-group">
+                                          <label for="comm">Price</label>
+                                          <input type ="number" name="price" min=0 id="price" class="form-control"  v-model="insert.boughtPrice" />
+                                    </div>
+                                    <div class="form-group">
+                                          <label for="comm">Images</label>
+                                          <input type ="file" multiple name="price" min=0 id="price" class="form-control" @change="onFileSelected" />
+                                    </div>
                               </div>
                               <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Uždaryti</button>
-                                    <button @click="addCar(vin)" class="btn btn-primary">Išsaugoti</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button @click="addBMWCar()" class="btn btn-primary">Save</button>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </div>
+
+      <!-- MB modal -->
+      <div>
+            <div class="modal fade" id="MBModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" v-show="modalShow">
+                  <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                              <div class="modal-header">                                  
+                              <h4 class="modal-title" id="myModalLabel">Add new car</h4>
+
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                              </div>
+                              <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                          <ul class="nav nav-tabs">
+                                                <li class="nav-item">
+                                                      <a class="nav-link" data-dismiss="modal" data-toggle="modal" data-target="#BMWModal" href="">
+                                                            BMW
+                                                      </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                      <a class="nav-link active" href="">Mercedes-benz</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                      <a class="nav-link" data-dismiss="modal" data-toggle="modal" data-target="#OthersModal" href="">
+                                                            Other
+                                                      </a>
+                                                </li>
+                                          </ul>
+                                    </div>
+                              </nav>
+                              <div class="modal-body" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                          <label for="comm">Vin2</label>
+                                          <input type ="text" name="vin" id="vin" class="form-control" v-model="insert.vin" />
+                                    </div>
+                                    <div class="form-group">
+                                          <label for="comm">Price2</label>
+                                          <input type ="number" name="price" min=0 id="price" class="form-control" v-model="insert.boughtPrice" />
+                                    </div>
+                                    <div class="form-group">
+                                          <label for="comm">Images2</label>
+                                          <input type ="file" multiple name="price" min=0 id="price" class="form-control" @change="onFileSelected" />
+                                    </div>
+                              </div>
+                              <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button @click="addMBCar()" class="btn btn-primary">Save</button>
                               </div>
                         </div>
                   </div>
@@ -63,6 +145,7 @@ import axios from 'axios';
 export default {      
       data() {
             return {
+                  modalShow: true,
                   cars: [],
                   car: {
                         _id: '',
@@ -86,8 +169,10 @@ export default {
                   },
                   insert: {
                         vin: '',
-                        images: []
-                  }
+                        boughtPrice: '',
+                        make: '',
+                        Base64images: []
+                  }          
             }
             
       },
@@ -103,7 +188,7 @@ export default {
       },
       methods: {
             fetchCars() {
-                  fetch('https://localhost:44373/api/cars')
+                  fetch('https://localhost:44348/api/cars')
                   .then(res => res.json())
                   .then(res => {
                         this.cars = res;
@@ -111,19 +196,49 @@ export default {
                   .catch(err => console.log(err));
             },
 
-            addCar()
+            addBMWCar()
             {
-                  console.log(this.car);
-                  console.log(this.car.vin);
-                  axios.post('https://localhost:44373/api/cars', this.insert)
-                  .then(function (response) {
-                        console.log(response);
-                  })
-                  .catch(function (error) {
-                        console.log(error);
-                  });
+                  this.insert.make = "BMW";
+                  var vm = this;
+                  console.log(this.insert);
+                  axios.post('https://localhost:44348/api/cars', this.insert)
+                        .then(function (response) {
+                              console.log(response);
+                              if(response.status == 200)
+                                    vm.modalShow = false;
+                        })
+                        .catch(function (error) {
+                              console.log(error);
+                        });
+            },
+            addMBCar()
+            {
+                  var vm = this;
+                  this.insert.make = "MB";
+                  console.log(this.insert);
+                  axios.post('https://localhost:44348/api/cars', this.insert)
+                        .then(function (response) {
+                              console.log(response);
+                              if(response.status == 200)
+                                    vm.modalShow = false;
+                        })
+                        .catch(function (error) {
+                              console.log(error);
+                        });
             },
 
+            async onFileSelected(e) {
+                  for(let i=0; i < e.target.files.length; i++)
+                  {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(e.target.files[i]);
+                        reader.onload = (e) => {
+                              this.insert.Base64images[i] = e.target.result;
+                        }                 
+                  }
+                  console.log(this.insert.Base64images);
+                  
+            }, 
 
             goHome() {
                   this.$router.push('/');
