@@ -1,7 +1,7 @@
 <template>
        <!-- BMW modal -->
       <div>
-            <div class="modal fade" id="BMWModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div v-show="value" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                   <div class="modal-dialog" role="document">
                         <div class="modal-content">
                               <div class="modal-header">                                  
@@ -44,7 +44,7 @@
                                     </div>
                               </div>
                               <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button @click.prevent="close" class="btn btn-default">Close</button>
                                     <button @click="addBMWCar()" class="btn btn-primary">Save</button>
                               </div>
                         </div>
@@ -52,3 +52,56 @@
             </div>
       </div>
 </template>
+<script>
+
+import axios from 'axios';
+
+export default {
+      data() {
+            return {
+                  insert: {
+                        
+                  }
+            }
+      },
+      methods: {
+            close() {
+                  this.$emit("input", !this.value);
+            },
+
+            async addBMWCar()
+            {
+                  this.insert.make = "BMW";
+                  var vm = this;
+                  console.log(this.insert);
+                  axios.post('https://localhost:44348/api/cars', this.insert)
+                        .then(function (response) {
+                              console.log(response);
+                              if(response.status == 200)
+                                    vm.$emit("input", !vm.value);
+                        })
+                        .catch(function (error) {
+                              console.log(error);
+                        });
+            },
+            async onFileSelected(e) {
+                  for(let i=0; i < e.target.files.length; i++)
+                  {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(e.target.files[i]);
+                        reader.onload = (e) => {
+                              this.insert.Base64images[i] = e.target.result;
+                        }                 
+                  }
+                  console.log(this.insert.Base64images);
+                  
+            }, 
+      }
+}
+</script>
+
+<style lang="css" scoped>
+      .modal {
+      background-color: rgba(0, 0, 0, 0.7);
+}
+</style>

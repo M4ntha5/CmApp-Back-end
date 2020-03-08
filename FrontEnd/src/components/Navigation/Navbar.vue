@@ -1,5 +1,5 @@
 <template>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light" >
+       <nav class="navbar navbar-expand-lg navbar-light bg-light" >
             <router-link to="/" class="navbar-brand">Big Logo</router-link>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
@@ -14,21 +14,23 @@
                               <router-link to="/cars" class="nav-link">Cars</router-link>
                         </li>
                         <li class="nav-item">
-                              <router-link to="/cars" class="nav-link">Add new car</router-link>
+                              <router-link to="/#" class="nav-link">Exchange converter</router-link>
                         </li>
                   </ul>
-                  <form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                  </form>
+                  <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                              <router-link to="/repair" class="nav-link">Carousel Test1</router-link>
+                        </li>
+                        <li class="nav-item">
+                              <router-link to="/repair2" class="nav-link">Carousel Test2</router-link>
+                        </li>
+                        <li class="nav-item">
+                              <router-link to="/login" class="nav-link">Login</router-link>
+                        </li>
+                        <li class="nav-item">
+                              <router-link to="/register" class="nav-link">Register</router-link>
+                        </li>
+                  </ul>
             </div>
       </nav>
 </template>
-
-<script>
-export default {
-      methods:{
-
-      }
-}
-</script>

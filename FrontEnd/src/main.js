@@ -8,6 +8,10 @@ import ShowCar from './components/Cars/Show.vue';
 import Create from './components/Cars/Create.vue';
 import About from './components/About.vue';
 import Home from './components/Home.vue';
+import Test2 from './components/Modals/MultiCarousel.vue';
+import Login from './components/Auth/Login.vue';
+import Register from './components/Auth/Register.vue';
+import Tracking from './components/Cars/Tracking.vue';
 
 
 Vue.use(VueRouter);
@@ -19,7 +23,10 @@ const routes = [
     { path: '/cars/:id', component: ShowCar },
     { path: '/about', component: About },
     { path: '/create', component: Create },
-    
+    { path: '/repair2', component: Test2 },
+    { path: '/login', component: Login },
+    { path: '/register', component: Register },
+    { path: '/cars/:id/tracking', component: Tracking },
 
  ];
 
