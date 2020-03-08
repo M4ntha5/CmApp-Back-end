@@ -6,10 +6,11 @@ namespace CmApp.Entities
     public class RepairEntity : Entity
     {
         [Field("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         [Field("price")]
-        public double Price { get; set; }
+        public double Price { get; set; } = 0;
         [Field("car")]
-        public string Car { get; set; }
+        public string Car { get; set; } = "";
+        public double Total { get; set; } = 0;
     }
 }

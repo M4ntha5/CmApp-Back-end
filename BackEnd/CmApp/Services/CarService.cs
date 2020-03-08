@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -17,7 +16,7 @@ namespace CmApp.Services
         public ISummaryRepository SummaryRepository { get; set; }
         public IFileRepository FileRepository { get; set; }
 
-        public async Task<CarEntity> InsertCarDetailsFromScraperBMW(CarEntity car)
+        private async Task<CarEntity> InsertCarDetailsFromScraperBMW(CarEntity car)
         {
             if (car == null || car.Vin == "" || car.Vin == null)
                 throw new ArgumentNullException("Vin number cannot be null or empty!");
@@ -97,13 +96,13 @@ namespace CmApp.Services
                 BoughtPrice = car.BoughtPrice, 
                 Car = insertedCar.Id 
             };
-            var summary = await SummaryRepository.InsertSummary(summaryEntity);
+            _ = await SummaryRepository.InsertSummary(summaryEntity);
 
             return insertedCar;
 
         }
 
-        public async Task<CarEntity> InsertCarDetailsFromScraperMB(CarEntity car)
+        private async Task<CarEntity> InsertCarDetailsFromScraperMB(CarEntity car)
         {
             if (car == null || car.Vin == "" || car.Vin == null)
                 throw new ArgumentNullException("Vin number cannot be null or empty!");
@@ -167,10 +166,58 @@ namespace CmApp.Services
                 BoughtPrice = car.BoughtPrice,
                 Car = insertedCar.Id
             };
-            var summary = await SummaryRepository.InsertSummary(summaryEntity);
+            _ = await SummaryRepository.InsertSummary(summaryEntity);
 
             return insertedCar;
 
+        }
+        private async Task<CarEntity> InsertOtherCar(CarEntity car)
+        {
+            if (car == null)
+                throw new ArgumentNullException("Can not insert car, because car is empty!");
+
+            //inserting vehicle data
+            var insertedCar = await CarRepository.InsertCar(car);
+
+            //image upload here
+            if (car.Base64images != null && car.Base64images.Count > 0)
+            {
+                int count = 1;
+                foreach (var image in car.Base64images)
+                {
+                    //spliting base64 begining and getting image format and base64 string 
+                    var split = image.Split(';');
+                    var imageType = split[0].Split('/')[1];
+                    var base64 = split[1].Split(',')[1];
+                    var imgName = insertedCar.Id + "_image" + count + "." + imageType;
+
+                    var bytes = FileRepository.Base64ToByteArray(base64);
+                    await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    count++;
+                }
+            }
+
+            //create summary
+            var summaryEntity = new SummaryEntity
+            {
+                BoughtPrice = car.BoughtPrice,
+                Car = insertedCar.Id
+            };
+            _ = await SummaryRepository.InsertSummary(summaryEntity);
+
+            return insertedCar;
+        }
+
+        public async Task<CarEntity> InsertCar(CarEntity car)
+        {
+            if (car.Make == null || car.Make == "")
+                throw new Exception("Make not defined");
+            if (car.Make == "BMW")
+                return await InsertCarDetailsFromScraperBMW(car);
+            else if (car.Make == "Mercedes-benz")
+                return await InsertCarDetailsFromScraperMB(car);
+            else
+                return await InsertOtherCar(car);
         }
 
         public async Task DeleteCar(string id)
@@ -187,44 +234,55 @@ namespace CmApp.Services
         public async Task<List<CarEntity>> GetAllCars()
         {
             var cars = await CarRepository.GetAllCars();
+            
+            foreach (var car in cars)
+            {
+                var summary = await SummaryRepository.GetSummaryByCarId(car.Id);
+                car.Summary = summary;
+
+                var fileInfo = FileRepository.GetFileId(car.Images[0]);
+
+                var fileId = fileInfo.Item1;
+                var fileType = fileInfo.Item2;
+
+                var stream = await FileRepository.GetFile(fileId);
+
+                var mem = new MemoryStream();
+                stream.CopyTo(mem);
+
+                var bytes = FileRepository.StreamToByteArray(mem);
+                string base64 = FileRepository.ByteArrayToBase64String(bytes);
+
+                base64 = "data:" + fileType + ";base64," + base64;
+
+                car.Base64images.Add(base64);
+            }
             return cars;
         }
         public async Task<CarEntity> GetCarById(string id)
         {
             var car = await CarRepository.GetCarById(id);
+            car.ManufactureDate = car.ManufactureDate.Date;
+            foreach (var image in car.Images)
+            {
+                var fileInfo = FileRepository.GetFileId(image);
 
-           /* var fileId = GetFileId(car.Images[0]);
+                var fileId = fileInfo.Item1;
+                var fileType = fileInfo.Item2;
 
-            var fileRepo = new FileRepository();
+                var stream = await FileRepository.GetFile(fileId);
 
-            var stream = await fileRepo.GetFile(fileId);
+                var mem = new MemoryStream();
+                stream.CopyTo(mem);
 
-            var mem = new MemoryStream();
-            stream.CopyTo(mem);
+                var bytes = FileRepository.StreamToByteArray(mem);
+                string base64 = FileRepository.ByteArrayToBase64String(bytes);
 
-            var bytes = FileRepository.StreamToByteArray(mem);
-            string base64 = FileRepository.ByteArrayToBase64String(bytes);
+                base64 = "data:" + fileType + ";base64," + base64;
 
-            base64 = "data:image/jpeg;base64,"+base64;
-
-            car.Base64images.Add(base64);*/
-
+                car.Base64images.Add(base64); 
+            }
             return car;
-        }
-
-        public string GetFileId(object file)
-        {
-            //all file names list
-            var names = file;
-            // converting one of the file to string
-            var source = names.ToString();
-            //parsing formated string json
-            dynamic data = JObject.Parse(source);
-            //accessing json fields
-            string fileId = data.id;
-            string fileType = data.originalFileName;
-
-            return fileId;
         }
 
     }

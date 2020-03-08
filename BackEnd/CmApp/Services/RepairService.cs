@@ -1,6 +1,7 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -17,6 +18,9 @@ namespace CmApp.Services
         public async Task<List<RepairEntity>> GetAllSelectedCarRepairs(string carId)
         {
             var repairs = await RepairRepository.GetAllRepairsByCarId(carId);
+            if (repairs != null && repairs.Count > 0)
+                repairs[0].Total = repairs.Sum(x => x.Price);
+
             return repairs;
         }
         public async Task<RepairEntity> InsertCarRepair(string carId, RepairEntity repair)

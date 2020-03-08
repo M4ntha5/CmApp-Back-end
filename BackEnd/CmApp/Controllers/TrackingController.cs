@@ -12,7 +12,10 @@ namespace CmApp.Controllers
     {
         private readonly TrackingService trackingService = new TrackingService()
         {
-            TrackingRepository = new TrackingRepository()
+            TrackingRepository = new TrackingRepository(),
+            CarRepository = new CarRepository(),
+            ScraperService = new WebScraper(),
+            FileRepository = new FileRepository()
         };
 
         // GET: api/cars/{carId}/tracking

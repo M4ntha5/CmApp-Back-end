@@ -16,7 +16,7 @@ namespace CmApp.Controllers
             CarRepository = new CarRepository(),
             WebScraper = new WebScraper(),
             SummaryRepository = new SummaryRepository(),
-            FileRepository = new FileRepository()
+            FileRepository = new FileRepository(),
         };
 
         // GET: api/Cars
@@ -39,7 +39,7 @@ namespace CmApp.Controllers
         [HttpPost]
         public CarEntity Post([FromBody] CarEntity car)
         {
-            var newCar = carService.InsertCarDetailsFromScraperBMW(car).Result;
+            var newCar = carService.InsertCar(car).Result;
             return newCar;
         }
 

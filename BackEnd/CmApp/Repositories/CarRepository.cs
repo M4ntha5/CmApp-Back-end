@@ -34,7 +34,7 @@ namespace CmApp.Repositories
                 Color = car.Color,
                 Displacement = car.Displacement,
                 Drive = car.Drive,
-                ManufactureDate = car.ManufactureDate,
+                ManufactureDate = car.ManufactureDate.Date,
                 Engine = car.Engine,
                 Interior = car.Interior,
                 Make = car.Make,
