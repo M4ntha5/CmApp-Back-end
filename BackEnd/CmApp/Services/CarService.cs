@@ -234,13 +234,14 @@ namespace CmApp.Services
         public async Task<List<CarEntity>> GetAllCars()
         {
             var cars = await CarRepository.GetAllCars();
-            
+                     
             foreach (var car in cars)
-            {
+            { 
                 var summary = await SummaryRepository.GetSummaryByCarId(car.Id);
                 car.Summary = summary;
 
                 var fileInfo = FileRepository.GetFileId(car.Images[0]);
+                car.Images = null;
 
                 var fileId = fileInfo.Item1;
                 var fileType = fileInfo.Item2;

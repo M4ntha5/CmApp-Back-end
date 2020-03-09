@@ -108,9 +108,10 @@ namespace CmApp.Repositories
                 {
                     RecordId = recordId,
                     CollectionName = "cars",
-                    UniqueFieldName = "images"
-
+                    UniqueFieldName = "images",                  
                 });
+
+            response.Result.IsPublic = true;
             return response;
         }
 

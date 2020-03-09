@@ -246,6 +246,9 @@ namespace CmApp.Services
                 var bytes = FileRepository.StreamToByteArray(stream);
                 //insert here
                 var imgResponse = await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
+                var base64 = FileRepository.ByteArrayToBase64String(bytes);
+                tracking.Base64images.Add(base64);
+
                 counter++;
             }
 

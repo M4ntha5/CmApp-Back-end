@@ -31,7 +31,7 @@ namespace CmApp.Services
             var car = await CarRepository.GetCarById(carId);
               
             if (tracking == null && (car.Vin != null || car.Vin != ""))
-                tracking = await ScraperService.TrackingScraper(car.Vin);
+                return await ScraperService.TrackingScraper(car.Vin);
 
             foreach (var image in tracking.AuctionImages)
             {

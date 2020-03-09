@@ -1,7 +1,6 @@
 <template>
 <div>
-      <div class="container pt-5">
-
+      <div class="container pt-5" v-if="!loading">
             <button class="btn btn-primary"
             data-toggle="modal" data-target="#BMWModal">Add new</button>
 
@@ -25,6 +24,9 @@
                         </a>
                   </div>
             </div>   
+      </div>
+      <div class="pt-3" v-else>
+            <center><h1>Loading... please wait</h1></center> 
       </div>
 
       <!-- BMW modal -->
@@ -221,7 +223,8 @@ export default {
                         name: '',
                         price: '',
                         car: ''
-                  }         
+                  },
+                  loading: true     
             }
             
       },
@@ -238,11 +241,16 @@ export default {
       },
       methods: {
             fetchCars() {
+                  let vm = this;
                   fetch('https://localhost:44348/api/cars')
                   .then(res => res.json())
                   .then(res => {
-                        if(res != null)
+                        if(res)
+                        {
                               this.cars = res;
+                              vm.loading = false;
+                        }
+                              
                   })
                   .catch(err => console.log(err));
             },
