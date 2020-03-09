@@ -28,6 +28,7 @@ namespace CmApp.Controllers
         }
 
         // GET: api/Cars/5
+        [Produces("application/json")]
         [HttpGet("{carId}")]
         public CarEntity Get(string carId)
         {

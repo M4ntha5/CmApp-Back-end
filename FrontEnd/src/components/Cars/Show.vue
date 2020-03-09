@@ -19,7 +19,6 @@
                   </div>
                   <div class="col-sm-2 col-12">
                         <a v-bind:href="'/cars/'+ car._id + '/tracking'">Look for tracking</a>
-                        <button @click="asd" class="btn btn-primary" style="float:right;">Look for tracking</button>
                   </div>
             </div>
             <div class="row mb-3 pt-5">

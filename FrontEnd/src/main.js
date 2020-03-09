@@ -21,12 +21,13 @@ const routes = [
     { path: '/', component: Home },
     { path: '/cars', component: Cars },
     { path: '/cars/:id', component: ShowCar },
+    { path: '/cars/:id/tracking', component: Tracking },
     { path: '/about', component: About },
     { path: '/create', component: Create },
     { path: '/repair2', component: Test2 },
     { path: '/login', component: Login },
     { path: '/register', component: Register },
-    { path: '/cars/:id/tracking', component: Tracking },
+    
 
  ];
 

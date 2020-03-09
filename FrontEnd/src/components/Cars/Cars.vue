@@ -237,7 +237,7 @@ export default {
          ///   alert(this.$route.params.id);
       },
       methods: {
-            async fetchCars() {
+            fetchCars() {
                   fetch('https://localhost:44348/api/cars')
                   .then(res => res.json())
                   .then(res => {
@@ -246,7 +246,7 @@ export default {
                   })
                   .catch(err => console.log(err));
             },
-            async fetchCarSummary() {
+            fetchCarSummary() {
                   for(let i =0; i< this.cars.length;i++)
                   {
                         fetch(`https://localhost:44348/api/cars/${this.cars[i]._id}/summary`)
@@ -260,7 +260,7 @@ export default {
               
             },
 
-            async addBMWCar()
+            addBMWCar()
             {
                   this.insertCar.make = "BMW";
                   console.log(this.insertCar);
@@ -273,7 +273,7 @@ export default {
                               console.log(error);
                         });
             },
-            async addMBCar()
+            addMBCar()
             {
                   var vm = this;
                   this.insertCar.make = "Mercedes-benz";
@@ -289,7 +289,7 @@ export default {
                         });
             },
 
-            async addRepairToCar()
+            addRepairToCar()
             {
                   axios.post(`https://localhost:44348/api/cars/${this.insertRepair.car}/repairs`, this.insertRepair)
                         .then(function (response) {
@@ -300,7 +300,7 @@ export default {
                         });
             },
 
-            async onFileSelected(e) {
+            onFileSelected(e) {
                   for(let i=0; i < e.target.files.length; i++)
                   {
                         var reader = new FileReader();
