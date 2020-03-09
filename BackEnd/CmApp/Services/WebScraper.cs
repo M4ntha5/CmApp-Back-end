@@ -239,7 +239,7 @@ namespace CmApp.Services
                 var newImg = ResizeImage(image, new Size(1920, 1080));
                 var newsize = newImg.Size;
 
-                string imageName = counter+".jpeg";
+                string imageName = tracking.Id + "_image" + counter + ".jpeg";
                 var stream = new MemoryStream();
 
                 image.Save(stream, ImageFormat.Jpeg);        
