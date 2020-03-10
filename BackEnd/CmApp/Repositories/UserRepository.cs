@@ -25,7 +25,7 @@ namespace CmApp.Repositories
             if (user == null)
                 throw new ArgumentNullException(nameof(user), "Cannot insert user in db, because user is empty");
             if(user.Password1 != user.Password2)
-                throw new BusinessException("Password do not match!!");
+                throw new BusinessException("Passwords do not match!!");
 
 
             //password hashing

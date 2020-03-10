@@ -54,11 +54,18 @@ namespace CmApp.Repositories
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
 
-            var cars = await repo.FindAsync(x => true, new DatabaseFindOptions()
-            {
-                PageNumber = 0,
-                PageSize = 100
-            });
+            var projection = Builders<CarEntity>.Projection
+                .Include(x => x.Images)
+                .Include(x => x.Make)
+                .Include(x => x.Model)
+                .Include(x => x.Vin);
+
+            var cars = await repo.FindAsync<CarEntity>(x => true, projection, null,
+                new DatabaseFindOptions
+                {
+                    //PageNumber = ,
+                    //PageSize = 9
+                });       
 
             return cars.Items;
         }
@@ -110,8 +117,16 @@ namespace CmApp.Repositories
                     CollectionName = "cars",
                     UniqueFieldName = "images",                  
                 });
+           /* var filter = new GetFileRequest { FileId = response.Result.Id };
 
-            response.Result.IsPublic = true;
+            var url = await filesService.GetFileUrlAsync(filter);
+
+            var repo = new CodeMashRepository<ImagesEntity>(Client);
+
+            var entity = new ImagesEntity { Url = url.Result };
+
+            var insertedImageId = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
+            */
             return response;
         }
 

@@ -8,14 +8,20 @@
                               <h1>{{car.make}} {{car.model}}</h1>
                         </div>
                         <div class="col-sm-2 col-12">
-                              <button class="btn btn-primary" style="float:right;">Edit</button>
+                              <button @click="editCar(car._id)" class="btn btn-primary" style="float:right;">
+                                    Edit
+                              </button>
                         </div>
                         <div class="col-sm-2 col-12">
                               <button class="btn btn-primary" style="float:right;"
-                              data-toggle="modal" data-target="#repairModal">Add repair</button>
+                              data-toggle="modal" data-target="#repairModal">
+                                    Add repair
+                              </button>
                         </div>
                         <div class="col-sm-2 col-12">
-                              <button @click="openTracking(car._id)">Look for tracking</button>
+                              <button @click="openTracking(car._id)" class="btn btn-primary">
+                                    Look for tracking
+                              </button>
                         </div>
                   </div>
                   <div class="row mb-3 pt-5">
@@ -281,7 +287,9 @@ export default {
                         .then(res => {  
                               if(res._id != "")
                               {
-                                    this.car = res;
+                                    this.car = res;  
+                                    //trimming unnecessary dat ending           
+                                    this.car.manufactureDate = this.car.manufactureDate.substring(0, 10);
                                     vm.loading = false;
                               }                           
                               
@@ -344,8 +352,11 @@ export default {
             },
             async openTracking(id)
             {
-                  window.location.href = `/cars/${id}/tracking`;
-                  
+                  window.location.href = `/cars/${id}/tracking`;    
+            },
+            async editCar(id)
+            {
+                  window.location.href = `/cars/${id}/edit`;  
             }
       }
 }

@@ -16,16 +16,27 @@ namespace CmApp.Repositories
     {
         private static CodeMashClient Client => new CodeMashClient(Settings.ApiKey, Settings.ProjectId);
         
-        public Task<Stream> GetFile(string fileId)
+        public async Task<Stream> GetFile(string fileId)
         {
             var filesRepo = new CodeMashFilesService(Client);
 
-            var response = filesRepo.GetFileStreamAsync(new GetFileRequest()
+            var response = await filesRepo.GetFileStreamAsync(new GetFileRequest()
             {
                 FileId = fileId,
                 ProjectId = Settings.ProjectId
             });
             return response;
+        }
+
+        public async Task<string> GetFileUrl(string fileId)
+        {
+            var filesRepo = new CodeMashFilesService(Client);
+
+            var request = new GetFileRequest { FileId = fileId };
+
+            var response = await filesRepo.GetFileUrlAsync(request);
+
+            return response.Result;
         }
         public byte[] StreamToByteArray(MemoryStream mem)
         {

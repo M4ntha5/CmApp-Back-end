@@ -242,7 +242,7 @@ namespace CmApp.Services
                 string imageName = tracking.Id + "_image" + counter + ".jpeg";
                 var stream = new MemoryStream();
 
-                image.Save(stream, ImageFormat.Jpeg);        
+                newImg.Save(stream, ImageFormat.Jpeg);        
                 var bytes = FileRepository.StreamToByteArray(stream);
                 //insert here
                 var imgResponse = await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);

@@ -13,5 +13,6 @@ namespace CmApp.Contracts
         byte[] Base64ToByteArray(string base64String);
         string ByteArrayToBase64String(byte[] bytes);
         Tuple<string, string> GetFileId(object file);
+        Task<string> GetFileUrl(string fileId);
     }
 }

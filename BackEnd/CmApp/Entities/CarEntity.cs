@@ -44,6 +44,10 @@ namespace CmApp.Entities
         public List<string> Base64images { get; set; } = new List<string>();
         public double BoughtPrice { get; set; }
         public SummaryEntity Summary { get; set; }
+
+        [Field("test")]
+        public string test { get; set; }
+
     }
     //nested form
     public class Equipment

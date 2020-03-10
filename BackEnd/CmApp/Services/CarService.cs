@@ -237,16 +237,19 @@ namespace CmApp.Services
                      
             foreach (var car in cars)
             { 
-                var summary = await SummaryRepository.GetSummaryByCarId(car.Id);
-                car.Summary = summary;
-
+               /* var summary = await SummaryRepository.GetSummaryByCarId(car.Id);
+                car.Summary = summary;*/
+         
                 var fileInfo = FileRepository.GetFileId(car.Images[0]);
                 car.Images = null;
-
                 var fileId = fileInfo.Item1;
                 var fileType = fileInfo.Item2;
 
-                var stream = await FileRepository.GetFile(fileId);
+                var url = await FileRepository.GetFileUrl(fileId);
+
+                car.test = url;
+
+              /*  var stream = await FileRepository.GetFile(fileId);
 
                 var mem = new MemoryStream();
                 stream.CopyTo(mem);
@@ -256,7 +259,7 @@ namespace CmApp.Services
 
                 base64 = "data:" + fileType + ";base64," + base64;
 
-                car.Base64images.Add(base64);
+                car.Base64images.Add(base64);*/
             }
             return cars;
         }

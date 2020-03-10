@@ -14,7 +14,7 @@
                               <router-link to="/cars" class="nav-link">Cars</router-link>
                         </li>
                         <li class="nav-item">
-                              <router-link to="/#" class="nav-link">Exchange converter</router-link>
+                              <router-link to="/converter" class="nav-link">Exchange converter</router-link>
                         </li>
                   </ul>
                   <ul class="navbar-nav ml-auto">

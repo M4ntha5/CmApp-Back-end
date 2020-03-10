@@ -12,19 +12,21 @@
                   <div class="pt-5 col-4" v-for="car in cars" v-bind:key="car._id">    
                         <a v-bind:href="'/cars/'+ car._id">
                               <div class="card" style="width: 20rem; height: 30rem;">                                                          
-                                    <img :src='car.base64images[0]' class="card-img-top img-thumbnail" alt="Responsive image">
+                                    <img :src='car.test' class="card-img-top img-thumbnail" alt="Responsive image">
                                     
                                     <div class="pt-3 card-body">
                                           <h2>{{car.make}} {{car.model}}</h2>
-                                          <h4 class="card-text" style="color:red;">
-                                                Bought price: {{car.summary.boughtPrice}} €
+                                          <h4 class="card-text">
+                                                {{car.vin}}
                                           </h4>
                                     </div>
                               </div>      
                         </a>
                   </div>
-            </div>   
+            </div> 
       </div>
+
+
       <div class="pt-3" v-else>
             <center><h1>Loading... please wait</h1></center> 
       </div>
@@ -202,6 +204,7 @@ export default {
                         color:'',
                         interior:'',
                         created_at:'',
+                        test:'',
                         images: [],
                         equipment: [],
                         summary: {
