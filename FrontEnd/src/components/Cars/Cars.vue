@@ -1,18 +1,26 @@
 <template>
 <div>
       <div class="container pt-5" v-if="!loading">
-            <button class="btn btn-primary"
-            data-toggle="modal" data-target="#BMWModal">Add new</button>
+            <b-alert v-model="alertFlag" variant="success" dismissible>{{alertMessage}}</b-alert>
+            <button v-b-modal.modal-prevent-closing class="btn btn-primary"
+            @click="showBmwModal">
+                  Add new
+            </button>
 
             <button class="btn btn-primary" style="float:right;"
-             data-toggle="modal" data-target="#repairModal"
-            >Add repair</button>
+            data-toggle="modal" data-target="#repairModal">
+                  Add repair
+            </button>
+
+
+            <!-- bmw modal-->
+            <bmwModal v-show="isBmwModalVisible" @click="closeBmwModal"/>
 
             <div class="row">
                   <div class="pt-5 col-4" v-for="car in cars" v-bind:key="car._id">    
                         <a v-bind:href="'/cars/'+ car._id">
                               <div class="card" style="width: 20rem; height: 30rem;">                                                          
-                                    <img :src='car.test' class="card-img-top img-thumbnail" alt="Responsive image">
+                                    <img :src='car.mainImgUrl' class="card-img-top img-thumbnail" alt="Responsive image">
                                     
                                     <div class="pt-3 card-body">
                                           <h2>{{car.make}} {{car.model}}</h2>
@@ -26,116 +34,10 @@
             </div> 
       </div>
 
-
       <div class="pt-3" v-else>
             <center><h1>Loading... please wait</h1></center> 
       </div>
-
-      <!-- BMW modal -->
-      <div>
-            <div class="modal fade" id="BMWModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                  <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                              <div class="modal-header">                                  
-                              <h4 class="modal-title" id="myModalLabel">Add new car</h4>
-
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-
-                              </div>
-                              <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                          <ul class="nav nav-tabs">
-                                                <li class="nav-item">
-                                                      <a class="nav-link active" href="">BMW</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                      <a class="nav-link" data-dismiss="modal" data-toggle="modal" data-target="#MBModal" href="">
-                                                            Mercedes-benz
-                                                      </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                      <a class="nav-link" data-dismiss="modal" data-toggle="modal" data-target="#OtherModal" href="">
-                                                            Other
-                                                      </a>
-                                                </li>
-                                          </ul>
-                                    </div>
-                              </nav>
-                              <div class="modal-body" enctype="multipart/form-data">
-                                    <div class="form-group">
-                                          <label for="comm">Vin</label>
-                                          <input type ="text" name="vin" id="vin" class="form-control"  v-model="insertCar.vin" />
-                                    </div>
-                                    <div class="form-group">
-                                          <label for="comm">Price</label>
-                                          <input type ="number" name="price" min=0 id="price" class="form-control"  v-model="insertCar.boughtPrice" />
-                                    </div>
-                                    <div class="form-group">
-                                          <label for="comm">Images</label>
-                                          <input type ="file" multiple name="price" min=0 id="price" class="form-control" @change="onFileSelected" />
-                                    </div>
-                              </div>
-                              <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button @click="addBMWCar()" class="btn btn-primary">Save</button>
-                              </div>
-                        </div>
-                  </div>
-            </div>
-      </div>
-
-      <!-- MB modal -->
-      <div>
-            <div class="modal fade" id="MBModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                  <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                              <div class="modal-header">                                  
-                              <h4 class="modal-title" id="myModalLabel">Add new car</h4>
-
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-
-                              </div>
-                              <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                          <ul class="nav nav-tabs">
-                                                <li class="nav-item">
-                                                      <a class="nav-link" data-dismiss="modal" data-toggle="modal" data-target="#BMWModal" href="">
-                                                            BMW
-                                                      </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                      <a class="nav-link active" href="">Mercedes-benz</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                      <a class="nav-link" data-dismiss="modal" data-toggle="modal" data-target="#OthersModal" href="">
-                                                            Other
-                                                      </a>
-                                                </li>
-                                          </ul>
-                                    </div>
-                              </nav>
-                              <div class="modal-body" enctype="multipart/form-data">
-                                    <div class="form-group">
-                                          <label for="comm">Vin2</label>
-                                          <input type ="text" name="vin" id="vin" class="form-control" v-model="insertCar.vin" />
-                                    </div>
-                                    <div class="form-group">
-                                          <label for="comm">Price2</label>
-                                          <input type ="number" name="price" min=0 id="price" class="form-control" v-model="insertCar.boughtPrice" />
-                                    </div>
-                                    <div class="form-group">
-                                          <label for="comm">Images2</label>
-                                          <input type ="file" multiple name="price" min=0 id="price" class="form-control" @change="onFileSelected" />
-                                    </div>
-                              </div>
-                              <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button @click="addMBCar()" class="btn btn-primary">Save</button>
-                              </div>
-                        </div>
-                  </div>
-            </div>
-      </div>
+ 
 
       <!-- repair modal -->
       <div>
@@ -143,32 +45,42 @@
                   <div class="modal-dialog" role="document">
                         <div class="modal-content">
                               <div class="modal-header">                                  
-                              <h4 class="modal-title" id="myModalLabel">Add new car</h4>
-
+                              <h4 class="modal-title" id="myModalLabel">Add new repair</h4>
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-
                               </div>
-                              <div class="modal-body">
-                                    <div class="form-group">
-                                          <label for="comm">Name</label>
-                                          <input type ="text" name="name" id="name" required class="form-control" v-model="insertRepair.name" />
+                              
+                                    <div class="modal-body">
+                                          <div class="form-row mb-3">
+                                                <label for="comm">Name</label>
+                                                <input type ="text" name="name" id="name" required class="form-control" placeholder="Front wind shield" v-model="insertRepair.name" />
+                                                <div class="valid-feedback">
+                                                      Looks good!
+                                                </div>
+                                          </div>                                        
+                                          <div class="form-row mb-3" >
+                                                <label for="comm">Price (€)</label>
+                                                <input id="price" type ="number" name="price" min=1 step=".01" placeholder="100" required class="form-control" v-model="insertRepair.price" />
+                                                <div class="valid-feedback">
+                                                      Looks good!
+                                                </div>      
+                                          </div>                                         
+                                          <div class="form-row mb-3s">
+                                                <label for="comm">Car</label>
+                                                <select class="form-control" required v-model="insertRepair.car">
+                                                      <option v-for='data in cars' :key='data._id' :value='data._id'>{{data.make}} {{data.model}}</option>
+                                                </select>
+                                                <div class="valid-feedback">
+                                                      Looks good!
+                                                </div>      
+                                          </div>
+                                          
                                     </div>
-                                    <div class="form-group">
-                                          <label for="comm">Price</label>
-                                          <input type ="number" name="price" min=0 id="price" required class="form-control" v-model="insertRepair.price" />
-                                    </div>
-                                    <div class="form-group">
-                                          <label for="comm">Car</label>
-                                          <select class="form-control" required v-model="insertRepair.car">
-                                                <option value="0">Select</option>
-                                                <option v-for='data in cars' :key='data._id' :value='data._id'>{{data.model}}</option>
-                                          </select>
-                                    </div>
-                              </div>
+                              
                               <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button @click="addRepairToCar()" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="repairModal">Close</button>
+                                    <button @click="addRepairToCar()" type="submit" class="btn btn-primary">Save</button>
                               </div>
+                              
                         </div>
                   </div>
             </div>
@@ -180,12 +92,39 @@
 
 <script>
 
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() 
+{
+     'use strict';
+     window.addEventListener('load', function() 
+     {
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.getElementsByClassName('needs-validation');
+          // Loop over them and prevent submission
+          Array.prototype.filter.call(forms, function(form) 
+          {
+               form.addEventListener('submit', function(event) 
+               {
+                    if (form.checkValidity() === false)
+                    {
+                         event.preventDefault();
+                         event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+               }, false);
+          });
+     }, false);
+})();
+
+import bmwModal from '../Modals/BmwModal.vue';
 import axios from 'axios';
 
 export default {      
       data() {
             return {
                   modalShow: true,
+                  alertMessage:'',
+                  alertFlag: false,
                   cars: [],
                   car: {
                         _id: '',
@@ -204,7 +143,7 @@ export default {
                         color:'',
                         interior:'',
                         created_at:'',
-                        test:'',
+                        mainImgUrl:'',
                         images: [],
                         equipment: [],
                         summary: {
@@ -213,9 +152,9 @@ export default {
                               totalShipping: '',
                               sold: Boolean,
                         },
-                        
+                                       
                   },
-                  
+                  errors: [],
                   insertCar: {
                         vin: '',
                         boughtPrice: '',
@@ -227,10 +166,13 @@ export default {
                         price: '',
                         car: ''
                   },
-                  loading: true     
+                  loading: true  ,
+                  isBmwModalVisible: false
+
             }
             
       },
+
       watch: {
             //'$route' (to, from) {
               //    alert("to", to.params.id);
@@ -242,7 +184,16 @@ export default {
             this.fetchCarSummary();
          ///   alert(this.$route.params.id);
       },
+            components: {
+            bmwModal,
+      },
       methods: {
+            showBmwModal(){
+                  this.isBmwModalVisible = true;
+            },
+            closeBmwModal() {
+                  this.isBmwModalVisible = false;
+            },
             fetchCars() {
                   let vm = this;
                   fetch('https://localhost:44348/api/cars')
@@ -252,6 +203,8 @@ export default {
                         {
                               this.cars = res;
                               vm.loading = false;
+                              //setting repair value to dafault - first of a list
+                              vm.insertRepair.car = vm.cars[0]._id;
                         }
                               
                   })
@@ -270,63 +223,68 @@ export default {
                   }
               
             },
-
-            addBMWCar()
-            {
-                  this.insertCar.make = "BMW";
-                  console.log(this.insertCar);
-                  axios.post('https://localhost:44348/api/cars', this.insertCar)
-                        .then(function (response) {
-                              if(response.statusTesxt == "OK")
-                                    location.reload();
-                        })
-                        .catch(function (error) {
-                              console.log(error);
-                        });
+            showAlert(message){
+                  this.alertFlag = true;
+                  this.alertMessage = message;
             },
-            addMBCar()
-            {
-                  var vm = this;
-                  this.insertCar.make = "Mercedes-benz";
-                  console.log(this.insertCar);
-                  axios.post('https://localhost:44348/api/cars', this.insertCar)
-                        .then(function (response) {
-                              console.log(response);
-                              if(response.status == 200)
-                                    vm.modalShow = false;
-                        })
-                        .catch(function (error) {
-                              console.log(error);
-                        });
+            checkFormValidity() {
+                  const valid = this.$refs.form.checkValidity()
+                  this.price = valid
+                  return valid
             },
-
-            addRepairToCar()
-            {
-                  axios.post(`https://localhost:44348/api/cars/${this.insertRepair.car}/repairs`, this.insertRepair)
-                        .then(function (response) {
-                              console.log(response.statusText);
-                        })
-                        .catch(function (error) {
-                              console.log(error);
-                        });
+            resetModal() {
+                  this.vin = ''
+                  this.price = null
+            },
+            handleOk(bvModalEvt) {
+                  // Prevent modal from closing
+                  bvModalEvt.preventDefault()
+                  // Trigger submit handler
+                  this.handleSubmit()
+            },
+            handleSubmit() {
+                  // Exit when the form isn't valid
+                  if (!this.checkFormValidity()) {
+                        return
+                  }
+                  // Push the name to submitted names
+                  this.submittedNames.push(this.price)
+                  // Hide the modal manually
+                  this.$nextTick(() => {
+                        this.$bvModal.hide('modal-prevent-closing')
+                  })
             },
 
             onFileSelected(e) {
                   for(let i=0; i < e.target.files.length; i++)
                   {
-                        var reader = new FileReader();
-                        reader.readAsDataURL(e.target.files[i]);
-                        reader.onload = (e) => {
+                  var reader = new FileReader();
+                  reader.readAsDataURL(e.target.files[i]);
+                  reader.onload = (e) => {
                               this.insertCar.Base64images[i] = e.target.result;
-                        }                 
+                  }                 
                   }
-                  console.log(this.insertCar.Base64images);
-                  
-            }, 
+                  console.log(this.insertCar.Base64images);                
+            },
+
+            addRepairToCar()
+            {
+                 // let vm = this;
+                  axios.post(`https://localhost:44348/api/cars/${this.insertRepair.car}/repairs`, this.insertRepair)
+                        .then(function (response) {
+                              console.log(response.statusText);
+                              //vm.$router.push('/cars');
+                        })
+                        .catch(function (error) {
+                              console.log(error);
+                        });
+            },
+
+
 
             goHome() {
-                  this.$router.push('/');
-            },
+                  this.$router.push('/cars');
+            },  
 
       }
 }

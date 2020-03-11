@@ -247,7 +247,7 @@ namespace CmApp.Services
 
                 var url = await FileRepository.GetFileUrl(fileId);
 
-                car.test = url;
+                car.MainImgUrl = url;
 
               /*  var stream = await FileRepository.GetFile(fileId);
 
