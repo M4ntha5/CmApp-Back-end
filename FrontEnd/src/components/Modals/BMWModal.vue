@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="modal-prevent-closing" ref="modal" title="Insert new car"
+        <b-modal id="car-insert-modal" ref="modal" title="Insert new car"
         @show="resetModal"
         @ok="handleOk"
         @close="resetModal">
@@ -91,13 +91,13 @@ export default {
                 let vm = this;
                 axios.post('https://localhost:44348/api/cars', vm.insert)
                     .then(function (response) {             
-                        if(response.statusText == "OK")
+                        if(response.status == 200)
                         {
                             console.log(response);
                             this.alertFlag = false;
                             // Hide the modal manually
                             vm.$nextTick(() => {
-                                vm.$bvModal.hide('modal-prevent-closing')
+                                vm.$bvModal.hide('car-insert-modal')
                             })
                         }              
                     })

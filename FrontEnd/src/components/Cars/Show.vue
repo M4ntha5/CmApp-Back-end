@@ -1,6 +1,5 @@
 <template>
-<div>   
-       
+<div>         
       <div class="container pt-5" >  
             <div v-if="!loading">      
                   <div class="row">
@@ -10,12 +9,6 @@
                         <div class="col-sm-2 col-12">
                               <button @click="editCar(car._id)" class="btn btn-primary" style="float:right;">
                                     Edit
-                              </button>
-                        </div>
-                        <div class="col-sm-2 col-12">
-                              <button class="btn btn-primary" style="float:right;"
-                              data-toggle="modal" data-target="#repairModal">
-                                    Add repair
                               </button>
                         </div>
                         <div class="col-sm-2 col-12">
@@ -157,37 +150,7 @@
                         <div v-else>
                               <h3>No shipping yet</h3>
                         </div>
-                  </div>
-
-                  <!-- repair modal -->
-                  <div>
-                        <div class="modal fade" id="repairModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                              <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                          <div class="modal-header">                                  
-                                          <h4 class="modal-title" id="myModalLabel">Add new car</h4>
-
-                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-
-                                          </div>
-                                          <div class="modal-body">
-                                                <div class="form-group">
-                                                      <label for="comm">Name</label>
-                                                      <input type ="text" name="name" id="name" required class="form-control" v-model="insertRepair.name" />
-                                                </div>
-                                                <div class="form-group">
-                                                      <label for="comm">Price</label>
-                                                      <input type ="number" name="price" min=0 id="price" required class="form-control" v-model="insertRepair.price" />
-                                                </div>
-                                          </div>
-                                          <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                <button @click="addRepairToCar()" class="btn btn-primary">Save</button>
-                                          </div>
-                                    </div>
-                              </div>
-                        </div>
-                  </div>
+                  </div>                 
             </div>
             <div class="pt-3" v-else>
                  <center><h1>Loading... please wait</h1></center> 
@@ -212,8 +175,10 @@
 </template>
 
 <script>
+
 import VueGallery from 'vue-gallery';
 import axios from 'axios';
+
 export default { 
       data() {
             return {
@@ -282,33 +247,30 @@ export default {
       methods: {
             async fetchCar() {
                   var vm = this;
-                  fetch(`https://localhost:44348/api/cars/${this.$route.params.id}`)
-                        .then(res => res.json())
-                        .then(res => {  
-                              if(res._id != "")
-                              {
-                                    this.car = res;  
-                                    //trimming unnecessary dat ending           
-                                    this.car.manufactureDate = this.car.manufactureDate.substring(0, 10);
-                                    vm.loading = false;
-                              }                           
-                              
-                        })
-                        .catch(function (error) {
-                              console.log(error);
-                        });
+                  axios.get(`https://localhost:44348/api/cars/${vm.$route.params.id}`)
+                  .then(function (response) {
+                        if(response.status == 200)
+                        {
+                              vm.car = response.data;  
+                              //trimming unnecessary dat ending           
+                              vm.car.manufactureDate = vm.car.manufactureDate.substring(0, 10);
+                              vm.loading = false;
+                        }
+                  })
+                  .catch(function (error) {
+                        console.log(error);
+                  });
                   
                   
             },
             async fetchCarRepairs() {
-                  fetch(`https://localhost:44348/api/cars/${this.$route.params.id}/repairs`)
-                  .then(res => res.json())
-                  .then(res => {
-                        if(res.length != 0)
+                  var vm = this;
+                  axios.get(`https://localhost:44348/api/cars/${vm.$route.params.id}/repairs`)
+                  .then(function (response) {
+                        if(response.status == 200)
                         {
-                              this.repairs = res;
-                        }  
-                        
+                              vm.repairs = response.data;
+                        } 
                   })
                   .catch(function (error) {
                         console.log(error);
@@ -316,12 +278,12 @@ export default {
             },
 
             async fetchCarShipping() {
-                  fetch(`https://localhost:44348/api/cars/${this.$route.params.id}/shipping`)
-                  .then(res => res.json())
-                  .then(res => {
-                        if(res._id != "")
+                  var vm = this;
+                  axios.get(`https://localhost:44348/api/cars/${vm.$route.params.id}/shipping`)
+                  .then(function (response) {
+                        if(response.status == 200)
                         {
-                              this.shipping = res;
+                              vm.shipping = response.data;
                         }
                   })
                   .catch(function (error) {
@@ -329,26 +291,17 @@ export default {
                   });
             },
             async fetchCarSummary() {
-                  fetch(`https://localhost:44348/api/cars/${this.$route.params.id}/summary`)
-                  .then(res => res.json())
-                  .then(res => {
-                        this.car.summary = res;
+                  var vm = this;
+                  axios.get(`https://localhost:44348/api/cars/${vm.$route.params.id}/summary`)
+                  .then(function (response) {
+                        if(response.status == 200)
+                        {
+                              vm.car.summary = response.data;
+                        }
                   })
                   .catch(function (error) {
                         console.log(error);
                   });           
-            },
-            async addRepairToCar()
-            {
-                  var vm = this;
-                  axios.post(`https://localhost:44348/api/cars/${this.$route.params.id}/repairs`, this.insertRepair)
-                        .then(function (response) {
-                              if(response)
-                                    vm.showRepairModal = false;
-                        })
-                        .catch(function (error) {
-                              console.log(error);
-                        });
             },
             async openTracking(id)
             {
