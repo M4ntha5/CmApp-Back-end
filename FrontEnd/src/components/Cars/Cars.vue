@@ -63,7 +63,7 @@
 
 import bmwModal from '../Modals/BmwModal.vue';
 import axios from 'axios';
-
+const backEndUrl = "https://localhost:44348";
 export default {      
       data() {
             return {
@@ -136,7 +136,7 @@ export default {
             },
             fetchCars() {
                   let vm = this;
-                  axios.get('https://localhost:44348/api/cars')
+                  axios.get(backEndUrl + '/api/cars')
                   .then(function (response) {
                         if(response.status == 200)
                         {

@@ -178,7 +178,7 @@
 
 import VueGallery from 'vue-gallery';
 import axios from 'axios';
-
+const backEndUrl = "https://localhost:44348"
 export default { 
       data() {
             return {
@@ -247,7 +247,7 @@ export default {
       methods: {
             async fetchCar() {
                   var vm = this;
-                  axios.get(`https://localhost:44348/api/cars/${vm.$route.params.id}`)
+                  axios.get(backEndUrl + `/api/cars/${vm.$route.params.id}`)
                   .then(function (response) {
                         if(response.status == 200)
                         {
@@ -265,7 +265,7 @@ export default {
             },
             async fetchCarRepairs() {
                   var vm = this;
-                  axios.get(`https://localhost:44348/api/cars/${vm.$route.params.id}/repairs`)
+                  axios.get(backEndUrl + `/api/cars/${vm.$route.params.id}/repairs`)
                   .then(function (response) {
                         if(response.status == 200)
                         {
@@ -279,7 +279,7 @@ export default {
 
             async fetchCarShipping() {
                   var vm = this;
-                  axios.get(`https://localhost:44348/api/cars/${vm.$route.params.id}/shipping`)
+                  axios.get(backEndUrl + `/api/cars/${vm.$route.params.id}/shipping`)
                   .then(function (response) {
                         if(response.status == 200)
                         {
@@ -292,7 +292,7 @@ export default {
             },
             async fetchCarSummary() {
                   var vm = this;
-                  axios.get(`https://localhost:44348/api/cars/${vm.$route.params.id}/summary`)
+                  axios.get(backEndUrl + `/api/cars/${vm.$route.params.id}/summary`)
                   .then(function (response) {
                         if(response.status == 200)
                         {

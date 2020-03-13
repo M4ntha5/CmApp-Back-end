@@ -42,6 +42,7 @@
 </template>
 
 <script>
+const backEndUrl = "https://localhost:44348";
 import VueGallery from 'vue-gallery';
 //import axios from 'axios';
 export default { 
@@ -76,7 +77,7 @@ export default {
                   let vm = this;
                   if(confirm('Warning! This operation could take longer than 1 min! Want to continue? '))
                   {
-                        fetch(`https://localhost:44348/api/cars/${this.$route.params.id}/tracking`)
+                        fetch(backEndUrl + `/api/cars/${this.$route.params.id}/tracking`)
                         .then(res => res.json())
                         .then(res => {
                               if(res)
@@ -92,7 +93,7 @@ export default {
             },
             async fetchTracking() {
                   let vm = this;
-                  fetch(`https://localhost:44348/api/cars/${this.$route.params.id}/tracking`)
+                  fetch(backEndUrl + `/api/cars/${this.$route.params.id}/tracking`)
                   .then(res => res.json())
                   .then(res => {
                         if(res)

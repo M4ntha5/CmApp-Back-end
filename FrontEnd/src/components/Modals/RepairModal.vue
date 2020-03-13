@@ -33,6 +33,7 @@
 
 <script>
 import axios from'axios';
+const backEndUrl = "https://localhost:44348";
 export default {
      data(){
           return {
@@ -86,7 +87,7 @@ export default {
                {
                     let vm = this;
                     vm.alertFlag = true;
-                    axios.post(`https://localhost:44348/api/cars/${vm.insert.car}/repairs`, vm.insert)
+                    axios.post(backEndUrl + `/api/cars/${vm.insert.car}/repairs`, vm.insert)
                     .then(function (response) {
                          if(response.status == 200)
                          {
@@ -103,7 +104,7 @@ export default {
           },
           getCarNames() {
                let vm = this;
-               axios.get('https://localhost:44348/api/user-car-names')
+               axios.get(backEndUrl + '/api/user-car-names')
                .then(function (response) {
                     vm.cars = response.data;
                     vm.insert.car = vm.cars[0].id;

@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
+const backEndUrl = "https://localhost:44348";
 export default {
     data() {
         return {
@@ -89,7 +90,7 @@ export default {
                 this.showAlert();
                 // Push the name to submitted names
                 let vm = this;
-                axios.post('https://localhost:44348/api/cars', vm.insert)
+                axios.post(backEndUrl + '/api/cars', vm.insert)
                     .then(function (response) {             
                         if(response.status == 200)
                         {

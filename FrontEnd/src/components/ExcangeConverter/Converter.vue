@@ -38,7 +38,7 @@
 </template>
 
 <script>
-
+const backEndUrl = "https://localhost:44348";
 import axios from 'axios';
 
 export default {
@@ -62,7 +62,7 @@ export default {
      methods: {
           getCurrencies() {
                let vm = this;
-               axios.get('https://localhost:44348/api/currency')
+               axios.get(backEndUrl + '/api/currency')
                .then(function (response) {
                     vm.rates = response.data;
                     console.log(response.data);
@@ -75,7 +75,7 @@ export default {
           convert() {
                let vm = this;
                vm.currTo = vm.data.to;
-               axios.post('https://localhost:44348/api/currency', this.data)
+               axios.post(backEndUrl + '/api/currency', this.data)
                .then(function (response) {
                     if(response.data)
                     {

@@ -144,7 +144,7 @@
 })();
 
 import axios from 'axios';
-
+const backEndUrl = "https://localhost:44348";
 export default {
      data() {
           return {
@@ -183,9 +183,10 @@ export default {
           this.fetchCar();
      },
      methods: {
+          
           async fetchCar() {
                var vm = this;
-               axios.get(`https://localhost:44348/api/cars/${vm.$route.params.id}`)
+               axios.get(backEndUrl + `/api/cars/${vm.$route.params.id}`)
                .then(function (response) {
                     if(response.status == 200)
                     {
@@ -201,7 +202,7 @@ export default {
           },
           async updateCar() {
                let vm = this;
-               axios.put(`https://localhost:44348/api/cars/${this.$route.params.id}`, this.car)
+               axios.put(backEndUrl + `/api/cars/${this.$route.params.id}`, this.car)
                .then(function (response) {
                     if(response.status == 204)
                          vm.$router.push(`/cars/${vm.$route.params.id}`);
