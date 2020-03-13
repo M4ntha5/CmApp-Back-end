@@ -45,7 +45,7 @@ namespace CmApp.Controllers
 
         // PUT: api/Cars/5
         [HttpPut("{carId}")]
-        public async Task<IActionResult> Put(string carId, [FromBody] CarEntity car)
+        public async Task<NoContentResult> Put(string carId, [FromBody] CarEntity car)
         {
             await carService.UpdateCar(carId, car);
             return NoContent();

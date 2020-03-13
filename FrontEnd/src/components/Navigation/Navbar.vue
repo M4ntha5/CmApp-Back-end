@@ -23,9 +23,6 @@
                               <a @click.prevent="showRepairModal" href v-b-modal.repair-insert-modal class="nav-link">Add repair</a>
                         </li>
                         <li class="nav-item">
-                              <router-link to="/repair2" class="nav-link">Carousel Test2</router-link>
-                        </li>
-                        <li class="nav-item">
                               <router-link to="/login" class="nav-link">Login</router-link>
                         </li>
                         <li class="nav-item">

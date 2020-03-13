@@ -90,11 +90,26 @@ namespace CmApp.Repositories
         public async Task UpdateCar(string id, CarEntity car)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
-            car.Id = id;
-            await repo.ReplaceOneAsync(
-                x => x.Id == id,
-                car,
-                new DatabaseReplaceOneOptions()
+
+            var update = Builders<CarEntity>.Update
+                .Set("make", car.Make)
+                .Set("model", car.Model)
+                .Set("manufacture_date", car.ManufactureDate)
+                .Set("series", car.Series)
+                .Set("body_type", car.BodyType)
+                .Set("steering", car.Steering)
+                .Set("engine", car.Engine)
+                .Set("displacement", car.Displacement)
+                .Set("power", car.Power)
+                .Set("drive", car.Drive)
+                .Set("transmission", car.Transmission)
+                .Set("color", car.Color)
+                .Set("interior", car.Interior);
+
+            _ = await repo.UpdateOneAsync(
+                car.Id,
+                update,
+                new DatabaseUpdateOneOptions()
             );
         }
 

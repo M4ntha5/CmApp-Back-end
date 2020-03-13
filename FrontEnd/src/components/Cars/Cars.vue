@@ -88,14 +88,13 @@ export default {
                         interior:'',
                         created_at:'',
                         mainImgUrl:'',
-                        images: [],
                         equipment: [],
                         summary: {
                               boughtPrice:'',
                               soldPrice:'',
                               totalShipping: '',
                               sold: Boolean,
-                        },                              
+                        },
                   },
                   insertCar: {
                         vin: '',
@@ -108,7 +107,7 @@ export default {
                         price: '',
                         car: ''
                   },
-                  loading: true  ,
+                  loading: true,
                   isBmwModalVisible: false,
             }
             
