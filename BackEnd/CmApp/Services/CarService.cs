@@ -58,6 +58,10 @@ namespace CmApp.Services
                 else if (param.Key == "Upholstery")
                     carEntity.Interior = param.Value;
             }
+            if (car.Drive == "HECK")
+                car.Drive = "Rear wheel drive";
+            else if (car.Drive == "ALLR")
+                car.Drive = "All wheel drive";
 
             //matching equipment to entity
             var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make);
@@ -67,7 +71,7 @@ namespace CmApp.Services
                 equipment.Add(new Equipment() { Code = eq.Key, Name = eq.Value });
 
             carEntity.Equipment = equipment;
-            carEntity.Vin = car.Vin;
+            carEntity.Vin = car.Vin.ToUpper();
 
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(carEntity);
@@ -137,7 +141,7 @@ namespace CmApp.Services
                 equipment.Add(new Equipment() { Code = eq.Key, Name = eq.Value });
 
             carEntity.Equipment = equipment;
-            carEntity.Vin = car.Vin;
+            carEntity.Vin = car.Vin.ToUpper();
 
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(carEntity);
@@ -176,9 +180,10 @@ namespace CmApp.Services
             if (car == null)
                 throw new ArgumentNullException("Can not insert car, because car is empty!");
 
+            car.Vin = car.Vin.ToUpper();
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(car);
-
+            
             //image upload here
             if (car.Base64images != null && car.Base64images.Count > 0)
             {

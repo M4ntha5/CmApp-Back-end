@@ -34,15 +34,15 @@ namespace CmApp.Services
             double totalPrice = newShipping.Customs + newShipping.AuctionFee +
                 newShipping.TransferFee + newShipping.TransportationFee;
 
-            var rates = await ExchangesRepository.GetSelectedExchangeRate("USD");
+            //var rates = await ExchangesRepository.GetSelectedExchangeRate("USD");
 
-            if (rates.Rates.Count != 1)
-                throw new Exception("Bad currency");
+            //if (rates.Rates.Count != 1)
+              //  throw new Exception("Bad currency");
                 
-            var price = totalPrice * double.Parse(rates.Rates["USD"]);
+            //var price = totalPrice * double.Parse(rates.Rates["USD"]);
 
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
-            await SummaryRepository.InsertTotalShippingCostByCar(summary.Id, price);
+            await SummaryRepository.InsertTotalShippingCostByCar(summary.Id, totalPrice);
 
             return newShipping;
         }

@@ -61,9 +61,9 @@
      }, false);
 })();
 
-import bmwModal from '../Modals/BmwModal.vue';
+import bmwModal from '../Modals/CarModal.vue';
 import axios from 'axios';
-const backEndUrl = "https://localhost:44348";
+const backEndUrl = process.env.VUE_APP_BACK_END_URL;
 export default {      
       data() {
             return {
@@ -155,7 +155,7 @@ export default {
                   let vm = this;
                   for(let i =0; i< this.cars.length;i++)
                   {
-                        fetch(`https://localhost:44348/api/cars/${this.cars[i]._id}/summary`)
+                        fetch(backEndUrl + `/api/cars/${this.cars[i]._id}/summary`)
                         .then(function (response) {
                               if(response.status == 200)
                               {

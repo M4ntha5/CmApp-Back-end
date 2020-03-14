@@ -38,7 +38,7 @@
 </template>
 
 <script>
-const backEndUrl = "https://localhost:44348";
+const backEndUrl = process.env.VUE_APP_BACK_END_URL;
 import axios from 'axios';
 
 export default {

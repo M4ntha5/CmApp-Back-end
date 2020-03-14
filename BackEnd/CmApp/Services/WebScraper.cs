@@ -170,13 +170,12 @@ namespace CmApp.Services
                 }
             }
 
-
             //table content
             List<HtmlNode> trs = result.DocumentNode.Descendants().Where
             (x => (x.Name == "tr")).ToList();
 
             if (trs.Count == 0 || trs == null)
-                throw new Exception("tracking scraper failed (reCaptcha probably ocured)");
+                throw new Exception("No tracking info for this car!");
 
             CarRepo = new CarRepository();
             FileRepository = new FileRepository();
@@ -207,10 +206,8 @@ namespace CmApp.Services
                 Car = car.Id,
                 AuctionImages = new List<object>()
             };
-
-            
+       
             var tracking = await TrackingRepo.InsertTracking(trackingEntity);
-
 
             //all images
             var links = result.DocumentNode.SelectNodes("//img[@src]");
@@ -274,34 +271,6 @@ namespace CmApp.Services
             graph.Dispose();
 
             return bmp;
-
-            /*
-            int sourceWidth = imgToResize.Width;
-            int sourceHeight = imgToResize.Height;
-
-            float nPercent, nPercentW, nPercentH;
-
-            nPercentW = size.Width / sourceWidth;
-            nPercentH = size.Height / sourceHeight;
-
-            if (nPercentH < nPercentW)
-                nPercent = nPercentH;
-            else
-                nPercent = nPercentW;
-
-            
-            int destWidth = (int)(sourceWidth * nPercent);
-            int destHeight = (int)(sourceHeight * nPercent);
-
-            
-            Bitmap b = new Bitmap(destWidth, destHeight);
-            Graphics g = Graphics.FromImage(c);
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-            g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
-            g.Dispose();
-
-            return b;*/
         }
 
         private Image DownloadImageFromUrl(string imageUrl)

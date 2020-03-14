@@ -16,6 +16,14 @@
                                     Look for tracking
                               </button>
                         </div>
+                        <div class="col-sm-2 col-12">
+                              <button v-b-modal.shipping-modal class="btn btn-primary"
+                                    @click="showShippingModal">
+                              Add shipping info
+                              </button>
+                              <!-- bmw modal-->
+                              <shippingModal v-show="isShippingModalVisible" @click="closeShippingModal"/>
+                        </div>
                   </div>
                   <div class="row mb-3 pt-5">
                         <div class="img-fluid col-sm-4 col-12">              
@@ -30,48 +38,69 @@
                         </div>
             
                         <div class="col-sm-8 col-12">
-                              <table class="table">
+                              <table class="table"> 
+                                    <tr>
+                                          <th>Vin</th>
+                                          <td>{{car.vin}}</td>
+                                    </tr>
                                     <tr>
                                           <th>Manufacture Date</th>
                                           <td>{{car.manufactureDate}}</td>
-                                    </tr>
-                                    <tr>
-                                          <th>Engine / power</th>
-                                          <td>{{car.engine}} {{car.power}}</td>
-                                    </tr>
+                                    </tr> 
                                     <tr>
                                           <th>Series</th>
                                           <td>{{car.series}}</td>
-                                    </tr>
+                                    </tr>                                                                 
                                     <tr>
                                           <th>Body type</th>
                                           <td>{{car.bodyType}}</td>
                                     </tr>
                                     <tr>
+                                          <th>Steering</th>
+                                          <td>{{car.steering}}</td>
+                                    </tr>
+                                    <tr>
+                                          <th>Engine / power</th>
+                                          <td>{{car.engine}} ({{car.displacement}} l)  {{car.power}}</td>
+                                    </tr>
+                                    <tr>
                                           <th>Driven wheels</th>
                                           <td>{{car.drive}}</td>
-                                    </tr>
+                                    </tr>           
                                     <tr>
                                           <th>Gearbox</th>
                                           <td>{{car.transmission}}</td>
                                     </tr>
                                     <tr>
+                                          <th>Color</th>
+                                          <td>{{car.color}}</td>
+                                    </tr>
+                                    <tr>
                                           <th>Interior</th>
                                           <td>{{car.interior}}</td>
                                     </tr>
-                                    <tr>
-                                          <th>Steering</th>
-                                          <td>{{car.steering}}</td>
-                                    </tr>
+                                    
                               </table>
                         </div>
                   </div>
-
-                  <div class="pt-2">
-                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#equipmentCollapse" aria-expanded="false" aria-controls="collapseExample">
-                              Equipment
-                        </button>
+                  <div class="row">
+                        <div class="col-md-4 pt-2">
+                              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#equipmentCollapse" aria-expanded="false" aria-controls="collapseExample">
+                                    Equipment
+                              </button>
+                        </div>
+                        <div class="col-md-4 pt-2">
+                              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#repairsCollapse" aria-expanded="false" aria-controls="collapseExample">
+                                    Repairs
+                              </button>
+                        </div>
+                        <div class="col-md-4 pt-2">
+                              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#shippingCollapse" aria-expanded="false" aria-controls="collapseExample">
+                                    Shipping
+                              </button>
+                        </div>
                   </div>
+                  
             
                   <!-- equipment collapse table -->
                   <div class="collapse" id="equipmentCollapse">
@@ -88,11 +117,7 @@
                         </table>
                   </div>
 
-                  <div class="pt-2">
-                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#repairsCollapse" aria-expanded="false" aria-controls="collapseExample">
-                              Repairs
-                        </button>
-                  </div>
+                  
                   
 
                   <!-- repairs collapse table -->
@@ -114,38 +139,31 @@
                         </div>
                   </div>
 
-                  <div class="pt-2">
-                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#shippingCollapse" aria-expanded="false" aria-controls="collapseExample">
-                              Shipping
-                        </button>
-                  </div>
+                  
                   
 
                   <!-- shipping collapse table -->
                   <div class="collapse" id="shippingCollapse">
                         <table class="table table-dark" v-if="shipping.customs != 0">
                               <div class="row">
-                                    <div class="col-6">
-                                          <tbody>
-                                                <tr>
-                                                      <th>Auction fee</th>
-                                                      <td>{{shipping.auctionFee}}</td>
-                                                </tr>
-                                                <tr>
-                                                      <th>Transfer fee</th>
-                                                      <td>{{shipping.transferFee}}</td>
-                                                </tr>
-                                                <tr>
-                                                      <th>Transportation fee</th>
-                                                      <td>{{shipping.transportationFee}}</td>
-                                                </tr>
-                                                <tr>
-                                                      <th>Customs</th>
-                                                      <td>{{shipping.customs}}</td>
-                                                </tr>
-                                          </tbody>
-                                    </div>                       
-                              </div>                
+                                    <div class="col-3">
+                                          <th>Auction fee:</th>
+                                          <td>{{shipping.auctionFee}}</td>
+                                    </div>
+                                    <div class="col-3">
+                                          <th>Transfer fee:</th>
+                                          <td>{{shipping.transferFee}}</td>
+                                    </div>
+                                    <div class="col-3">
+                                          <th>Transportation fee:</th>
+                                          <td>{{shipping.transportationFee}}</td>
+                                    </div>
+                                    <div class="col-3">
+                                          <th>Customs:</th>
+                                          <td>{{shipping.customs}}</td>
+                                    </div>  
+                              </div>  
+                              <h2 class="pl-3">Total: {{summary.totalShipping}} €</h2>               
                         </table>
                         <div v-else>
                               <h3>No shipping yet</h3>
@@ -177,8 +195,10 @@
 <script>
 
 import VueGallery from 'vue-gallery';
+import shippingModal from '../Modals/ShippingModal.vue';
 import axios from 'axios';
-const backEndUrl = "https://localhost:44348"
+const backEndUrl = process.env.VUE_APP_BACK_END_URL;
+
 export default { 
       data() {
             return {
@@ -200,13 +220,13 @@ export default {
                         interior:'',
                         created_at:'',
                         equipment: [],
-                        base64images: [],
-                        summary: {
-                              boughtPrice:'',
-                              soldPrice:'',
-                              totalShipping: '',
-                              sold: Boolean,
-                        }
+                        base64images: [],                     
+                  },
+                  summary: {
+                        boughtPrice:'',
+                        soldPrice:'',
+                        totalShipping: '',
+                        sold: '',
                   },
                   repairs: [],
                   repair: {
@@ -224,13 +244,15 @@ export default {
                         name: '',
                         price: '',
                   }, 
-                  index: null,
                   loading: true,
+                  index: null,
+                  isShippingModalVisible: false,
             }
             
       },
       components: {
             'gallery': VueGallery,
+            shippingModal,
       },
       watch: {
             //'$route' (to, from) {
@@ -240,6 +262,7 @@ export default {
       },
       async created() {
             this.fetchCar();
+            this.fetchCarSummary();
             this.fetchCarRepairs();
             this.fetchCarShipping();
       },
@@ -259,18 +282,14 @@ export default {
                   })
                   .catch(function (error) {
                         console.log(error);
-                  });
-                  
-                  
+                  });        
             },
             async fetchCarRepairs() {
                   var vm = this;
                   axios.get(backEndUrl + `/api/cars/${vm.$route.params.id}/repairs`)
                   .then(function (response) {
                         if(response.status == 200)
-                        {
                               vm.repairs = response.data;
-                        } 
                   })
                   .catch(function (error) {
                         console.log(error);
@@ -282,9 +301,7 @@ export default {
                   axios.get(backEndUrl + `/api/cars/${vm.$route.params.id}/shipping`)
                   .then(function (response) {
                         if(response.status == 200)
-                        {
                               vm.shipping = response.data;
-                        }
                   })
                   .catch(function (error) {
                         console.log(error);
@@ -295,9 +312,7 @@ export default {
                   axios.get(backEndUrl + `/api/cars/${vm.$route.params.id}/summary`)
                   .then(function (response) {
                         if(response.status == 200)
-                        {
-                              vm.car.summary = response.data;
-                        }
+                              vm.summary = response.data;
                   })
                   .catch(function (error) {
                         console.log(error);
@@ -310,6 +325,12 @@ export default {
             async editCar(id)
             {
                   window.location.href = `/cars/${id}/edit`;  
+            },
+            showShippingModal(){
+                  this.isShippingModalVisible = true;
+            },
+            closeShippingModal(){
+                  this.isShippingModalVisible = false;
             }
       }
 }

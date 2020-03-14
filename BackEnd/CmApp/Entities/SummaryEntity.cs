@@ -14,7 +14,7 @@ namespace CmApp.Entities
         public DateTime SoldDate { get; set; } = new DateTime();
         [Field("sold")]
         public bool Sold { get; set; } = false;
-        [Field("total_Shipping")]
+        [Field("total_shipping")]
         public double TotalShipping { get; set; } = 0;
         [Field("car")]
         public string Car { get; set; }
