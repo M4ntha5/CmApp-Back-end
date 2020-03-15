@@ -76,7 +76,7 @@ namespace ScraperTests
                 Make = make
             };
 
-            var result = await carService.InsertCarDetailsFromScraperMB(car);
+            var result = await carService.InsertCar(car);
 
             Assert.AreNotEqual(null, result);
         }

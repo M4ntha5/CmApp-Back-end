@@ -19,19 +19,19 @@ namespace ExchangeRates
         {
             var repo = new ExchangeRatesRepository();
 
-            var result = await repo.GetLatestForeignExchanges();
+            var result = await repo.GetAvailableCurrencies();
 
-            Assert.AreNotEqual(0, result.Rates.Count);
+            Assert.AreNotEqual(0, result.Count);
         }
 
-        [Test]
+     /*   [Test]
         public async Task GetSelected()
         {
             var repo = new ExchangeRatesRepository();
 
-            var result = await repo.GetSelectedExchangeRate("USD");
+           // var result = await repo.CalculateResult("USD");
 
-            Assert.AreEqual(1, result.Rates.Count);
-        }
+            //Assert.AreEqual(1, result.Rates.Count);
+        }*/
     }
 }

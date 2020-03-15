@@ -8,7 +8,7 @@ namespace CmApp.Contracts
 {
     public interface ICarService
     {
-        Task<CarEntity> InsertCarDetailsFromScraperBMW(CarEntity car);
+        Task<CarEntity> InsertCar(CarEntity car);
         Task DeleteCar(string id);
         Task<CarEntity> GetCarById(string id);
         Task<List<CarEntity>> GetAllCars();

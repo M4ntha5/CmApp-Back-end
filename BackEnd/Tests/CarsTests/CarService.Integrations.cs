@@ -47,7 +47,7 @@ namespace Cars.Integration
                 Images = new List<object>() { "", ""},
                 Vin = vin
             };
-            var response = await carService.InsertCarDetailsFromScraperBMW(car);
+            var response = await carService.InsertCar(car);
 
             Assert.AreEqual(vin, response.Vin);
         }
@@ -97,8 +97,21 @@ namespace Cars.Integration
         {
             var service = new CarService() { CarRepository = carRepo, WebScraper = new WebScraper() };
 
-            var car = await service.GetCarById("5e4c2d3bc0ae17000119da0b");
+            var carid = "5e4c2d3bc0ae17000119da0b";
+            var car = await service.GetCarById(carid);
 
+            Assert.AreEqual(carid, car.Id);
+        }
+        [Test]
+        public async Task TestGetCarByVin()
+        {
+            var service = new CarService() { CarRepository = carRepo, WebScraper = new WebScraper() };
+            var repo = new CarRepository();
+
+            var vin = "WDDLJ7EB1CA031646";
+            var car = await repo.GetCarByVin(vin);
+
+            Assert.AreEqual(vin, car.Vin);
         }
 
         [Test]
