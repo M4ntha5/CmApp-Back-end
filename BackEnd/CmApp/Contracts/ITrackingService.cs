@@ -12,5 +12,6 @@ namespace CmApp.Contracts
         Task UpdateTracking(string carId, TrackingEntity tracking);
         Task<TrackingEntity> GetTracking(string carId);
         Task<TrackingEntity> InsertTracking(string carId, TrackingEntity tracking);
+        Task<TrackingEntity> LookForTracking(string carId);
     }
 }

@@ -31,29 +31,39 @@ namespace CmApp.Services
 
         public Dictionary<string, string> GetVehicleInfo(string vin, string make)
         {
-            Dictionary<string, string> vehicleInfo = new Dictionary<string, string>();
-            HtmlNode table;
-            if (make == "BMW")
-                table = SetUpBMW(vin).Result[0];
-            else
-                table = SetUpMB(vin).Result[0];
-
-            int info = 0;
-
-            List<HtmlNode> toftitle2 = table.Descendants().Where
-                                        (x => (x.Name == "tr")).ToList();
-            foreach (var tr in toftitle2)
+            try
             {
-                if (info == 0)
+                Dictionary<string, string> vehicleInfo = new Dictionary<string, string>();
+                HtmlNode table;
+                if (make == "BMW")
+                    table = SetUpBMW(vin).Result[0];
+                else
+                    table = SetUpMB(vin).Result[0];
+
+                int info = 0;
+
+                List<HtmlNode> toftitle2 = table.Descendants().Where
+                                            (x => (x.Name == "tr")).ToList();
+                foreach (var tr in toftitle2)
                 {
-                    info = 1;
-                    continue;
+                    if (info == 0)
+                    {
+                        info = 1;
+                        continue;
+                    }
+                    var name = tr.ChildNodes[1].InnerText;
+                    var value = tr.ChildNodes[3].InnerText;
+                    vehicleInfo.Add(name, value);
                 }
-                var name = tr.ChildNodes[1].InnerText;
-                var value = tr.ChildNodes[3].InnerText;
-                vehicleInfo.Add(name, value);
+                return vehicleInfo;
             }
-            return vehicleInfo;
+            catch(Exception ex)
+            {
+                var error = new Dictionary<string, string>();
+                error.Add("Error", ex.Message);
+                return error;
+            }
+            
         }
 
         public Dictionary<string, string> GetVehicleEquipment(string vin, string make)
@@ -122,7 +132,7 @@ namespace CmApp.Services
             return tables;
         }
 
-        public async Task TrackingScraper(string vin)
+        public async Task<TrackingEntity> TrackingScraper(string vin)
         {
             var website = AtlanticExpressEndpoint + vin;
             HttpClient http = new HttpClient();
@@ -160,13 +170,16 @@ namespace CmApp.Services
                 }
             }
 
-
             //table content
             List<HtmlNode> trs = result.DocumentNode.Descendants().Where
             (x => (x.Name == "tr")).ToList();
 
             if (trs.Count == 0 || trs == null)
-                throw new Exception("tracking scraper failed (reCaptcha probably ocured)");
+                throw new Exception("No tracking info for this car!");
+
+            CarRepo = new CarRepository();
+            FileRepository = new FileRepository();
+            TrackingRepo = new TrackingRepository();
 
             var bookingNr = trs[11].ChildNodes[3].InnerText;
             var containerNr = trs[12].ChildNodes[3].InnerText;
@@ -193,10 +206,8 @@ namespace CmApp.Services
                 Car = car.Id,
                 AuctionImages = new List<object>()
             };
-
-            
+       
             var tracking = await TrackingRepo.InsertTracking(trackingEntity);
-
 
             //all images
             var links = result.DocumentNode.SelectNodes("//img[@src]");
@@ -223,45 +234,43 @@ namespace CmApp.Services
                 var size = image.Size;
 
                 var newImg = ResizeImage(image, new Size(1920, 1080));
-                var newsize = image.Size;
+                var newsize = newImg.Size;
 
-                string imageName = counter+".jpeg";
+                string imageName = tracking.Id + "_image" + counter + ".jpeg";
                 var stream = new MemoryStream();
 
-
-                image.Save(stream, ImageFormat.Jpeg);        
+                newImg.Save(stream, ImageFormat.Jpeg);        
                 var bytes = FileRepository.StreamToByteArray(stream);
                 //insert here
                 var imgResponse = await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
+                var base64 = FileRepository.ByteArrayToBase64String(bytes);
+                tracking.Base64images.Add(base64);
+
                 counter++;
             }
+
+            return tracking;
         }
         private Image ResizeImage(Image imgToResize, Size size)
         {
-            int sourceWidth = imgToResize.Width;
-            int sourceHeight = imgToResize.Height;
+            var brush = new SolidBrush(Color.Black);
 
-            float nPercent, nPercentW, nPercentH;
+            var image = new Bitmap(imgToResize);
+            
+            float scale = Math.Min(size.Width / image.Width, size.Height / image.Height);
 
-            nPercentW = size.Width / sourceWidth;
-            nPercentH = size.Height / sourceHeight;
+            var bmp = new Bitmap((int)size.Width, (int)size.Height);
+            var graph = Graphics.FromImage(bmp);
 
-            if (nPercentH < nPercentW)
-                nPercent = nPercentH;
-            else
-                nPercent = nPercentW;
+            var scaleWidth = (int)(image.Width * scale);
+            var scaleHeight = (int)(image.Height * scale);
 
-            int destWidth = (int)(sourceWidth * nPercent);
-            int destHeight = (int)(sourceHeight * nPercent);
+            graph.FillRectangle(brush, new RectangleF(0, 0, size.Width, size.Height));
+            graph.DrawImage(image, ((int)size.Width - scaleWidth) / 2, ((int)size.Height - scaleHeight) / 2, scaleWidth, scaleHeight);
 
-            Bitmap b = new Bitmap(destWidth, destHeight);
-            Graphics g = Graphics.FromImage(b);
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graph.Dispose();
 
-            g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
-            g.Dispose();
-
-            return b;
+            return bmp;
         }
 
         private Image DownloadImageFromUrl(string imageUrl)

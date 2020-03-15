@@ -34,15 +34,18 @@ namespace CmApp.Entities
         [Field("transmission")]
         public string Transmission { get; set; } = string.Empty;
         [Field("color")]
-        public string Color { get; set; }
+        public string Color { get; set; } = string.Empty;
         [Field("interior")]
-        public string Interior { get; set; }
+        public string Interior { get; set; } = string.Empty;
         [Field("equipment")]
-        public List<Equipment> Equipment { get; set; }
+        public List<Equipment> Equipment { get; set; } = new List<Equipment>();
         [Field("images")]
         public List<object> Images { get; set; } = new List<object>();
         public List<string> Base64images { get; set; } = new List<string>();
-        public double BoughtPrice { get; set; }
+        public double BoughtPrice { get; set; } = 0;
+        public SummaryEntity Summary { get; set; } = new SummaryEntity();
+        public string MainImgUrl { get; set; } = "";
+
     }
     //nested form
     public class Equipment

@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Domains;
+using CmApp.Entities;
+using CmApp.Repositories;
+using CmApp.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +16,11 @@ namespace CmApp.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        IUserService UserService = new UserService()
+        {
+            UserRepository = new UserRepository()
+        };
+
         // GET: api/Users
         [HttpGet]
         public IEnumerable<string> Get()
@@ -28,8 +37,14 @@ namespace CmApp.Controllers
 
         // POST: api/Users
         [HttpPost]
-        public void Post([FromBody] User user)
+        public async Task<UserEntity> Post([FromBody] User user)
         {
+            var newUser = await UserService.InsertNewUser(user);
+
+            //hiding pass
+            newUser.Password = "";
+
+            return newUser;
         }
 
         // PUT: api/Users/5

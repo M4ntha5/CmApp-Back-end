@@ -34,7 +34,7 @@ namespace CmApp.Repositories
                 Color = car.Color,
                 Displacement = car.Displacement,
                 Drive = car.Drive,
-                ManufactureDate = car.ManufactureDate,
+                ManufactureDate = car.ManufactureDate.Date,
                 Engine = car.Engine,
                 Interior = car.Interior,
                 Make = car.Make,
@@ -54,11 +54,18 @@ namespace CmApp.Repositories
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
 
-            var cars = await repo.FindAsync(x => true, new DatabaseFindOptions()
-            {
-                PageNumber = 0,
-                PageSize = 100
-            });
+            var projection = Builders<CarEntity>.Projection
+                .Include(x => x.Images)
+                .Include(x => x.Make)
+                .Include(x => x.Model)
+                .Include(x => x.Vin);
+
+            var cars = await repo.FindAsync<CarEntity>(x => true, projection, null,
+                new DatabaseFindOptions
+                {
+                    //PageNumber = ,
+                    //PageSize = 9
+                });       
 
             return cars.Items;
         }
@@ -83,11 +90,26 @@ namespace CmApp.Repositories
         public async Task UpdateCar(string id, CarEntity car)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
-            car.Id = id;
-            await repo.ReplaceOneAsync(
-                x => x.Id == id,
-                car,
-                new DatabaseReplaceOneOptions()
+
+            var update = Builders<CarEntity>.Update
+                .Set("make", car.Make)
+                .Set("model", car.Model)
+                .Set("manufacture_date", car.ManufactureDate)
+                .Set("series", car.Series)
+                .Set("body_type", car.BodyType)
+                .Set("steering", car.Steering)
+                .Set("engine", car.Engine)
+                .Set("displacement", car.Displacement)
+                .Set("power", car.Power)
+                .Set("drive", car.Drive)
+                .Set("transmission", car.Transmission)
+                .Set("color", car.Color)
+                .Set("interior", car.Interior);
+
+            _ = await repo.UpdateOneAsync(
+                car.Id,
+                update,
+                new DatabaseUpdateOneOptions()
             );
         }
 
@@ -108,9 +130,18 @@ namespace CmApp.Repositories
                 {
                     RecordId = recordId,
                     CollectionName = "cars",
-                    UniqueFieldName = "images"
-
+                    UniqueFieldName = "images",                  
                 });
+           /* var filter = new GetFileRequest { FileId = response.Result.Id };
+
+            var url = await filesService.GetFileUrlAsync(filter);
+
+            var repo = new CodeMashRepository<ImagesEntity>(Client);
+
+            var entity = new ImagesEntity { Url = url.Result };
+
+            var insertedImageId = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
+            */
             return response;
         }
 

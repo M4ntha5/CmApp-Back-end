@@ -45,7 +45,7 @@ namespace CarsTests
         }
 
         [Test]
-        public async Task TestInsertScrapedData()
+        public async Task TestInsertBMWScrapedData()
         {
             var eq = new Dictionary<string, string> { { "eq_key1", "eq_val1" } };
             var par = new Dictionary<string, string> { { "Type", "328" } };
@@ -55,7 +55,8 @@ namespace CarsTests
                 Images = new List<object>(),
                 Equipment = new List<Equipment> { new Equipment() },
                 Model = "328",
-                Id = "1"
+                Id = "1",
+                Make = "BMW"
             };
 
             scraperMock.GetVehicleEquipment(Arg.Any<string>(), Arg.Any<string>()).Returns(eq);
@@ -68,7 +69,7 @@ namespace CarsTests
                 WebScraper = scraperMock
             };
 
-            var carDetails = await carService.InsertCarDetailsFromScraperBMW(car);
+            var carDetails = await carService.InsertCar(car);
 
             Assert.AreEqual(eq.Count, carDetails.Equipment.Count);
             await carMock.Received().InsertCar(Arg.Any<CarEntity>());

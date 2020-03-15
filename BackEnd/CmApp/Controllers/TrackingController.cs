@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -12,7 +13,10 @@ namespace CmApp.Controllers
     {
         private readonly TrackingService trackingService = new TrackingService()
         {
-            TrackingRepository = new TrackingRepository()
+            TrackingRepository = new TrackingRepository(),
+            CarRepository = new CarRepository(),
+            ScraperService = new WebScraper(),
+            FileRepository = new FileRepository()
         };
 
         // GET: api/cars/{carId}/tracking
@@ -25,10 +29,17 @@ namespace CmApp.Controllers
 
         // POST: api/cars/{carId}/tracking
         [HttpPost]
-        public async Task<TrackingEntity> Post(string carId, [FromBody] TrackingEntity tracking)
+        public async Task<IActionResult> Post(string carId)
         {
-            var newTracking = await trackingService.InsertTracking(carId, tracking);
-            return newTracking;
+            try
+            {
+                var newTracking = await trackingService.LookForTracking(carId);
+                return StatusCode(200, newTracking);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }          
         }
 
         // PUT: api/cars/{carId}/tracking/
