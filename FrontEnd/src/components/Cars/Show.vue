@@ -100,8 +100,7 @@
                               </button>
                         </div>
                   </div>
-                  
-            
+                        
                   <!-- equipment collapse table -->
                   <div class="collapse" id="equipmentCollapse">
                         <table class="table table-dark">
@@ -116,9 +115,6 @@
                               </div>
                         </table>
                   </div>
-
-                  
-                  
 
                   <!-- repairs collapse table -->
                   <div class="collapse" id="repairsCollapse">
@@ -137,10 +133,7 @@
                         <div v-else>
                               <h3>No repairs yet</h3>
                         </div>
-                  </div>
-
-                  
-                  
+                  </div>               
 
                   <!-- shipping collapse table -->
                   <div class="collapse" id="shippingCollapse">
