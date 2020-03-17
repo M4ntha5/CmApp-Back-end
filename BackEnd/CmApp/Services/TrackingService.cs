@@ -28,27 +28,27 @@ namespace CmApp.Services
         public async Task<TrackingEntity> GetTracking(string carId)
         {
             var tracking = await TrackingRepository.GetTrackingByCar(carId);
+                
+            if (tracking != null)
+            {
+                //fetching only first image
+                var fileInfo = FileRepository.GetFileId(tracking.AuctionImages[0]);
 
-            if(tracking != null)
-                foreach (var image in tracking.AuctionImages)
-                {
-                    var fileInfo = FileRepository.GetFileId(image);
+                var fileId = fileInfo.Item1;
+                var fileType = fileInfo.Item2;
 
-                    var fileId = fileInfo.Item1;
-                    var fileType = fileInfo.Item2;
+                var stream = await FileRepository.GetFile(fileId);
 
-                    var stream = await FileRepository.GetFile(fileId);
+                var mem = new MemoryStream();
+                stream.CopyTo(mem);
 
-                    var mem = new MemoryStream();
-                    stream.CopyTo(mem);
+                var bytes = FileRepository.StreamToByteArray(mem);
+                string base64 = FileRepository.ByteArrayToBase64String(bytes);
 
-                    var bytes = FileRepository.StreamToByteArray(mem);
-                    string base64 = FileRepository.ByteArrayToBase64String(bytes);
+                base64 = "data:" + fileType + ";base64," + base64;
 
-                    base64 = "data:" + fileType + ";base64," + base64;
-
-                    tracking.Base64images.Add(base64);
-                }
+                tracking.Base64images.Add(base64);
+            }
 
             return tracking;
         }

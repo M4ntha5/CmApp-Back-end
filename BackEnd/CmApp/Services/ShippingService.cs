@@ -42,7 +42,7 @@ namespace CmApp.Services
             //var price = totalPrice * double.Parse(rates.Rates["USD"]);
 
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
-            await SummaryRepository.InsertTotalShippingCostByCar(summary.Id, totalPrice);
+            await SummaryRepository.InsertTotalByCar(summary.Id, summary.Total + totalPrice);
 
             return newShipping;
         }

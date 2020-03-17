@@ -1,5 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
+using System;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -13,16 +14,16 @@ namespace CmApp.Services
             await SummaryRepository.DeleteCarSummary(carId, summaryId);
         }
 
-        public async Task UpdateSummary(string carId, string summaryId, SummaryEntity summary)
+        public async Task UpdateSoldSummary(string carId, SummaryEntity summary)
         {
             summary.Car = carId;
-            summary.Id = summaryId;
-            await SummaryRepository.UpdateCarSummary(summary);
+            await SummaryRepository.UpdateCarSoldSummary(summary);
         }
 
         public async Task<SummaryEntity> GetSummaryByCarId(string carId)
         {
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
+
             return summary;
         }
 

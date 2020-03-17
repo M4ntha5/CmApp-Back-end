@@ -36,10 +36,10 @@ namespace CmApp.Controllers
         }
 
         // PUT: /api/cars/{carId}/summary/{id}
-        [HttpPut("{summaryId}")]
-        public async Task<IActionResult> Put(string carId, string summaryId, [FromBody] SummaryEntity summary)
+        [HttpPut]
+        public async Task<NoContentResult> Put(string carId, [FromBody] SummaryEntity summary)
         {
-            await summaryService.UpdateSummary(carId, summaryId, summary);
+            await summaryService.UpdateSoldSummary(carId, summary);
             return NoContent();
         }
 

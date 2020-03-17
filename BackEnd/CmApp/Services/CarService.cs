@@ -1,6 +1,7 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
+using CmApp.Utils.Exceptions;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -58,10 +59,10 @@ namespace CmApp.Services
                 else if (param.Key == "Upholstery")
                     carEntity.Interior = param.Value;
             }
-            if (car.Drive == "HECK")
-                car.Drive = "Rear wheel drive";
-            else if (car.Drive == "ALLR")
-                car.Drive = "All wheel drive";
+            if (carEntity.Drive == "HECK")
+                carEntity.Drive = "Rear wheel drive";
+            else if (carEntity.Drive == "ALLR")
+                carEntity.Drive = "All wheel drive";
 
             //matching equipment to entity
             var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make);
@@ -77,7 +78,7 @@ namespace CmApp.Services
             var insertedCar = await CarRepository.InsertCar(carEntity);
 
             //image upload here
-            if(car.Base64images != null && car.Base64images.Count > 0)
+            if (car.Base64images != null && car.Base64images.Count > 0)
             {
                 int count = 1;
                 foreach (var image in car.Base64images)
@@ -95,10 +96,11 @@ namespace CmApp.Services
             }
 
             //create summary
-            var summaryEntity = new SummaryEntity 
-            { 
-                BoughtPrice = car.BoughtPrice, 
-                Car = insertedCar.Id 
+            var summaryEntity = new SummaryEntity
+            {
+                BoughtPrice = car.BoughtPrice,
+                Car = insertedCar.Id,
+                Total = car.BoughtPrice
             };
             _ = await SummaryRepository.InsertSummary(summaryEntity);
 
@@ -126,7 +128,7 @@ namespace CmApp.Services
                 if (param.Key == "Production Date")
                     carEntity.ManufactureDate = Convert.ToDateTime(param.Value);
                 else if (param.Key == "Model")
-                    carEntity.Model = param.Value;   
+                    carEntity.Model = param.Value;
                 else if (param.Key == "Colour")
                     carEntity.Color = param.Value;
                 else if (param.Key == "Upholstery")
@@ -168,7 +170,8 @@ namespace CmApp.Services
             var summaryEntity = new SummaryEntity
             {
                 BoughtPrice = car.BoughtPrice,
-                Car = insertedCar.Id
+                Car = insertedCar.Id,
+                Total = car.BoughtPrice
             };
             _ = await SummaryRepository.InsertSummary(summaryEntity);
 
@@ -183,7 +186,7 @@ namespace CmApp.Services
             car.Vin = car.Vin.ToUpper();
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(car);
-            
+
             //image upload here
             if (car.Base64images != null && car.Base64images.Count > 0)
             {
@@ -206,7 +209,8 @@ namespace CmApp.Services
             var summaryEntity = new SummaryEntity
             {
                 BoughtPrice = car.BoughtPrice,
-                Car = insertedCar.Id
+                Car = insertedCar.Id,
+                Total = car.BoughtPrice
             };
             _ = await SummaryRepository.InsertSummary(summaryEntity);
 
@@ -239,58 +243,48 @@ namespace CmApp.Services
         public async Task<List<CarEntity>> GetAllCars()
         {
             var cars = await CarRepository.GetAllCars();
-                     
+            if (cars.Count == 0)
+                throw new HttpResponseException() {Value = "You do not have any cars yet!" };//Exception("You do not have any cars yet!");
+
             foreach (var car in cars)
-            { 
-               /* var summary = await SummaryRepository.GetSummaryByCarId(car.Id);
-                car.Summary = summary;*/
-         
+            {
                 var fileInfo = FileRepository.GetFileId(car.Images[0]);
                 car.Images = null;
                 var fileId = fileInfo.Item1;
-                var fileType = fileInfo.Item2;
 
                 var url = await FileRepository.GetFileUrl(fileId);
 
                 car.MainImgUrl = url;
-
-              /*  var stream = await FileRepository.GetFile(fileId);
-
-                var mem = new MemoryStream();
-                stream.CopyTo(mem);
-
-                var bytes = FileRepository.StreamToByteArray(mem);
-                string base64 = FileRepository.ByteArrayToBase64String(bytes);
-
-                base64 = "data:" + fileType + ";base64," + base64;
-
-                car.Base64images.Add(base64);*/
             }
             return cars;
         }
         public async Task<CarEntity> GetCarById(string id)
         {
             var car = await CarRepository.GetCarById(id);
+            if (car == null)
+                throw new Exception("Car with provided id does not exists!");
+
             car.ManufactureDate = car.ManufactureDate.Date;
-            foreach (var image in car.Images)
-            {
-                var fileInfo = FileRepository.GetFileId(image);
 
-                var fileId = fileInfo.Item1;
-                var fileType = fileInfo.Item2;
 
-                var stream = await FileRepository.GetFile(fileId);
+            //fetching only first image
+            var fileInfo = FileRepository.GetFileId(car.Images[0]);
 
-                var mem = new MemoryStream();
-                stream.CopyTo(mem);
+            var fileId = fileInfo.Item1;
+            var fileType = fileInfo.Item2;
 
-                var bytes = FileRepository.StreamToByteArray(mem);
-                string base64 = FileRepository.ByteArrayToBase64String(bytes);
+            var stream = await FileRepository.GetFile(fileId);
 
-                base64 = "data:" + fileType + ";base64," + base64;
+            var mem = new MemoryStream();
+            stream.CopyTo(mem);
 
-                car.Base64images.Add(base64); 
-            }
+            var bytes = FileRepository.StreamToByteArray(mem);
+            string base64 = FileRepository.ByteArrayToBase64String(bytes);
+
+            base64 = "data:" + fileType + ";base64," + base64;
+
+            car.Base64images.Add(base64); 
+
             return car;
         }
 

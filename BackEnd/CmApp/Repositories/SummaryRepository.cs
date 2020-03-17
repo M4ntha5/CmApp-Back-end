@@ -55,21 +55,26 @@ namespace CmApp.Repositories
             await repo.DeleteOneAsync(filter);
         }
 
-        public async Task UpdateCarSummary(SummaryEntity summary)
+        public async Task UpdateCarSoldSummary(SummaryEntity summary)
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
 
-            await repo.ReplaceOneAsync(
-                x => x.Id == summary.Id,
-                summary,
-                new DatabaseReplaceOneOptions()
+            var update = Builders<SummaryEntity>.Update
+                .Set("sold", summary.Sold)
+                .Set("sold_price", summary.SoldPrice)
+                .Set("sold_date", DateTime.Now);
+
+            await repo.UpdateOneAsync(
+                x => x.Car == summary.Car,
+                update,
+                new DatabaseUpdateOneOptions()
             );
         }
-        public async Task InsertTotalShippingCostByCar(string summaryId, double totalPrice)
+        public async Task InsertTotalByCar(string summaryId, double total)
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
 
-            var update = Builders<SummaryEntity>.Update.Set("total_shipping", totalPrice);
+            var update = Builders<SummaryEntity>.Update.Set("total", Math.Round(total,2));
 
             await repo.UpdateOneAsync(
                 x => x.Id == summaryId,

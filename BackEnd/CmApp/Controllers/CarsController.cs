@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CmApp.Entities;
 using CmApp.Repositories;
@@ -20,11 +21,11 @@ namespace CmApp.Controllers
         };
 
         // GET: api/Cars
-       [HttpGet]
+        [HttpGet]
         public List<CarEntity> Get()
         {
             var cars = carService.GetAllCars().Result;
-            return cars;
+            return cars;               
         }
 
         // GET: api/Cars/5

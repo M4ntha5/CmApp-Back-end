@@ -14,7 +14,8 @@ namespace CmApp.Controllers
     {
         private readonly RepairService repairService = new RepairService
         {
-            RepairRepository = new RepairRepository()
+            RepairRepository = new RepairRepository(),
+            SummaryRepository = new SummaryRepository()
         };
 
         // GET: api/cars/{carId}/Repairs

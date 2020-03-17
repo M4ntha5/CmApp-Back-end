@@ -39,12 +39,17 @@ namespace CmApp.Repositories
         public async Task UpdateCarShipping(string shippingId, ShippingEntity shipping)
         {
             var repo = new CodeMashRepository<ShippingEntity>(Client);
-            shipping.Id = shippingId;
 
-            await repo.ReplaceOneAsync(
-                x => x.Id == shipping.Id,
-                shipping,
-                new DatabaseReplaceOneOptions()
+            var update = Builders<ShippingEntity>.Update
+                .Set("auction_fee", shipping.AuctionFee)
+                .Set("customs", shipping.Customs)
+                .Set("transfer_fee", shipping.TransferFee)
+                .Set("transportation_fee", shipping.TransportationFee);
+
+            _ = await repo.UpdateOneAsync(
+                shippingId,
+                update,
+                new DatabaseUpdateOneOptions()
             );
         }
         public async Task<ShippingEntity> GetShippingByCar(string carId)

@@ -60,7 +60,7 @@ namespace CmApp.Services
             catch(Exception ex)
             {
                 var error = new Dictionary<string, string>();
-                error.Add("Error", ex.Message);
+                error.Add("Error 500", ex.Message);
                 return error;
             }
             

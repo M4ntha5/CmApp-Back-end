@@ -11,11 +11,11 @@ namespace CmApp.Entities
         [Field("sold_price")]
         public double SoldPrice { get; set; } = 0;
         [Field("sold_date")]
-        public DateTime SoldDate { get; set; } = new DateTime();
+        public DateTime SoldDate { get; set; } = new DateTime(1900,01,01);
         [Field("sold")]
         public bool Sold { get; set; } = false;
-        [Field("total_shipping")]
-        public double TotalShipping { get; set; } = 0;
+        [Field("total")]
+        public double Total { get; set; } = 0;
         [Field("car")]
         public string Car { get; set; }
 
