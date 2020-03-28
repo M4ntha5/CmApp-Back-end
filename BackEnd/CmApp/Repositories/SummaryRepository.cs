@@ -6,8 +6,6 @@ using CodeMash.Repository;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Repositories
@@ -65,7 +63,7 @@ namespace CmApp.Repositories
                 .Set("sold_date", DateTime.Now);
 
             await repo.UpdateOneAsync(
-                x => x.Car == summary.Car,
+                summary.Id,
                 update,
                 new DatabaseUpdateOneOptions()
             );

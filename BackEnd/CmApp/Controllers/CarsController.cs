@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CmApp.Controllers
 {
     [Route("/api/cars")]
+    [Authorize(Roles = "user, admin", AuthenticationSchemes = "user, admin")]
     [ApiController]
     public class CarsController : ControllerBase
     {
@@ -22,42 +26,97 @@ namespace CmApp.Controllers
 
         // GET: api/Cars
         [HttpGet]
-        public List<CarEntity> Get()
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> Get()
         {
-            var cars = carService.GetAllCars().Result;
-            return cars;               
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var cars = await carService.GetAllUserCars(userId);
+                return Ok(cars);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }       
         }
 
         // GET: api/Cars/5
         [HttpGet("{carId}")]
-        public CarEntity Get(string carId)
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> Get(string carId)
         {
-            var car = carService.GetCarById(carId).Result;
-            return car;
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+
+                var car = await carService.GetCarById(carId);
+
+                if (car.User != userId && role != "admin")
+                    throw new BusinessException("Car does not exist");
+
+                return Ok(car);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         // POST: api/Cars
         [HttpPost]
-        public CarEntity Post([FromBody] CarEntity car)
+        //[Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> Post([FromBody] CarEntity car)
         {
-            var newCar = carService.InsertCar(car).Result;
-            return newCar;
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                car.User = userId;
+                var newCar = await carService.InsertCar(car);
+
+                return Ok(newCar);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT: api/Cars/5
         [HttpPut("{carId}")]
-        public async Task<NoContentResult> Put(string carId, [FromBody] CarEntity car)
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> Put(string carId, [FromBody] CarEntity car)
         {
-            await carService.UpdateCar(carId, car);
-            return NoContent();
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                await carService.UpdateCar(userId, carId, car);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{carId}")]
+        [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> Delete(string carId)
         {
-            await carService.DeleteCar(carId);
-            return NoContent();
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                await carService.DeleteCar(userId, carId);
+                return NoContent();
+            }        
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

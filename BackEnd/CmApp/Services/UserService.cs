@@ -1,10 +1,7 @@
 ﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
-using CmApp.Utils.Exceptions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -15,8 +12,8 @@ namespace CmApp.Services
 
         public async Task<UserEntity> InsertNewUser(User user)
         {
-            if (user.Password1 != user.Password2)
-                throw new BusinessException("Password do not match!!");
+            if (user.Password != user.Password2)
+                throw new BusinessException("Passwords do not match!!");
 
             var newUser = await UserRepository.InsertUser(user);
 

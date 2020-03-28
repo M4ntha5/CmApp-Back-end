@@ -1,6 +1,5 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,7 +38,7 @@ namespace CmApp.Services
         {
             var response = await RepairRepository.GetCarRepairById(carId, repairid);
             if (response == null)
-                throw new Exception("Repair does not exists!");
+                throw new BusinessException("Repair does not exists!");
 
             return response;
         }

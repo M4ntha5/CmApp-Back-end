@@ -1,6 +1,5 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
-using System;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -18,8 +17,8 @@ namespace CmApp.Services
         public async Task UpdateShipping(string carId, ShippingEntity shipping)
         {
             shipping.Car = carId;
-            var shippingId = ShippingRepository.GetShippingByCar(carId).Result.Id;
-            await ShippingRepository.UpdateCarShipping(shippingId, shipping);
+            var oldShipping = await ShippingRepository.GetShippingByCar(carId);
+            await ShippingRepository.UpdateCarShipping(oldShipping.Id, shipping);
         }
         public async Task<ShippingEntity> GetShipping(string carId)
         {

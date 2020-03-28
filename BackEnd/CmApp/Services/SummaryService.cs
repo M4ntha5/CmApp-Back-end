@@ -1,6 +1,5 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
-using System;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -17,6 +16,8 @@ namespace CmApp.Services
         public async Task UpdateSoldSummary(string carId, SummaryEntity summary)
         {
             summary.Car = carId;
+            var oldSummary = await GetSummaryByCarId(carId);
+            summary.Id = oldSummary.Id;
             await SummaryRepository.UpdateCarSoldSummary(summary);
         }
 

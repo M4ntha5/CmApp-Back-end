@@ -1,9 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -22,8 +19,8 @@ namespace CmApp.Services
         public async Task UpdateTracking(string carId, TrackingEntity tracking)
         {
             tracking.Car = carId;
-            var trackingId = TrackingRepository.GetTrackingByCar(carId).Result.Id;
-            await TrackingRepository.UpdateCarTracking(trackingId, tracking);
+            var oldTracking = await TrackingRepository.GetTrackingByCar(carId);
+            await TrackingRepository.UpdateCarTracking(oldTracking.Id, tracking);
         }
         public async Task<TrackingEntity> GetTracking(string carId)
         {

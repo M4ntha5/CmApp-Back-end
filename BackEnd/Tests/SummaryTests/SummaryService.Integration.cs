@@ -58,7 +58,7 @@ namespace Summary.Integration
                 SoldPrice = 8000,
             };
 
-            await serviceRepo.UpdateSummary(carId, summaryId, entity);
+           // await serviceRepo.UpdateSummary(carId, summaryId, entity);
         }
 
         [Test]

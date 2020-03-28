@@ -17,6 +17,7 @@ namespace CmApp.Contracts
         Task<List<UserEntity>> GetAllUsers();
         Task<List<UserEntity>> GetAllBlockedUsers();
         Task<List<UserEntity>> GetAllUnblockedUsers();
+        Task<UserEntity> GetUserByEmail(string email);
 
     }
 }

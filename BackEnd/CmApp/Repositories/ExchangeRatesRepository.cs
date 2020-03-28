@@ -70,7 +70,7 @@ namespace CmApp.Repositories
         public async Task<double> CalculateResult(ExchangeInput input)
         {
             if (input.From == "" || input.To == "" || input.Amount < 1)
-                throw new Exception("Input data was in incorect format!");
+                throw new BusinessException("Input data was in incorect format!");
 
             ExchangeRatesRepository repo = new ExchangeRatesRepository();
 

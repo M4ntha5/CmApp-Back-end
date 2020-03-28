@@ -2,7 +2,6 @@
 using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Utils;
-using CmApp.Utils.Exceptions;
 using CodeMash.Client;
 using CodeMash.Repository;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -10,7 +9,6 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -24,7 +22,7 @@ namespace CmApp.Repositories
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user), "Cannot insert user in db, because user is empty");
-            if(user.Password1 != user.Password2)
+            if(user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match!!");
 
 
@@ -37,7 +35,7 @@ namespace CmApp.Repositories
 
             string hashedPass = Convert.ToBase64String(
                 KeyDerivation.Pbkdf2(
-                    password: user.Password1,
+                    password: user.Password,
                     salt: salt,
                     prf: KeyDerivationPrf.HMACSHA1,
                     iterationCount: 10000,
@@ -46,12 +44,10 @@ namespace CmApp.Repositories
             );
 
             var entity = new UserEntity
-            {
-                Blocked = user.Blocked,
+            { 
                 Email = user.Email,
-                Name = user.Name,
                 Password = hashedPass,
-                Cars = user.Cars.Select(x => x.Id).ToList(),
+                Salt = Convert.ToBase64String(salt)
             };
 
             var repo = new CodeMashRepository<UserEntity>(Client);
@@ -75,10 +71,11 @@ namespace CmApp.Repositories
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
 
-            var summary = await repo.FindAsync(x=> true, new DatabaseFindOptions());
+            var summary = await repo.FindAsync(x=> !x.Deleted, new DatabaseFindOptions());
 
             return summary.Items;
         }
+
         public async Task<List<UserEntity>> GetAllBlockedUsers()
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
@@ -119,14 +116,39 @@ namespace CmApp.Repositories
             UpdateDefinition<UserEntity>[] updates =
             {
                 Builders<UserEntity>.Update.Set(x => x.Name, user.Name),
-                Builders<UserEntity>.Update.Set(x => x.Email, user.Email),
-                Builders<UserEntity>.Update.Set(x => x.Cars, user.Cars)
+                Builders<UserEntity>.Update.Set(x => x.Email, user.Email)
             };
 
             var atributes = Builders<UserEntity>.Update.Combine(updates);
 
             await repo.UpdateOneAsync(x => x.Id == user.Id, atributes, new DatabaseUpdateOneOptions());
         }
+        public async Task<UserEntity> GetUserByEmail(string email)
+        {
+            var repo = new CodeMashRepository<UserEntity>(Client);
+
+            var user = await repo.FindOneAsync(x => x.Email == email, new DatabaseFindOneOptions());
+
+            return user;
+        }
+
+
+        /*  public async Task<string> CheckIfEmailAlreadyExist(User user)
+          {
+              var registerService = new CodeMashRepository<ConsumerEntity>(Client);
+              var email = await registerService.FindOneAsync(x => x.Email == user.Email);
+              var password = await registerService.FindOneAsync(x => x.Password == user.Password);
+
+              if (email != null)
+              {
+                  return "email already exist";
+              }
+              else if (password != null)
+              {
+                  return "password already exist";
+              }
+          }*/
+
 
     }
 }

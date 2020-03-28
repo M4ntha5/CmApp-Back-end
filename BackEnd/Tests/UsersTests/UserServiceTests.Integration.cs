@@ -27,13 +27,13 @@ namespace UsersTests.Integration
                 {new CarEntity { Id = "5e4c2d3bc0ae17000119da0b"} }
             };
 
-            var user = new User("jonas", "j@j.lt", "password", "password", false, cars);
+            /*var user = new User("jonas", "j@j.lt", "password", "password", false, cars);
 
             var resut = await repo.InsertUser(user);
 
             Assert.AreEqual(user.Name, resut.Name);
             Assert.AreEqual(user.Email, resut.Email);
-
+            */
         }
 
         [Test]

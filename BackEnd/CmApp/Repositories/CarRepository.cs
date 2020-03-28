@@ -1,4 +1,5 @@
 ﻿using CmApp.Contracts;
+using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Utils;
 using CodeMash.Client;
@@ -9,8 +10,6 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CmApp.Repositories
@@ -44,7 +43,8 @@ namespace CmApp.Repositories
                 Steering = car.Steering,
                 Transmission = car.Transmission,
                 Equipment = car.Equipment,
-                Vin = car.Vin
+                Vin = car.Vin,
+                User = car.User
             };
             var response = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
             return response;
@@ -66,6 +66,29 @@ namespace CmApp.Repositories
                     //PageNumber = 0,
                     //PageSize = 9
                 });       
+
+            return cars.Items;
+        }
+        public async Task<List<CarDisplay>> GetAllUserCars(string userId)
+        {
+            var repo = new CodeMashRepository<CarEntity>(Client);
+
+            var projection = Builders<CarEntity>.Projection
+                .Include(x => x.Images)
+                .Include(x => x.Make)
+                .Include(x => x.Model)
+                .Include(x => x.Vin)
+                .Include(x => x.User);
+
+
+            var filter = Builders<CarEntity>.Filter.Eq("user", ObjectId.Parse(userId));
+
+            var cars = await repo.FindAsync<CarDisplay>(filter, projection, null,
+                new DatabaseFindOptions
+                {
+                    //PageNumber = 0,
+                    //PageSize = 9
+                });
 
             return cars.Items;
         }
@@ -113,11 +136,11 @@ namespace CmApp.Repositories
             );
         }
 
-        public async Task DeleteCar(CarEntity car)
+        public async Task DeleteCar(string carId)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
 
-            await repo.DeleteOneAsync(x => x.Id == car.Id);
+            await repo.DeleteOneAsync(x => x.Id == carId);
 
         }
 
