@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -33,6 +31,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var cars = await carService.GetAllUserCars(userId);
+                //var cars = await carService.GetAllCars();
                 return Ok(cars);
             }
             catch(Exception ex)
@@ -67,7 +66,7 @@ namespace CmApp.Controllers
 
         // POST: api/Cars
         [HttpPost]
-        //[Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> Post([FromBody] CarEntity car)
         {
             try

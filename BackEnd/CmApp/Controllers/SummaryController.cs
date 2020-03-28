@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CmApp.Controllers
 {
     [Route("/api/cars/{carId}/summary")]
-    [Authorize(Roles = "user, admin", AuthenticationSchemes = "user, admin")]
+    //[Authorize(Roles = "user, admin", AuthenticationSchemes = "user, admin")]
     [ApiController]
     public class SummaryController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace CmApp.Controllers
 
         // GET: /api/cars/{carId}/summary
         [HttpGet]
-        [Authorize(Roles = "user, admin")]
+    //    [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> Get(string carId)
         {
             try
@@ -44,17 +44,17 @@ namespace CmApp.Controllers
 
         // POST: /api/cars/{carId}/summary
         [HttpPost]
-        [Authorize(Roles = "user, admin")]
+      //  [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> Post(string carId, [FromBody] SummaryEntity summary)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+              /*  var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
                 if (car.User != userId && role != "admin")
                     throw new Exception("Car does not exist");
-
+*/
                 var newSummary = await summaryService.InsertCarSummary(carId, summary);
                 return Ok(newSummary);
             }
@@ -66,7 +66,7 @@ namespace CmApp.Controllers
 
         // PUT: /api/cars/{carId}/summary/{id}
         [HttpPut]
-        [Authorize(Roles = "user, admin")]
+       // [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> Put(string carId, [FromBody] SummaryEntity summary)
         {
             try
@@ -88,7 +88,7 @@ namespace CmApp.Controllers
 
         // DELETE: /api/cars/{carId}/summary/{id}
         [HttpDelete("{summaryId}")]
-        [Authorize(Roles = "user, admin")]
+     //   [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> Delete(string carId, string summaryId)
         {
             try

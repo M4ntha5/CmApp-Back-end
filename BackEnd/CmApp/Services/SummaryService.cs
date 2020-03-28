@@ -31,6 +31,7 @@ namespace CmApp.Services
         public async Task<SummaryEntity> InsertCarSummary(string carId, SummaryEntity summary)
         {
             summary.Car = carId;
+            summary.Total = summary.BoughtPrice;
             var newSummary = await SummaryRepository.InsertSummary(summary);
             return newSummary;
         }

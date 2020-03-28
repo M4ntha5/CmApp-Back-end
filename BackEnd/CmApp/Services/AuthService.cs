@@ -32,7 +32,7 @@ namespace CmApp.Services
         {
             var user = await UserRepository.GetUserByEmail(userData.Email);
 
-            if (user.Id != null)
+            if (user != null && user.Id != null)
             {
                 string hashedPass = Convert.ToBase64String(
                     KeyDerivation.Pbkdf2(
@@ -54,6 +54,8 @@ namespace CmApp.Services
                         return GenerateAdminToken(user.Id);
                     }
                 }
+                else
+                    throw new BusinessException("Incorrect password!");
             }
             return null;
         }

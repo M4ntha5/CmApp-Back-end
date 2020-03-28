@@ -42,7 +42,7 @@ namespace CmApp.Controllers
             {
                 var response = await authService.Register(user);
                 if (response == null)
-                    return Ok("Successfully created");
+                    return Ok("Success");
                 else
                     return BadRequest(response);
             }
