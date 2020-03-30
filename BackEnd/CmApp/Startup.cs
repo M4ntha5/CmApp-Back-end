@@ -46,7 +46,7 @@ namespace CmApp
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = "localhost",
+                        ValidIssuer = "shrouded-ocean-70036.herokuapp.com",
                         ValidAudience = "readers",
                         IssuerSigningKey = symmetricSecurityKeyDefault
                     };
@@ -58,7 +58,7 @@ namespace CmApp
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = "localhost",
+                        ValidIssuer = "shrouded-ocean-70036.herokuapp.com",
                         ValidAudience = "readers",
                         IssuerSigningKey = symmetricSecurityKeyAdmin
                     };
