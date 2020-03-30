@@ -12,6 +12,8 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "CaptchaApiKey": "1d53bbbfbc8e66ffbfef9b172fa5d183",
+        "ApiKey": "euHlhRE-TGmz4Y5gtmNeoFm1L5e_Xkun",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

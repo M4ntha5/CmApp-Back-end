@@ -11,8 +11,9 @@ namespace CmApp.Contracts
     {
         Task<List<RepairEntity>> GetAllSelectedCarRepairs(string carId);
         Task DeleteSelectedCarRepair(string carId, string repairId);
-        Task<RepairEntity> InsertCarRepair(string carId, RepairEntity repair);
+        Task InsertCarRepairs(string carId, List<RepairEntity> repairs);
         Task<RepairEntity> GetSelectedCarRepairById(string carId, string repairid);
         Task UpdateSelectedCarRepair(string repairid, string carId, RepairEntity repair);
+        Task DeleteAllCarRepairs(string carId);
     }
 }

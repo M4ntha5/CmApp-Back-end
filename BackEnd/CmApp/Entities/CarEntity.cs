@@ -7,10 +7,12 @@ namespace CmApp.Entities
     [Collection("Cars")]
     public class CarEntity : Entity
     {
+        [Field("user")]
+        public string User { get; set; }
         [Field("make")]
         public string Make { get; set; }
         [Field("model")]
-        public string Model { get; set; }
+        public string Model { get; set; } = "";
         [Field("vin")]
         public string Vin { get; set; }
         [Field("created_at")]
@@ -42,8 +44,6 @@ namespace CmApp.Entities
         [Field("images")]
         public List<object> Images { get; set; } = new List<object>();
         public List<string> Base64images { get; set; } = new List<string>();
-        public double BoughtPrice { get; set; } = 0;
-        public SummaryEntity Summary { get; set; } = new SummaryEntity();
         public string MainImgUrl { get; set; } = "";
 
     }

@@ -1,6 +1,7 @@
 ﻿using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
+using CmApp.Utils;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace Cars.Integration
         [SetUp]
         public void Setup()
         {
+            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
+            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             carRepo = new CarRepository();
             scraperService = new WebScraper();
             carService = new CarService()
@@ -89,7 +92,7 @@ namespace Cars.Integration
 
             var oldCar = await carRepo.GetCarById("5e4c2dfac0ae1700011a2c38");
 
-            await carRepo.DeleteCar(oldCar);
+            await carRepo.DeleteCar(oldCar.Id);
         }
 
         [Test]
@@ -132,15 +135,6 @@ namespace Cars.Integration
             //Assert.AreNotEqual(null, result);
         }
 
-     /*   [Test]
-        public async Task TestAddImageToCar()
-        {
-            var img = new Image { Name = "lajsfhj" };
-
-            await carRepo.AddImageToCar("5e4810c976fdd2000162938b", img);
-        }*/
-
-
         [Test]
         public async Task TestGetFile()
         {
@@ -162,12 +156,18 @@ namespace Cars.Integration
                 }
                 var base64 = Convert.ToBase64String(byteArray);
             }
-
-
-            
-            
-
             Assert.AreNotEqual(null, response);
+        }
+
+        [Test]
+        public async Task test()
+        {
+            var entity = new CarEntity
+            {
+                Vin = "165",
+                Make = "Opel"
+            };
+            var car = await carService.InsertCar(entity);
         }
     }
 }

@@ -9,29 +9,42 @@ namespace CmApp.Services
     public class RepairService : IRepairService
     {
         public IRepairRepository RepairRepository { get; set; }
+        public ISummaryRepository SummaryRepository { get; set; }
 
         public async Task DeleteSelectedCarRepair(string carId, string repairId)
         {
             await RepairRepository.DeleteRepair(carId, repairId);
         }
+        public async Task DeleteAllCarRepairs(string carId)
+        {
+            await RepairRepository.DeleteMultipleRepairs(carId);
+        }
 
         public async Task<List<RepairEntity>> GetAllSelectedCarRepairs(string carId)
         {
             var repairs = await RepairRepository.GetAllRepairsByCarId(carId);
+
             if (repairs != null && repairs.Count > 0)
                 repairs[0].Total = repairs.Sum(x => x.Price);
 
             return repairs;
         }
-        public async Task<RepairEntity> InsertCarRepair(string carId, RepairEntity repair)
+        public async Task InsertCarRepairs(string carId, List<RepairEntity> repairs)
         {
-            repair.Car = carId;
-            var response = await RepairRepository.InsertRepair(repair);
-            return response;
+            repairs.ForEach(x => x.Car = carId);
+            var repairsTotal = repairs.Sum(x => x.Price);
+            
+            await RepairRepository.InsertMultipleRepairs(repairs);
+            var summary = await SummaryRepository.GetSummaryByCarId(carId);
+
+            await SummaryRepository.InsertTotalByCar(summary.Id, summary.Total + repairsTotal);
         }
         public async Task<RepairEntity> GetSelectedCarRepairById(string carId, string repairid)
         {
             var response = await RepairRepository.GetCarRepairById(carId, repairid);
+            if (response == null)
+                throw new BusinessException("Repair does not exists!");
+
             return response;
         }
         public async Task UpdateSelectedCarRepair(string repairid, string carId, RepairEntity repair)

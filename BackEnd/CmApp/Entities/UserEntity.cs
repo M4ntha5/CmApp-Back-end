@@ -1,5 +1,4 @@
 ﻿using CodeMash.Models;
-using System.Collections.Generic;
 
 namespace CmApp.Entities
 {
@@ -7,14 +6,18 @@ namespace CmApp.Entities
     public class UserEntity : Entity
     {
         [Field("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         [Field("email")]
         public string Email { get;set; }
         [Field("password")]
         public string Password { get; set; }
+        [Field("salt")]
+        public string Salt { get; set; }
         [Field("blocked")]
-        public bool Blocked { get; set; }
-        [Field("cars")]
-        public List<string> Cars { get; set; }
+        public bool Blocked { get; set; } = false;
+        [Field("deleted")]
+        public bool Deleted { get; set; } = false;
+        [Field("role")]
+        public string Role { get; set; } = "user";
     }
 }

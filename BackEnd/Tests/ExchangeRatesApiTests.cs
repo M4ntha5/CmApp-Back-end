@@ -1,4 +1,5 @@
 ﻿using CmApp.Repositories;
+using CmApp.Utils;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace ExchangeRates
         [SetUp]
         public void Setup()
         {
+            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
+            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
         }
 
         [Test]

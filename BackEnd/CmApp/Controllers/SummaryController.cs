@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CmApp.Controllers
 {
     [Route("/api/cars/{carId}/summary")]
+    [Authorize(Roles = "user, admin", AuthenticationSchemes = "user, admin")]
     [ApiController]
     public class SummaryController : ControllerBase
     {
@@ -18,37 +18,94 @@ namespace CmApp.Controllers
         {
             SummaryRepository = new SummaryRepository()
         };
+        private readonly CarRepository carRepo = new CarRepository();
 
         // GET: /api/cars/{carId}/summary
         [HttpGet]
-        public Task<SummaryEntity> Get(string carId)
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> Get(string carId)
         {
-            var summary = summaryService.GetSummaryByCarId(carId);
-            return summary;
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+                var car = await carRepo.GetCarById(carId);
+                if (car.User != userId && role != "admin")
+                    throw new Exception("Car does not exist");
+
+                var summary = await summaryService.GetSummaryByCarId(carId);
+                return Ok(summary);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: /api/cars/{carId}/summary
         [HttpPost]
-        public SummaryEntity Post(string carId, [FromBody] SummaryEntity summary)
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> Post(string carId, [FromBody] SummaryEntity summary)
         {
-            var newSummary = summaryService.InsertCarSummary(carId, summary).Result;
-            return newSummary;
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+                var car = await carRepo.GetCarById(carId);
+                if (car.User != userId && role != "admin")
+                    throw new Exception("Car does not exist");
+
+                var newSummary = await summaryService.InsertCarSummary(carId, summary);
+                return Ok(newSummary);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT: /api/cars/{carId}/summary/{id}
-        [HttpPut("{summaryId}")]
-        public async Task<IActionResult> Put(string carId, string summaryId, [FromBody] SummaryEntity summary)
+        [HttpPut]
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> Put(string carId, [FromBody] SummaryEntity summary)
         {
-            await summaryService.UpdateSummary(carId, summaryId, summary);
-            return NoContent();
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+                var car = await carRepo.GetCarById(carId);
+                if (car.User != userId && role != "admin")
+                    throw new Exception("Car does not exist");
+
+                await summaryService.UpdateSoldSummary(carId, summary);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: /api/cars/{carId}/summary/{id}
         [HttpDelete("{summaryId}")]
-        public async Task<IActionResult> Delete(string carid, string summaryId)
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> Delete(string carId, string summaryId)
         {
-            await summaryService.DeleteSummary(carid, summaryId);
-            return NoContent();
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+                var car = await carRepo.GetCarById(carId);
+                if (car.User != userId && role != "admin")
+                    throw new Exception("Car does not exist");
+
+                await summaryService.DeleteSummary(carId, summaryId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

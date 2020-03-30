@@ -1,6 +1,7 @@
 ﻿using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
+using CmApp.Utils;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace Summary.Integration
         [SetUp]
         public void Setup()
         {
+            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
+            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             summaryRepo = new SummaryRepository();
             serviceRepo = new SummaryService
             {
@@ -58,7 +61,7 @@ namespace Summary.Integration
                 SoldPrice = 8000,
             };
 
-            await serviceRepo.UpdateSummary(carId, summaryId, entity);
+           // await serviceRepo.UpdateSummary(carId, summaryId, entity);
         }
 
         [Test]

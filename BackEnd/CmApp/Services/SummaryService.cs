@@ -13,22 +13,25 @@ namespace CmApp.Services
             await SummaryRepository.DeleteCarSummary(carId, summaryId);
         }
 
-        public async Task UpdateSummary(string carId, string summaryId, SummaryEntity summary)
+        public async Task UpdateSoldSummary(string carId, SummaryEntity summary)
         {
             summary.Car = carId;
-            summary.Id = summaryId;
-            await SummaryRepository.UpdateCarSummary(summary);
+            var oldSummary = await GetSummaryByCarId(carId);
+            summary.Id = oldSummary.Id;
+            await SummaryRepository.UpdateCarSoldSummary(summary);
         }
 
         public async Task<SummaryEntity> GetSummaryByCarId(string carId)
         {
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
+
             return summary;
         }
 
         public async Task<SummaryEntity> InsertCarSummary(string carId, SummaryEntity summary)
         {
             summary.Car = carId;
+            summary.Total = summary.BoughtPrice;
             var newSummary = await SummaryRepository.InsertSummary(summary);
             return newSummary;
         }

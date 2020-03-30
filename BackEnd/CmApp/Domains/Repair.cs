@@ -14,7 +14,5 @@ namespace CmApp.Domains
             Price = price;
             Car = car;
         }
-        public Repair()
-        { }
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CmApp.Repositories;
 using CmApp.Domains;
 using CmApp.Entities;
+using CmApp.Utils;
 
 namespace ScraperTests
 {
@@ -19,6 +20,8 @@ namespace ScraperTests
         [SetUp]
         public void Setup()
         {
+            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
+            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             Vin = "wba3b1g58ens79736";
             scraperService = new WebScraper
             {

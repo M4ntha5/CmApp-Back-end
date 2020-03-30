@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CmApp.Utils.Exceptions
+namespace CmApp
 {
     public class BusinessException : Exception
     {

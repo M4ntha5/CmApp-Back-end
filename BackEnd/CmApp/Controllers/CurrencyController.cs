@@ -17,21 +17,34 @@ namespace CmApp.Controllers
 
         // GET: api/Currency
         [HttpGet]
-        public async Task<List<string>> Get()
+        public async Task<IActionResult> Get()
         {
-            //all rates names
-            var names = await repo.GetAvailableCurrencies();
-
-            return names;
+            try
+            {
+                //all rates names
+                var names = await repo.GetAvailableCurrencies();
+                return Ok(names);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/Currency
         [HttpPost]
-        public async Task<double> Post([FromBody] ExchangeInput input)
+        public async Task<IActionResult> Post([FromBody] ExchangeInput input)
         {
-            //calculates result here
-            var result = await repo.CalculateResult(input);
-            return result;
+            try
+            {
+                //calculates result here
+                var result = await repo.CalculateResult(input);
+                return Ok(result);
+            }          
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
