@@ -127,7 +127,8 @@ namespace CmApp.Repositories
                 .Set("drive", car.Drive)
                 .Set("transmission", car.Transmission)
                 .Set("color", car.Color)
-                .Set("interior", car.Interior);
+                .Set("interior", car.Interior)
+                .Set("equipment", car.Equipment);
 
             _ = await repo.UpdateOneAsync(
                 car.Id,

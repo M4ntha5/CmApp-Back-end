@@ -15,6 +15,10 @@ namespace CmApp.Services
         {
             await RepairRepository.DeleteRepair(carId, repairId);
         }
+        public async Task DeleteAllCarRepairs(string carId)
+        {
+            await RepairRepository.DeleteMultipleRepairs(carId);
+        }
 
         public async Task<List<RepairEntity>> GetAllSelectedCarRepairs(string carId)
         {
@@ -25,14 +29,15 @@ namespace CmApp.Services
 
             return repairs;
         }
-        public async Task<RepairEntity> InsertCarRepair(string carId, RepairEntity repair)
+        public async Task InsertCarRepairs(string carId, List<RepairEntity> repairs)
         {
-            repair.Car = carId;
-            var response = await RepairRepository.InsertRepair(repair);
+            repairs.ForEach(x => x.Car = carId);
+            var repairsTotal = repairs.Sum(x => x.Price);
+            
+            await RepairRepository.InsertMultipleRepairs(repairs);
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
 
-            await SummaryRepository.InsertTotalByCar(summary.Id, summary.Total + repair.Price);
-            return response;
+            await SummaryRepository.InsertTotalByCar(summary.Id, summary.Total + repairsTotal);
         }
         public async Task<RepairEntity> GetSelectedCarRepairById(string carId, string repairid)
         {

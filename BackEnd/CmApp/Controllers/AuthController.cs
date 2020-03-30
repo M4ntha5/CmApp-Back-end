@@ -51,5 +51,18 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("me")]
+        public async Task<IActionResult> Me(string userId)
+        {
+            try
+            {
+                var user = await authService.Me(userId);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

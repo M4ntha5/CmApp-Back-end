@@ -69,7 +69,7 @@ namespace CmApp.Controllers
         // POST: api/cars/{carId}/Repairs
         [HttpPost]
         [Authorize(Roles = "user, admin")]
-        public async Task<IActionResult> Post(string carId, [FromBody] RepairEntity repair)
+        public async Task<IActionResult> Post(string carId, [FromBody] List<RepairEntity> repairs)
         {
             try
             {
@@ -79,8 +79,8 @@ namespace CmApp.Controllers
                 if (car.User != userId && role != "admin")
                     throw new Exception("Car does not exist");
 
-                var newRepair = await repairService.InsertCarRepair(carId, repair);
-                return Ok(newRepair);
+                await repairService.InsertCarRepairs(carId, repairs);
+                return Ok();
             }
             catch (Exception ex)
             {

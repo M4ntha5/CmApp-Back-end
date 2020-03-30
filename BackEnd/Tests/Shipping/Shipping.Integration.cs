@@ -1,7 +1,9 @@
 ﻿using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
+using CmApp.Utils;
 using NUnit.Framework;
+using System;
 using System.Threading.Tasks;
 
 namespace Shipping.Integration
@@ -13,6 +15,8 @@ namespace Shipping.Integration
         [SetUp]
         public void Setup()
         {
+            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
+            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             shippingService = new ShippingService()
             {
                 ShippingRepository = new ShippingRepository(),

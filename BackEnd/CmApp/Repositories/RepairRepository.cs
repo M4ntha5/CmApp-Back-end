@@ -7,6 +7,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Repositories
@@ -26,6 +27,25 @@ namespace CmApp.Repositories
 
             var response = await repo.InsertOneAsync(repair, new DatabaseInsertOneOptions());
             return response;
+        }
+        public async Task InsertMultipleRepairs(List<RepairEntity> repairs)
+        {
+            if (repairs == null)
+            {
+                throw new ArgumentNullException(nameof(repairs), "Cannot insert repairs in db, because repairs is empty");
+            }
+
+            var repo = new CodeMashRepository<RepairEntity>(Client);
+
+            var entities = repairs
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Index / 100)
+                .Select(x => x.Select(v => v.Value).ToList())
+                .ToList();
+
+            foreach(var ent in entities)
+                await repo.InsertManyAsync(ent, new DatabaseInsertManyOptions());
+
         }
 
         public async Task<List<RepairEntity>> GetAllRepairsByCarId(string carId)
@@ -68,6 +88,14 @@ namespace CmApp.Repositories
 
             var response = await repo.DeleteOneAsync(filter);
             return response;
+        }
+        public async Task DeleteMultipleRepairs(string carId)
+        {
+            var repo = new CodeMashRepository<RepairEntity>(Client);
+
+            var filter = Builders<RepairEntity>.Filter.Eq("car", ObjectId.Parse(carId));
+
+            await repo.DeleteManyAsync(filter);
         }
 
         public async Task UpdateRepair(string repairId, RepairEntity repair)

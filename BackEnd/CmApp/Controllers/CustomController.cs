@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using CmApp.Entities;
 using CmApp.Repositories;
+using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,12 @@ namespace CmApp.Controllers
     [ApiController]
     public class CustomController : ControllerBase
     {
-        readonly CarRepository repo = new CarRepository();
+        readonly CarRepository carRepo = new CarRepository();
+        private readonly RepairService repairService = new RepairService
+        {
+            RepairRepository = new RepairRepository(),
+            SummaryRepository = new SummaryRepository()
+        };
 
         // GET: api/Cars
         [HttpGet]
@@ -26,7 +32,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                var cars = await repo.GetAllCars();
+                var cars = await carRepo.GetAllCars();
                 return Ok(cars);
             }
             catch (Exception ex)
@@ -45,7 +51,7 @@ namespace CmApp.Controllers
             try
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var cars = await repo.GetAllUserCars(userId);
+                var cars = await carRepo.GetAllUserCars(userId);
                 var result = new List<object>();
 
                 foreach (var car in cars)
@@ -55,6 +61,28 @@ namespace CmApp.Controllers
                     return Ok(result);
                 else
                     throw new Exception("No cars yet");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        // DELETE: api/ApiWithActions/5
+        [Route("api/cars/{carId}/delete-repairs")]
+        [HttpDelete("{repairId}")]
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> DeleteAllCarRepairs(string carId)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+                var car = await carRepo.GetCarById(carId);
+                if (car.User != userId && role != "admin")
+                    throw new Exception("Car does not exist");
+
+                await repairService.DeleteAllCarRepairs(carId);
+                return Ok();
             }
             catch (Exception ex)
             {

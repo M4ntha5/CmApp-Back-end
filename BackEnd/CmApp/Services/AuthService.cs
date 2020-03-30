@@ -1,5 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Domains;
+using CmApp.Entities;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -14,6 +15,14 @@ namespace CmApp.Services
     public class AuthService : IAuthService
     {
         public IUserRepository UserRepository { get; set; }
+
+        public async Task<UserEntity> Me(string userId)
+        {
+            var user = await UserRepository.GetUserById(userId);
+            if (user == null)
+                throw new BusinessException("No such user");
+            return user;           
+        }
 
         public async Task<string> Register(User user)
         { 
@@ -47,11 +56,11 @@ namespace CmApp.Services
                 {
                     if (user.Role == "user")
                     {
-                        return GenerateDefaultToken(user.Id);
+                        return GenerateDefaultToken(user);
                     }
                     if (user.Role == "admin")
                     {
-                        return GenerateAdminToken(user.Id);
+                        return GenerateAdminToken(user);
                     }
                 }
                 else
@@ -60,7 +69,7 @@ namespace CmApp.Services
             return null;
         }
 
-        public JwtSecurityToken GenerateDefaultToken(string id)
+        public JwtSecurityToken GenerateDefaultToken(UserEntity user)
         {
             Environment.SetEnvironmentVariable("TestUser", "this_is_user_key");
 
@@ -75,7 +84,8 @@ namespace CmApp.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Role, "user"),
-                new Claim(ClaimTypes.NameIdentifier, id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email)
             };
 
             //create token
@@ -90,7 +100,7 @@ namespace CmApp.Services
             return token;
         }
 
-        public JwtSecurityToken GenerateAdminToken(string id)
+        public JwtSecurityToken GenerateAdminToken(UserEntity user)
         {
             Environment.SetEnvironmentVariable("TestAdmin", "this_is_admin_key");
 
@@ -105,7 +115,8 @@ namespace CmApp.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Role, "admin"),
-                new Claim(ClaimTypes.NameIdentifier, id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email)
             };
 
             //create token
