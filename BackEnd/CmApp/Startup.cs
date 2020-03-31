@@ -26,8 +26,8 @@ namespace CmApp
         {
             services.AddCors();
             
-            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
-            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
+           // Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
+           // Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             Environment.SetEnvironmentVariable("TestUser", "this_is_user_key");
             Environment.SetEnvironmentVariable("TestAdmin", "this_is_admin_key");
 

@@ -90,7 +90,7 @@ namespace CmApp.Services
 
             //create token
             var token = new JwtSecurityToken(
-                issuer: "localhost",
+                issuer: "shrouded-ocean-70036.herokuapp.com",
                 audience: "readers",
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: signingCredentials,
@@ -121,7 +121,7 @@ namespace CmApp.Services
 
             //create token
             var token = new JwtSecurityToken(
-                issuer: "localhost",
+                issuer: "shrouded-ocean-70036.herokuapp.com",
                 audience: "readers",
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: signingCredentials,

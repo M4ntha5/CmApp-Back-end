@@ -6,7 +6,7 @@ namespace CmApp.Entities
     public class UserEntity : Entity
     {
         [Field("name")]
-        public string Name { get; set; } = "";
+        public string FirstName { get; set; } = "";
         [Field("email")]
         public string Email { get;set; }
         [Field("password")]

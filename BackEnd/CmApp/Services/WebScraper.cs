@@ -149,6 +149,9 @@ namespace CmApp.Services
             result.OptionFixNestedTags = true;
             result.LoadHtml(source);
 
+            if (result == null)
+                throw new BusinessException("Error getting data from tracking page!");
+
             //check if captcha exists
             var dataSiteKey = result.DocumentNode.Descendants().Where
             (x => (x.Name == "div") && x.Attributes["class"] != null &&
@@ -180,7 +183,7 @@ namespace CmApp.Services
             (x => (x.Name == "tr")).ToList();
 
             if (trs.Count == 0 || trs == null)
-                throw new BusinessException("No tracking info for this car!");
+                throw new BusinessException("There is no tracking information for this car!");
 
             CarRepo = new CarRepository();
             FileRepository = new FileRepository();

@@ -115,7 +115,7 @@ namespace CmApp.Repositories
 
             UpdateDefinition<UserEntity>[] updates =
             {
-                Builders<UserEntity>.Update.Set(x => x.Name, user.Name),
+                Builders<UserEntity>.Update.Set(x => x.FirstName, user.FirstName),
                 Builders<UserEntity>.Update.Set(x => x.Email, user.Email)
             };
 
