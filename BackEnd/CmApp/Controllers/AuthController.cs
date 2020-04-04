@@ -41,10 +41,11 @@ namespace CmApp.Controllers
             try
             {
                 var response = await authService.Register(user);
-                if (response == null)
+
+                if(response)
                     return Ok("Success");
                 else
-                    return BadRequest(response);
+                    return BadRequest(response);                                     
             }
             catch (Exception ex)
             {

@@ -72,9 +72,7 @@ namespace CmApp.Repositories
             if (input.From == "" || input.To == "" || input.Amount < 1)
                 throw new BusinessException("Input data was in incorect format!");
 
-            ExchangeRatesRepository repo = new ExchangeRatesRepository();
-
-            var rates = await repo.GetSelectedExchangeRate(input.From);
+            var rates = await GetSelectedExchangeRate(input.From);
             double result = 0;
             if (rates.Rates.ContainsKey(input.To))
             {
@@ -87,9 +85,7 @@ namespace CmApp.Repositories
 
         public async Task<List<string>> GetAvailableCurrencies()
         {
-            ExchangeRatesRepository repo = new ExchangeRatesRepository();
-
-            var rates = await repo.GetLatestForeignExchanges();
+            var rates = await GetLatestForeignExchanges();
             List<string> names = new List<string>();
             foreach (var rate in rates.Rates)
             {
@@ -105,6 +101,36 @@ namespace CmApp.Repositories
             return names;
         }
 
+        public async Task<List<string>> GetAllCountries()
+        {
+            var url = "https://restcountries.eu/rest/v2/all";
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(url)
+            };
+
+            client.DefaultRequestHeaders.Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadAsStringAsync();
+                dynamic result = JsonConvert.DeserializeObject(responseData);
+                var countries = new List<string>();
+                foreach(var res in result)
+                    countries.Add(Convert.ToString(res.name));
+                
+                client.Dispose();
+                return countries;
+            }
+            else
+            {
+                client.Dispose();
+                return null;
+            }
+        }
 
     }
 }

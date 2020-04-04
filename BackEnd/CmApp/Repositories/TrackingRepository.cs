@@ -8,6 +8,7 @@ using Isidos.CodeMash.ServiceContracts;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CmApp.Repositories
@@ -41,6 +42,19 @@ namespace CmApp.Repositories
                     
                 });
             return response;
+        }
+        public async Task DeleteTrackingImages(string recordId)
+        {
+            var repo = new CodeMashRepository<TrackingEntity>(Client);
+
+            UpdateDefinition<TrackingEntity>[] updates =
+            {
+                Builders<TrackingEntity>.Update.Set("auction_photos", new List<object>()),
+            };
+
+            var update = Builders<TrackingEntity>.Update.Combine(updates);
+
+            await repo.UpdateOneAsync(recordId, update, new DatabaseUpdateOneOptions());
         }
 
         public async Task DeleteCarTracking(string carId)

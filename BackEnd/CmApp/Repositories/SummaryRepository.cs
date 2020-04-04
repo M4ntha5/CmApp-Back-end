@@ -38,14 +38,13 @@ namespace CmApp.Repositories
             return summary;
         }
 
-        public async Task DeleteCarSummary(string carId, string summaryId)
+        public async Task DeleteCarSummary(string carId)
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
 
             FilterDefinition<SummaryEntity>[] filters =
             {
                 Builders<SummaryEntity>.Filter.Eq("car",  BsonObjectId.Create(carId)),
-                Builders<SummaryEntity>.Filter.Eq("_id",  BsonObjectId.Create(summaryId))
             };
 
             var filter = Builders<SummaryEntity>.Filter.And(filters);
@@ -60,7 +59,8 @@ namespace CmApp.Repositories
             var update = Builders<SummaryEntity>.Update
                 .Set("sold", summary.Sold)
                 .Set("sold_price", summary.SoldPrice)
-                .Set("sold_date", DateTime.Now);
+                .Set("sold_date", summary.SoldDate)
+                .Set("sold_within", summary.SoldWithin);
 
             await repo.UpdateOneAsync(
                 summary.Id,

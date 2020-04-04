@@ -11,9 +11,12 @@ namespace CmApp.Repositories
 {
     public class VehicleAPI
     {
-        private readonly string Url = "https://vpic.nhtsa.dot.gov/api/vehicles/getallmakes?format=json";
-        public async Task<CarMakesObject> GetAllMakes()
+        private string Url = "https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/";
+        private const string Format = "?format=json";
+
+        public async Task<List<string>> GetAllMakeModels(string make)
         {
+            Url += make + Format;
 
             HttpClient client = new HttpClient
             {
@@ -29,8 +32,9 @@ namespace CmApp.Repositories
             {
                 var responseData = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<CarMakesObject>(responseData);
+                var models = result.Cars.Select(x => x.ModelName).ToList();
                 client.Dispose();
-                return result;
+                return models;
             }
             else
             {

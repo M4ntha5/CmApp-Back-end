@@ -156,45 +156,18 @@ namespace CmApp.Repositories
                     CollectionName = "cars",
                     UniqueFieldName = "images",                  
                 });
-           /* var filter = new GetFileRequest { FileId = response.Result.Id };
-
-            var url = await filesService.GetFileUrlAsync(filter);
-
-            var repo = new CodeMashRepository<ImagesEntity>(Client);
-
-            var entity = new ImagesEntity { Url = url.Result };
-
-            var insertedImageId = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
-            */
             return response;
         }
 
-      /*  public async Task<UploadRecordFileResponse> UploadImageToCar(string recordId, string fileName)
+        public async Task<List<CarMakes>> GetAllMakes()
         {
-            var filesService = new CodeMashFilesService(Client);
+            var service = new CodeMashRepository<CarMakes>(Client);
 
-            var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var filePath = $"{directory}\\{fileName}";
-
-            using var fsSource = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            var response = await filesService.UploadRecordFileAsync(fsSource, recordId+"_image.png",
-                new UploadRecordFileRequest
-                {
-                    CollectionName = "cars",
-                    UniqueFieldName = "images",
-                    RecordId = recordId
-                });
-            return response;
+            var makes = await service.FindAsync(
+                x => true,
+                new DatabaseFindOptions()
+            );
+            return makes.Items;
         }
-        */
-       /* public async Task AddImageToCar(string carId, Image img)
-        {
-            var repo = new CodeMashRepository<CarEntity>(Client);
-
-            var result = await repo.UpdateOneAsync(x => x.Id == carId,
-                       Builders<CarEntity>.Update.AddToSet($"images", img), null);
-
-        }*/
-
     }
 }

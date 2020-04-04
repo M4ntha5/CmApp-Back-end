@@ -17,29 +17,47 @@ namespace CmApp.Controllers
     [ApiController]
     public class CustomController : ControllerBase
     {
-        readonly CarRepository carRepo = new CarRepository();
+        private readonly CarRepository carRepo = new CarRepository();
+        private readonly VehicleAPI vehicleAPI = new VehicleAPI();
         private readonly RepairService repairService = new RepairService
         {
             RepairRepository = new RepairRepository(),
             SummaryRepository = new SummaryRepository()
         };
 
-        // GET: api/Cars
+
         [HttpGet]
-        [Route("/api/all-cars")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetAllCars()
+        [Route("/api/makes")]
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> GetAllMakes()
         {
             try
             {
-                var cars = await carRepo.GetAllCars();
-                return Ok(cars);
+                var makes = await carRepo.GetAllMakes();
+                List<string> namesOnly = makes.Select(x => x.Name).ToList();
+                namesOnly.Sort();
+                return Ok(namesOnly);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
+        }
+        [HttpGet]
+        [Route("/api/makes/{makeName}/models")]
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> GetAllMakeModels(string makeName)
+        {
+            try
+            {
+                var makes = await vehicleAPI.GetAllMakeModels(makeName);
+                makes.Sort();
+                return Ok(makes);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/Custom
@@ -53,9 +71,8 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var cars = await carRepo.GetAllUserCars(userId);
                 var result = new List<object>();
-
                 foreach (var car in cars)
-                    result.Add(new { id = car.Id, name = car.Make + " " + car.Model });
+                    result.Add(new { value = car.Id, text = car.Make + " " + car.Model });
 
                 if (result.Count != 0)
                     return Ok(result);
@@ -120,6 +137,22 @@ namespace CmApp.Controllers
                     imgs.Add(base64);
                 }
                 return Ok(imgs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Route("api/countries")]
+        [Authorize(Roles = "user, admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetCountries()
+        {
+            try
+            {
+                ExchangeRatesRepository repo = new ExchangeRatesRepository();
+                var countries = await repo.GetAllCountries();
+                return Ok(countries);
             }
             catch (Exception ex)
             {

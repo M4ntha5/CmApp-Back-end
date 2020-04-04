@@ -10,7 +10,7 @@ namespace CmApp.Contracts
 {
     public interface IAuthService
     {
-        Task<string> Register(User user);
+        Task<bool> Register(User user);
         Task<JwtSecurityToken> Login(User userData);
         JwtSecurityToken GenerateDefaultToken(UserEntity user);
         JwtSecurityToken GenerateAdminToken(UserEntity user);

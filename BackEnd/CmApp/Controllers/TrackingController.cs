@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -14,14 +15,14 @@ namespace CmApp.Controllers
     [ApiController]
     public class TrackingController : ControllerBase
     {
-        private readonly TrackingService trackingService = new TrackingService()
+        private readonly ITrackingService trackingService = new TrackingService()
         {
             TrackingRepository = new TrackingRepository(),
             CarRepository = new CarRepository(),
-            ScraperService = new WebScraper(),
+            ScraperService = new ScraperService(),
             FileRepository = new FileRepository()
         };
-        private readonly CarRepository carRepo = new CarRepository();
+        private readonly ICarRepository carRepo = new CarRepository();
 
         // GET: api/cars/{carId}/tracking
         [HttpGet]
@@ -37,6 +38,8 @@ namespace CmApp.Controllers
                     throw new Exception("Car does not exist");
 
                 var tracking = await trackingService.GetTracking(carId);
+                if (tracking == null)
+                    throw new BusinessException("There is no tracking info yet");
                 return Ok(tracking);
             }
             catch (Exception ex)
@@ -58,7 +61,29 @@ namespace CmApp.Controllers
                 if (car.User != userId && role != "admin")
                     throw new Exception("Car does not exist");
 
-                var newTracking = await trackingService.LookForTracking(carId);
+                var newTracking = await trackingService.LookForTrackingData(carId);
+                return Ok(newTracking);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        // POST: api/cars/{carId}/trackingImages
+        [HttpGet]
+        [Route("/api/cars/{carId}/tracking-images")]
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> GetTrackingImages(string carId)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+                var car = await carRepo.GetCarById(carId);
+                if (car.User != userId && role != "admin")
+                    throw new Exception("Car does not exist");
+
+                var newTracking = await trackingService.LookForTrackingImages(carId);
                 return Ok(newTracking);
             }
             catch (Exception ex)

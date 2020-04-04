@@ -12,9 +12,10 @@ namespace CmApp.Services
     public class CarService : ICarService
     {
         public ICarRepository CarRepository { get; set; }
-        public IWebScraper WebScraper { get; set; }
+        public IScraperService WebScraper { get; set; }
         public ISummaryRepository SummaryRepository { get; set; }
         public IFileRepository FileRepository { get; set; }
+        public ITrackingRepository TrackingRepository { get; set; }
 
         private async Task<CarEntity> InsertCarDetailsFromScraperBMW(CarEntity car)
         {
@@ -63,8 +64,13 @@ namespace CmApp.Services
                 carEntity.Drive = "Rear wheel drive";
             else if (carEntity.Drive == "ALLR")
                 carEntity.Drive = "All wheel drive";
+            //making first letter upper
+            if (carEntity.BodyType.ToLower().Contains("Coup".ToLower()))
+                carEntity.BodyType = "Coupe";
+            else if (carEntity.BodyType == "SAV")
+                carEntity.BodyType = "SUV";
 
-            //matching equipment to entity
+
             var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make);
             var equipment = new List<Equipment>();
 
@@ -103,6 +109,8 @@ namespace CmApp.Services
                 var imgName = "Default-image.jpg";
                 await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
             }
+            //inserts empty tracking 
+            await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
 
         }
@@ -135,6 +143,17 @@ namespace CmApp.Services
                 else if (param.Key == "Upholstery")
                     carEntity.Interior = param.Value;
             }
+            if (carEntity.Drive == "HECK")
+                carEntity.Drive = "Rear wheel drive";
+            else if (carEntity.Drive == "ALLR")
+                carEntity.Drive = "All wheel drive";
+            //making first letter upper
+            if (carEntity.BodyType.ToLower().Contains("coup"))
+                carEntity.BodyType = "Coupe";
+            else if (carEntity.BodyType == "SAV")
+                carEntity.BodyType = "SUV";
+            else if (carEntity.BodyType.ToLower().Contains("lim"))
+                carEntity.BodyType = "Limousine";
 
             //matching equipment to entity
             var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make);
@@ -175,7 +194,8 @@ namespace CmApp.Services
                 var imgName = "Default-image.jpg";
                 await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
             }
-
+            //inserts empty tracking 
+            await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
 
         }
@@ -214,6 +234,8 @@ namespace CmApp.Services
                 var imgName = "Default-image.jpg";
                 await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
             }
+            //inserts empty tracking 
+            await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
         }
 
@@ -221,9 +243,9 @@ namespace CmApp.Services
         {
             if (car.Make == null || car.Make == "")
                 throw new BusinessException("Make not defined");
-            if (car.Make == "BMW")
+            if (car.Make == "BMW" && car.Model == "")
                 return await InsertCarDetailsFromScraperBMW(car);
-            else if (car.Make == "Mercedes-benz")
+            else if (car.Make == "Mercedes-benz" && car.Model == "")
                 return await InsertCarDetailsFromScraperMB(car);
             else
                 return await InsertOtherCar(car);
@@ -241,8 +263,7 @@ namespace CmApp.Services
         {
             var cars = await CarRepository.GetAllUserCars(userid);
             if (cars.Count == 0)
-                //throw new HttpResponseException() { Value = "You do not have any cars yet!" };
-                throw new BusinessException("You do not have any cars yet!");
+                return cars;
 
             foreach (var car in cars)
             {

@@ -1,5 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace CmApp.Services
         public ITrackingRepository TrackingRepository { get; set; }
         public ICarRepository CarRepository { get; set; }
         public IFileRepository FileRepository { get; set; }
-        public IWebScraper ScraperService { get; set; }
+        public IScraperService ScraperService { get; set; }
 
         public async Task DeleteTracking(string carId)
         {
@@ -26,7 +27,7 @@ namespace CmApp.Services
         {
             var tracking = await TrackingRepository.GetTrackingByCar(carId);
                 
-            if (tracking != null)
+            if (tracking != null && tracking.AuctionImages != null && tracking.AuctionImages.Count > 0)
             {
                 //fetching only first image
                 var fileInfo = FileRepository.GetFileId(tracking.AuctionImages[0]);
@@ -56,11 +57,25 @@ namespace CmApp.Services
             return newTracking;
         }
 
-        public async Task<TrackingEntity> LookForTracking(string carId)
+        public async Task<TrackingEntity> LookForTrackingData(string carId)
         {
             var car = await CarRepository.GetCarById(carId);
-            var tracking = await ScraperService.TrackingScraper(car.Vin);
-            return tracking;
+            var tracking = await TrackingRepository.GetTrackingByCar(carId);
+            if (tracking == null)
+                tracking = await TrackingRepository.InsertTracking(new TrackingEntity { Car = carId });
+           
+            var updatedTracking = await ScraperService.TrackingScraper(car, tracking.Id);
+            return updatedTracking;
+        }
+        public async Task<List<string>> LookForTrackingImages(string carId)
+        {
+            var car = await CarRepository.GetCarById(carId);
+            var tracking = await TrackingRepository.GetTrackingByCar(carId);
+            if (tracking == null)
+                throw new BusinessException("Tracking images for this car not found. Try again later");
+            
+            var trackingImages = await ScraperService.DownloadAllTrackingImages(car, tracking);
+            return trackingImages;
         }
     }
 }

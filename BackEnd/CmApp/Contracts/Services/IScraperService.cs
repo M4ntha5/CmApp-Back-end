@@ -1,15 +1,14 @@
 ﻿using CmApp.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Contracts
 {
-    public interface IWebScraper
+    public interface IScraperService
     {
         Dictionary<string, string> GetVehicleInfo(string vin, string make);
         Dictionary<string, string> GetVehicleEquipment(string vin, string make);
-        Task<TrackingEntity> TrackingScraper(string vin);
+        Task<TrackingEntity> TrackingScraper(CarEntity car, string trackingId);
+        Task<List<string>> DownloadAllTrackingImages(CarEntity car, TrackingEntity tracking);
     }
 }

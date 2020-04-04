@@ -14,13 +14,13 @@ namespace CarsTests
     class CarServiceTests
     {
         ICarRepository carMock;
-        IWebScraper scraperMock;
+        IScraperService scraperMock;
 
         [SetUp]
         public void Setup()
         {
             carMock = Substitute.For<ICarRepository>();
-            scraperMock = Substitute.For<IWebScraper>();
+            scraperMock = Substitute.For<IScraperService>();
         }
 
         [Test]

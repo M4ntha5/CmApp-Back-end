@@ -20,10 +20,15 @@ namespace CmApp.Services
             return newUser;
         }
 
-        public async Task<UserEntity> GetSelecteduser(string userId)
+        public async Task<UserDetails> GetSelectedUser(string userId)
         {
             var user = await UserRepository.GetUserById(userId);
-            return user;
+            var userDetails = new UserDetails
+            {
+                Email = user.Email,
+                FirstName = user.FirstName
+            };
+            return userDetails;
         }
 
         public async Task<List<UserEntity>> GetAllUsers()
@@ -44,10 +49,18 @@ namespace CmApp.Services
             return users;
         }
 
-        public async Task UpdateUserDetails(string userId, UserEntity user)
+        public async Task UpdateUserDetails(string userId, UserDetails user)
         {
-            user.Id = userId;
-            await UserRepository.UpdateUser(user);
+            var entity = new UserEntity
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                BornDate = user.BornDate,
+                Country = user.Country,
+                Sex = user.Sex,
+                Id = userId
+            };
+            await UserRepository.UpdateUser(entity);
         }
 
 

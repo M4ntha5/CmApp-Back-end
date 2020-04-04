@@ -27,14 +27,13 @@ namespace ExchangeRates
             Assert.AreNotEqual(0, result.Count);
         }
 
-     /*   [Test]
-        public async Task GetSelected()
+        [Test]
+        public async Task GetAllCountries()
         {
             var repo = new ExchangeRatesRepository();
 
-           // var result = await repo.CalculateResult("USD");
+            await repo.GetAllCountries();
 
-            //Assert.AreEqual(1, result.Rates.Count);
-        }*/
+        }
     }
 }

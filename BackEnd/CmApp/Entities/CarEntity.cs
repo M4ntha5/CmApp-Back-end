@@ -20,25 +20,25 @@ namespace CmApp.Entities
         [Field("manufacture_date")]
         public DateTime ManufactureDate { get; set; }
         [Field("series")]
-        public string Series { get; set; } = string.Empty;
+        public string Series { get; set; } = "";
         [Field("body_type")]
-        public string BodyType { get; set; } = string.Empty;
+        public string BodyType { get; set; } = "";
         [Field("steering")]
-        public string Steering { get; set; } = string.Empty;
+        public string Steering { get; set; } = "";
         [Field("engine")]
-        public string Engine { get; set; } = string.Empty;
+        public string Engine { get; set; } = "";
         [Field("displacement")]
-        public double Displacement { get; set; } = 0;
+        public double Displacement { get; set; }
         [Field("power")]
-        public string Power { get; set; } = string.Empty;
+        public string Power { get; set; } = "";
         [Field("drive")]
-        public string Drive { get; set; } = string.Empty;
+        public string Drive { get; set; } = "";
         [Field("transmission")]
-        public string Transmission { get; set; } = string.Empty;
+        public string Transmission { get; set; } = "";
         [Field("color")]
-        public string Color { get; set; } = string.Empty;
+        public string Color { get; set; } = "";
         [Field("interior")]
-        public string Interior { get; set; } = string.Empty;
+        public string Interior { get; set; } = "";
         [Field("equipment")]
         public List<Equipment> Equipment { get; set; } = new List<Equipment>();
         [Field("images")]

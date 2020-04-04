@@ -30,7 +30,7 @@ namespace CmApp.Services
             return repairs;
         }
         public async Task InsertCarRepairs(string carId, List<RepairEntity> repairs)
-        {
+        {           
             repairs.ForEach(x => x.Car = carId);
             var repairsTotal = repairs.Sum(x => x.Price);
             

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -17,9 +18,10 @@ namespace CmApp.Controllers
         private readonly CarService carService = new CarService()
         {
             CarRepository = new CarRepository(),
-            WebScraper = new WebScraper(),
+            WebScraper = new ScraperService(),
             SummaryRepository = new SummaryRepository(),
             FileRepository = new FileRepository(),
+            TrackingRepository = new TrackingRepository()
         };
 
         // GET: api/Cars
