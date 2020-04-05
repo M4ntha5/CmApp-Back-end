@@ -26,7 +26,12 @@ namespace CmApp.Services
             var userDetails = new UserDetails
             {
                 Email = user.Email,
-                FirstName = user.FirstName
+                FirstName = user.FirstName,
+                BornDate = user.BornDate,
+                Country = user.Country,
+                Currency = user.Currency,
+                LastName = user.LastName,
+                Sex = user.Sex
             };
             return userDetails;
         }
