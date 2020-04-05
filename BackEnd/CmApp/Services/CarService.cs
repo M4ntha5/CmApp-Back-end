@@ -287,6 +287,21 @@ namespace CmApp.Services
             if (car.User != userId)
                 throw new BusinessException("Car does not exist");
             await CarRepository.UpdateCar(carId, car);
+            await CarRepository.DeleteAllCarImages(carId);
+
+            if(car.Base64images.Count > 0)
+            {
+                int counter = 1;
+                foreach(var img in car.Base64images)
+                {
+                    var image = img.Split(",")[1];
+                    var bytes = FileRepository.Base64ToByteArray(image);
+                    var imageName = carId + "_image" + counter + ".png";
+                    await CarRepository.UploadImageToCar(carId, bytes, imageName);
+                    counter++;
+                }
+            }
+            
         }
         public async Task<List<CarEntity>> GetAllCars()
         {
@@ -318,7 +333,7 @@ namespace CmApp.Services
 
             car.ManufactureDate = car.ManufactureDate.Date;
 
-            if (car.Images.Count != 0)
+            /*if (car.Images.Count != 0)
             {
                 //fetching only first image
                 var fileInfo = FileRepository.GetFileId(car.Images[0]);
@@ -337,7 +352,7 @@ namespace CmApp.Services
                 base64 = "data:" + fileType + ";base64," + base64;
 
                 car.Base64images.Add(base64);
-            }
+            }*/
             return car;
         }
 

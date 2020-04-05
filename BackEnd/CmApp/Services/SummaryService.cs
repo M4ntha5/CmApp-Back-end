@@ -24,9 +24,15 @@ namespace CmApp.Services
             var time = summary.SoldDate.Subtract(summary.CreatedAt);
             string message;
             if (time.Days > 0)
-                message = $"Sold within {time.Days} days";
+                if(time.Days == 1)
+                    message = $"Sold within {time.Days} day";
+                else
+                    message = $"Sold within {time.Days} days";
             else
-                message = $"Sold within {time.Hours} days";
+                if(time.Hours == 1)
+                    message = $"Sold within {time.Hours} hour";
+                else
+                    message = $"Sold within {time.Hours} hours";
 
             summary.SoldWithin = message;
             var oldSummary = await GetSummaryByCarId(carId);
@@ -36,7 +42,7 @@ namespace CmApp.Services
 
         public async Task<SummaryEntity> GetSummaryByCarId(string carId)
         {
-            var summary = await SummaryRepository.GetSummaryByCarId(carId);
+            var summary = await SummaryRepository.GetSummaryByCarId(carId);       
 
             return summary;
         }

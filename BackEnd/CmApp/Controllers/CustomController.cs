@@ -110,15 +110,15 @@ namespace CmApp.Controllers
         [Route("api/get-images")]
         [Authorize(Roles = "user, admin")]
         [HttpPost]
-        public async Task<IActionResult> GetImages([FromBody] List<object> images)
+        public async Task<IActionResult> GetImages([FromBody] object image)
         {
             try
             {
                 FileRepository fileRepo = new FileRepository();
                 List<string> imgs = new List<string>();
                 //images.RemoveAt(0);
-                foreach (var image in images)
-                {
+                //foreach (var image in images)
+                //{
                     var fileInfo = fileRepo.GetFileId(image);
 
                     var fileId = fileInfo.Item1;
@@ -134,9 +134,9 @@ namespace CmApp.Controllers
 
                     base64 = "data:" + fileType + ";base64," + base64;
 
-                    imgs.Add(base64);
-                }
-                return Ok(imgs);
+                   // imgs.Add(base64);
+               // }
+                return Ok(base64);
             }
             catch (Exception ex)
             {

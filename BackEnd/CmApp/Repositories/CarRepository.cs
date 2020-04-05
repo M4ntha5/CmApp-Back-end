@@ -158,6 +158,18 @@ namespace CmApp.Repositories
                 });
             return response;
         }
+        public async Task DeleteAllCarImages(string recordId)
+        {
+            var repo = new CodeMashRepository<CarEntity>(Client);
+
+            UpdateDefinition<CarEntity>[] updates =
+            {
+                Builders<CarEntity>.Update.Set("images", new List<object>()),
+            };
+            var update = Builders<CarEntity>.Update.Combine(updates);
+
+            await repo.UpdateOneAsync(recordId, update, new DatabaseUpdateOneOptions());
+        }
 
         public async Task<List<CarMakes>> GetAllMakes()
         {
