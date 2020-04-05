@@ -15,14 +15,14 @@ namespace Cars.Integration
     {
         CarRepository carRepo;
         CarService carService;
-        WebScraper scraperService;
+        ScraperService scraperService;
         [SetUp]
         public void Setup()
         {
             Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
             Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             carRepo = new CarRepository();
-            scraperService = new WebScraper();
+            scraperService = new ScraperService();
             carService = new CarService()
             {
                 CarRepository = carRepo,
@@ -98,7 +98,7 @@ namespace Cars.Integration
         [Test]
         public async Task TestGetCarById()
         {
-            var service = new CarService() { CarRepository = carRepo, WebScraper = new WebScraper() };
+            var service = new CarService() { CarRepository = carRepo, WebScraper = new ScraperService() };
 
             var carid = "5e4c2d3bc0ae17000119da0b";
             var car = await service.GetCarById(carid);
@@ -108,7 +108,7 @@ namespace Cars.Integration
         [Test]
         public async Task TestGetCarByVin()
         {
-            var service = new CarService() { CarRepository = carRepo, WebScraper = new WebScraper() };
+            var service = new CarService() { CarRepository = carRepo, WebScraper = new ScraperService() };
             var repo = new CarRepository();
 
             var vin = "WDDLJ7EB1CA031646";

@@ -17,7 +17,8 @@ namespace CmApp.Controllers
         private readonly ShippingService shippingService = new ShippingService
         {
             ShippingRepository = new ShippingRepository(),
-            SummaryRepository = new SummaryRepository()
+            SummaryRepository = new SummaryRepository(),
+            ExchangeRepository = new ExchangeRatesRepository()
         };
         private readonly CarRepository carRepo = new CarRepository();
 

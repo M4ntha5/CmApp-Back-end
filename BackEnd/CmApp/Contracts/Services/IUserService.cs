@@ -10,10 +10,10 @@ namespace CmApp.Contracts
     public interface IUserService
     {
         Task<UserEntity> InsertNewUser(User user);
-        Task<UserEntity> GetSelecteduser(string userId);
+        Task<UserDetails> GetSelectedUser(string userId);
         Task<List<UserEntity>> GetAllUsers();
         Task<List<UserEntity>> GetAllBlockedUsers();
         Task<List<UserEntity>> GetAllUnblockedUsers();
-        Task UpdateUserDetails(string userId, UserEntity user);
+        Task UpdateUserDetails(string userId, UserDetails user);
     }
 }

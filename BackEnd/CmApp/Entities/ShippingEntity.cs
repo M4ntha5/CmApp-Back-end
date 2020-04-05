@@ -15,5 +15,12 @@ namespace CmApp.Entities
         public double TransportationFee { get; set; } = 0;
         [Field("car")]
         public string Car { get; set; }
+
+        public string BaseCurrency { get; set; }
+        public string CustomsCurrency { get; set; }
+        public string AuctionFeeCurrency { get; set; }
+        public string TransferFeeCurrency { get; set; }
+        public string TransportationFeeCurrency { get; set; }
+       
     }
 }

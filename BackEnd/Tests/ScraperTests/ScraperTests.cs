@@ -15,7 +15,7 @@ namespace ScraperTests
     public class ScraperTests
     {
         string Vin = string.Empty;
-        WebScraper scraperService;
+        ScraperService scraperService;
 
         [SetUp]
         public void Setup()
@@ -23,12 +23,7 @@ namespace ScraperTests
             Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
             Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             Vin = "wba3b1g58ens79736";
-            scraperService = new WebScraper
-            {
-                CarRepo = new CarRepository(),
-                FileRepository = new FileRepository(),
-                TrackingRepo = new TrackingRepository()
-            };
+            scraperService = new ScraperService();
         }
 
         [Test]
@@ -50,12 +45,15 @@ namespace ScraperTests
         [Test]
         public async Task TestTrackingScraper()
         {
+            var repo = new CarRepository();
+
             var vin = "WBA7E2C37HG740629";
             vin = "wba3n9c56ek245582";
             //vin = "WBS1J5C56JVD36905";
             //vin = "WBA3A9G51FNT09002";
 
-            await scraperService.TrackingScraper(vin);
+            var cars = await repo.GetAllCars();
+            await scraperService.TrackingScraper(cars[0]);
 
         }
 
@@ -70,7 +68,7 @@ namespace ScraperTests
                 CarRepository = new CarRepository(),
                 FileRepository = new FileRepository(),
                 SummaryRepository = new SummaryRepository(),
-                WebScraper = new WebScraper()
+                WebScraper = new ScraperService()
             };
 
             var car = new CarEntity()

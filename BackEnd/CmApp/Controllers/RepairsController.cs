@@ -111,9 +111,9 @@ namespace CmApp.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{repairId}")]
+        [HttpDelete()]
         [Authorize(Roles = "user, admin")]
-        public async Task<IActionResult> Delete(string carId, string repairId)
+        public async Task<IActionResult> Delete(string carId)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace CmApp.Controllers
                 if (car.User != userId && role != "admin")
                     throw new Exception("Car does not exist");
 
-                await repairService.DeleteSelectedCarRepair(carId, repairId);
+                await repairService.DeleteAllCarRepairs(carId);
                 return NoContent();
             }
             catch (Exception ex)

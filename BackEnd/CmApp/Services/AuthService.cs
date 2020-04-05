@@ -24,17 +24,15 @@ namespace CmApp.Services
             return user;           
         }
 
-        public async Task<string> Register(User user)
+        public async Task<bool> Register(User user)
         { 
             var response = await UserRepository.GetUserByEmail(user.Email);
             if (response != null)
-            {
                 throw new BusinessException("User with this email already exists!");
-            }
 
-            await UserRepository.InsertUser(user);
+            var insertedUser = await UserRepository.InsertUser(user);
 
-            return null;
+            return insertedUser == null ? false : true;
         }
 
         public async Task<JwtSecurityToken> Login(User userData)
@@ -85,12 +83,13 @@ namespace CmApp.Services
             {
                 new Claim(ClaimTypes.Role, "user"),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.UserData, user.Currency)
             };
 
             //create token
             var token = new JwtSecurityToken(
-                issuer: "localhost",
+                issuer: "shrouded-ocean-70036.herokuapp.com",
                 audience: "readers",
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: signingCredentials,
@@ -116,12 +115,13 @@ namespace CmApp.Services
             {
                 new Claim(ClaimTypes.Role, "admin"),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.UserData, user.Currency)
             };
 
             //create token
             var token = new JwtSecurityToken(
-                issuer: "localhost",
+                issuer: "shrouded-ocean-70036.herokuapp.com",
                 audience: "readers",
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: signingCredentials,

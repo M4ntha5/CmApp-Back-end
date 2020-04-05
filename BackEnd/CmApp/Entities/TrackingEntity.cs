@@ -7,15 +7,15 @@ namespace CmApp.Entities
     public class TrackingEntity : Entity
     {
         [Field("container_number")]
-        public string ContainerNumber { get; set; }
+        public string ContainerNumber { get; set; } = "";
         [Field("booking_number")]
-        public string BookingNumber { get; set; }
+        public string BookingNumber { get; set; } = "";
         [Field("url")]
-        public string Url { get; set; }
+        public string Url { get; set; } = "";
         [Field("car")]
-        public string Car { get; set; }
+        public string Car { get; set; } = "";
         [Field("auction_photos")]
-        public List<object> AuctionImages { get; set; }
+        public List<object> AuctionImages { get; set; } = new List<object>();
         public List<string> Base64images { get; set; } = new List<string>();
 
     }

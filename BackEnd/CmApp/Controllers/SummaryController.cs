@@ -16,7 +16,8 @@ namespace CmApp.Controllers
     {
         private readonly SummaryService summaryService = new SummaryService()
         {
-            SummaryRepository = new SummaryRepository()
+            SummaryRepository = new SummaryRepository(),
+            ExchangeRepository = new ExchangeRatesRepository(),
         };
         private readonly CarRepository carRepo = new CarRepository();
 
@@ -87,9 +88,9 @@ namespace CmApp.Controllers
         }
 
         // DELETE: /api/cars/{carId}/summary/{id}
-        [HttpDelete("{summaryId}")]
+        [HttpDelete]
         [Authorize(Roles = "user, admin")]
-        public async Task<IActionResult> Delete(string carId, string summaryId)
+        public async Task<IActionResult> Delete(string carId)
         {
             try
             {
@@ -99,7 +100,7 @@ namespace CmApp.Controllers
                 if (car.User != userId && role != "admin")
                     throw new Exception("Car does not exist");
 
-                await summaryService.DeleteSummary(carId, summaryId);
+                await summaryService.DeleteSummary(carId);
                 return NoContent();
             }
             catch (Exception ex)

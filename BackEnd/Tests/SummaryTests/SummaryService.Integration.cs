@@ -67,7 +67,7 @@ namespace Summary.Integration
         [Test]
         public async Task DeleteSummary()
         {
-            await serviceRepo.DeleteSummary(carId, summaryId);
+            await serviceRepo.DeleteSummary(carId);
         }
     }
 }

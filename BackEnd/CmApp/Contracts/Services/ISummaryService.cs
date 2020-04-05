@@ -8,7 +8,7 @@ namespace CmApp.Contracts
 {
     public interface ISummaryService
     {
-        Task DeleteSummary(string carId, string summaryId);
+        Task DeleteSummary(string carId);
         Task UpdateSoldSummary(string carId, SummaryEntity summary);
         Task<SummaryEntity> GetSummaryByCarId(string carId);
         Task<SummaryEntity> InsertCarSummary(string carId, SummaryEntity summary);

@@ -16,5 +16,6 @@ namespace CmApp.Contracts
         Task<UploadRecordFileResponse> UploadImageToCar(string recordId, byte[] bytes, string imgName);
         Task<CarEntity> GetCarByVin(string vin);
         Task<List<CarDisplay>> GetAllUserCars(string userId);
+        Task DeleteAllCarImages(string recordId);
     }
 }
