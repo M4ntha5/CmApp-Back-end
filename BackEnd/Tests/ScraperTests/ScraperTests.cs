@@ -52,8 +52,10 @@ namespace ScraperTests
             //vin = "WBS1J5C56JVD36905";
             //vin = "WBA3A9G51FNT09002";
 
+            var trackingId = "asd";
+
             var cars = await repo.GetAllCars();
-            await scraperService.TrackingScraper(cars[0]);
+            await scraperService.TrackingScraper(cars[0], trackingId);
 
         }
 

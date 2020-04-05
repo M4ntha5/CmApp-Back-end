@@ -25,7 +25,8 @@ namespace CmApp.Services
         }
 
         public async Task<bool> Register(User user)
-        { 
+        {
+            user.Email = user.Email.ToLower();
             var response = await UserRepository.GetUserByEmail(user.Email);
             if (response != null)
                 throw new BusinessException("User with this email already exists!");
@@ -37,6 +38,7 @@ namespace CmApp.Services
 
         public async Task<JwtSecurityToken> Login(User userData)
         {
+            userData.Email = userData.Email.ToLower();
             var user = await UserRepository.GetUserByEmail(userData.Email);
 
             if (user != null && user.Id != null)

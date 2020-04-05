@@ -21,7 +21,6 @@ namespace Shipping.Integration
             {
                 ShippingRepository = new ShippingRepository(),
                 SummaryRepository = new SummaryRepository(),
-                ExchangesRepository = new ExchangeRatesRepository()
             };
         }
 
