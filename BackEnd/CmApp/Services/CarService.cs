@@ -300,8 +300,7 @@ namespace CmApp.Services
                     await CarRepository.UploadImageToCar(carId, bytes, imageName);
                     counter++;
                 }
-            }
-            
+            }         
         }
         public async Task<List<CarEntity>> GetAllCars()
         {

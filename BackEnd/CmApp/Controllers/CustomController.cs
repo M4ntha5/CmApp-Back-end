@@ -107,7 +107,7 @@ namespace CmApp.Controllers
             }
         }
 
-        [Route("api/get-images")]
+        [Route("api/get-image")]
         [Authorize(Roles = "user, admin")]
         [HttpPost]
         public async Task<IActionResult> GetImages([FromBody] object image)

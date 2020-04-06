@@ -27,7 +27,7 @@ namespace CmApp.Services
         {
             var tracking = await TrackingRepository.GetTrackingByCar(carId);
                 
-            if (tracking != null && tracking.AuctionImages != null && tracking.AuctionImages.Count > 0)
+            /*if (tracking != null && tracking.AuctionImages != null && tracking.AuctionImages.Count > 0)
             {
                 //fetching only first image
                 var fileInfo = FileRepository.GetFileId(tracking.AuctionImages[0]);
@@ -46,7 +46,7 @@ namespace CmApp.Services
                 base64 = "data:" + fileType + ";base64," + base64;
 
                 tracking.Base64images.Add(base64);
-            }
+            }*/
 
             return tracking;
         }
