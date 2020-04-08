@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CmApp.Contracts;
@@ -92,6 +93,22 @@ namespace CmApp.Controllers
             }
         }
 
+        [Route("/api/cars/{carId}/tracking/download-images")]
+        [Authorize(Roles = "user, admin")]
+        [HttpPost]
+        public async Task<IActionResult> DownloadImages(string carId, [FromBody] List<string> images)
+        {
+            try
+            {
+                await trackingService.DownloadTrackingImages(carId, images);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // PUT: api/cars/{carId}/tracking/
         [HttpPut]
         [Authorize(Roles = "user, admin")]
@@ -135,5 +152,7 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
     }
 }

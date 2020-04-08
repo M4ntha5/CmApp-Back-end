@@ -74,8 +74,16 @@ namespace CmApp.Services
             if (tracking == null)
                 throw new BusinessException("Tracking images for this car not found. Try again later");
             
-            var trackingImages = await ScraperService.DownloadAllTrackingImages(car, tracking);
+            var trackingImages = await ScraperService.GetTrackingImagesUrls(car);
             return trackingImages;
+        }
+        public async Task DownloadTrackingImages(string carId, List<string> urls)
+        {
+            var tracking = await TrackingRepository.GetTrackingByCar(carId);
+            if (tracking == null)
+                throw new BusinessException("Tracking images for this car not found. Try again later");
+
+            await ScraperService.DownloadAllTrackingImages(tracking, urls);
         }
     }
 }

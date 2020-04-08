@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -158,6 +159,6 @@ namespace CmApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }     
     }
 }

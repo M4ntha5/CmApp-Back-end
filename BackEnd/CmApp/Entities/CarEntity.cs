@@ -18,7 +18,7 @@ namespace CmApp.Entities
         [Field("created_at")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
         [Field("manufacture_date")]
-        public DateTime ManufactureDate { get; set; }
+        public DateTime ManufactureDate { get; set; } = DateTime.MinValue;
         [Field("series")]
         public string Series { get; set; } = "";
         [Field("body_type")]
@@ -28,7 +28,7 @@ namespace CmApp.Entities
         [Field("engine")]
         public string Engine { get; set; } = "";
         [Field("displacement")]
-        public double Displacement { get; set; }
+        public double Displacement { get; set; } = 0;
         [Field("power")]
         public string Power { get; set; } = "";
         [Field("drive")]

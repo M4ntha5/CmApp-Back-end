@@ -184,20 +184,42 @@ namespace CmApp.Services
                     throw new BusinessException("There is no tracking information for this car!");
                 //------------------------------------------------------------
 
-                var bookingNr = trs[11].ChildNodes[3].InnerText;
-                var containerNr = trs[12].ChildNodes[3].InnerText;
                 var trackingUrl = trs[13].ChildNodes[3].OuterHtml;
                 var url = trackingUrl.Split("\"")[1];
 
                 //insert tracking info here          
                 var trackingEntity = new TrackingEntity()
                 {
-                    BookingNumber = bookingNr,
-                    ContainerNumber = containerNr,
+                    Vin = trs[0].ChildNodes[3].InnerText,
+                    Year = int.Parse(trs[1].ChildNodes[3].InnerText),
+                    Make = trs[2].ChildNodes[3].InnerText,
+                    Model = trs[3].ChildNodes[3].InnerText,
+                    Title = trs[4].ChildNodes[3].InnerText,
+                    State = trs[5].ChildNodes[3].InnerText,
+                    Status = trs[6].ChildNodes[3].InnerText,
+                    DateReceived = DateTime.Parse(trs[7].ChildNodes[3].InnerText),
+                    DateOrdered = DateTime.Parse(trs[8].ChildNodes[3].InnerText),
+                    Branch = trs[9].ChildNodes[3].InnerText,
+                    ShippingLine = trs[10].ChildNodes[3].InnerText,
+
+                    BookingNumber = trs[11].ChildNodes[3].InnerText,
+                    ContainerNumber = trs[12].ChildNodes[3].InnerText,
                     Url = url,
+
+                    FinalPort = trs[14].ChildNodes[3].InnerText,
+                    DatePickedUp = DateTime.Parse(trs[15].ChildNodes[3].InnerText),
+                    Color = trs[16].ChildNodes[3].InnerText,
+                    Damage = trs[17].ChildNodes[3].InnerText,
+                    Condition = trs[18].ChildNodes[3].InnerText,
+                    Keys = trs[19].ChildNodes[3].InnerText,
+                    Running = trs[20].ChildNodes[3].InnerText,
+                    Wheels = trs[21].ChildNodes[3].InnerText,
+                    AirBag = trs[22].ChildNodes[3].InnerText,
+                    Radio = trs[23].ChildNodes[3].InnerText,
+
                     Car = car.Id,
-                    AuctionImages = new List<object>()
                 };
+                
                 await TrackingRepo.UpdateCarTracking(trackingId, trackingEntity);
                 var tracking = await TrackingRepo.GetTrackingByCar(car.Id);
                 return tracking;
@@ -208,7 +230,7 @@ namespace CmApp.Services
             }
         }
 
-        public async Task<List<string>> DownloadAllTrackingImages(CarEntity car, TrackingEntity tracking)
+        public async Task<List<string>> GetTrackingImagesUrls(CarEntity car)
         {
             try
             {
@@ -239,13 +261,26 @@ namespace CmApp.Services
                         }
                     }
                 }
-                if (tracking.AuctionImages.Count > 0)
+                return imgLinks;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException(ex.Message);
+            }
+        }
+
+        public async Task DownloadAllTrackingImages(TrackingEntity tracking, List<string> imageUrls)
+        {
+            try
+            {
+                if (tracking.AuctionImages.Count == imageUrls.Count)
+                    return;
+                else if (tracking.AuctionImages.Count > 0)
                     await TrackingRepo.DeleteTrackingImages(tracking.Id);
 
                 var counter = 1;
-                var images = new List<string>();
                 //downloads all auction images and inserts into tracking collection
-                foreach (var img in imgLinks)
+                foreach (var img in imageUrls)
                 {
                     Image image = DownloadImageFromUrl(img.Trim());
                     string imageName = tracking.Id + "_image" + counter + ".jpeg";
@@ -253,16 +288,9 @@ namespace CmApp.Services
                     image.Save(stream, ImageFormat.Jpeg);
                     var bytes = FileRepository.StreamToByteArray(stream);
                     //insert here
-                    var imgResponse = await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
-                    var base64 = FileRepository.ByteArrayToBase64String(bytes);
-
-                    var fileType = imgResponse.Result.ContentType.Split('/')[1];
-                    base64 = "data:/" + fileType + ";base64," + base64;
-
-                    images.Add(base64);
+                    await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
                     counter++;
                 }
-                return images;
             }
             catch(Exception ex)
             {
