@@ -69,13 +69,39 @@ namespace CmApp.Repositories
         public async Task UpdateCarTracking(string trackingId, TrackingEntity tracking)
         {
             var repo = new CodeMashRepository<TrackingEntity>(Client);
-            tracking.Id = trackingId;
 
-            await repo.ReplaceOneAsync(
-                x => x.Id == trackingId,
-                tracking,
-                new DatabaseReplaceOneOptions()
+            var update = Builders<TrackingEntity>.Update
+                .Set("container_number", tracking.ContainerNumber)
+                .Set("booking_number", tracking.BookingNumber)
+                .Set("url", tracking.Url)
+                .Set("vin", tracking.Vin)
+                .Set("year", tracking.Year)
+                .Set("make", tracking.Make)
+                .Set("model", tracking.Model)
+                .Set("title", tracking.Title)
+                .Set("state", tracking.State)
+                .Set("status", tracking.Status)
+                .Set("date_received", tracking.DateReceived)
+                .Set("order_date", tracking.DateOrdered)
+                .Set("branch", tracking.Branch)
+                .Set("shipping_line", tracking.ShippingLine)
+                .Set("final_port", tracking.FinalPort)
+                .Set("pick_up_date", tracking.DatePickedUp)
+                .Set("color", tracking.Color)
+                .Set("damage", tracking.Damage)
+                .Set("condition", tracking.Condition)
+                .Set("keys", tracking.Keys)
+                .Set("running", tracking.Running)
+                .Set("wheels", tracking.Wheels)
+                .Set("air_bag", tracking.AirBag)
+                .Set("radio", tracking.Radio);
+
+            _ = await repo.UpdateOneAsync(
+                trackingId,
+                update,
+                new DatabaseUpdateOneOptions()
             );
+
         }
         public async Task<TrackingEntity> GetTrackingByCar(string carId)
         {

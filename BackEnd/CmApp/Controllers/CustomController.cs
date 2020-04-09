@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -107,7 +108,7 @@ namespace CmApp.Controllers
             }
         }
 
-        [Route("api/get-images")]
+        [Route("api/get-image")]
         [Authorize(Roles = "user, admin")]
         [HttpPost]
         public async Task<IActionResult> GetImages([FromBody] object image)
@@ -158,6 +159,6 @@ namespace CmApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }     
     }
 }

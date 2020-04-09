@@ -100,7 +100,7 @@ namespace CmApp.Services
                     count++;
                 }
             }
-            else
+           /* else
             {
                 var defaultImg = await FileRepository.GetFile(Settings.DefaultImage);
                 using MemoryStream ms = new MemoryStream();
@@ -108,7 +108,7 @@ namespace CmApp.Services
                 var bytes = ms.ToArray();
                 var imgName = "Default-image.jpg";
                 await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-            }
+            }*/
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
@@ -185,7 +185,7 @@ namespace CmApp.Services
                     count++;
                 }
             }
-            else
+           /* else
             {
                 var defaultImg = await FileRepository.GetFile(Settings.DefaultImage);
                 using MemoryStream ms = new MemoryStream();
@@ -193,7 +193,7 @@ namespace CmApp.Services
                 var bytes = ms.ToArray();
                 var imgName = "Default-image.jpg";
                 await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-            }
+            }*/
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
@@ -225,7 +225,7 @@ namespace CmApp.Services
                     count++;
                 }
             }
-            else
+           /* else
             {
                 var defaultImg = await FileRepository.GetFile(Settings.DefaultImage);
                 using MemoryStream ms = new MemoryStream();
@@ -233,7 +233,7 @@ namespace CmApp.Services
                 var bytes = ms.ToArray();
                 var imgName = "Default-image.jpg";
                 await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-            }
+            }*/
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
@@ -270,13 +270,28 @@ namespace CmApp.Services
                 if (car.Images.Count != 0)
                 {
                     var fileInfo = FileRepository.GetFileId(car.Images[0]);
-                    car.Images = null;
                     var fileId = fileInfo.Item1;
 
                     var url = await FileRepository.GetFileUrl(fileId);
 
                     car.MainImgUrl = url;
                 }
+                else
+                {
+                    var tracking = await TrackingRepository.GetTrackingByCar(car.Id);
+                    if(tracking.AuctionImages.Count != 0)
+                    {
+                        var fileInfo = FileRepository.GetFileId(tracking.AuctionImages[0]);
+                        var fileId = fileInfo.Item1;
+
+                        var url = await FileRepository.GetFileUrl(fileId);
+
+                        car.MainImgUrl = url;
+                    }
+                    else
+                        car.MainImgUrl = Settings.DefaultImageUrl;
+                }
+                    
             }
             return cars;
             
@@ -300,19 +315,17 @@ namespace CmApp.Services
                     await CarRepository.UploadImageToCar(carId, bytes, imageName);
                     counter++;
                 }
-            }
-            
+            }         
         }
         public async Task<List<CarEntity>> GetAllCars()
         {
             var cars = await CarRepository.GetAllCars();
             if (cars.Count == 0)
-                //throw new HttpResponseException() {Value = "You do not have any cars yet!" };
                 throw new BusinessException("You do not have any cars yet!");
 
             foreach (var car in cars)
             {
-                if(car.Images.Count != 0)
+                if (car.Images.Count != 0)
                 {
                     var fileInfo = FileRepository.GetFileId(car.Images[0]);
                     car.Images = null;
@@ -321,7 +334,24 @@ namespace CmApp.Services
                     var url = await FileRepository.GetFileUrl(fileId);
 
                     car.MainImgUrl = url;
-                }      
+                }
+                else
+                {
+                    var tracking = await TrackingRepository.GetTrackingByCar(car.Id);
+                    if (tracking.AuctionImages.Count != 0)
+                    {
+                        var fileInfo = FileRepository.GetFileId(tracking.AuctionImages[0]);
+                        car.Images = null;
+                        var fileId = fileInfo.Item1;
+
+                        var url = await FileRepository.GetFileUrl(fileId);
+
+                        car.MainImgUrl = url;
+                    }
+                    else
+                        car.MainImgUrl = Settings.DefaultImageUrl;
+                }
+
             }
             return cars;
         }
@@ -330,29 +360,8 @@ namespace CmApp.Services
             var car = await CarRepository.GetCarById(id);
             if (car == null)
                 throw new BusinessException("Car with provided id does not exists!");
+            car.MainImgUrl = Settings.DefaultImageUrl;
 
-            car.ManufactureDate = car.ManufactureDate.Date;
-
-            /*if (car.Images.Count != 0)
-            {
-                //fetching only first image
-                var fileInfo = FileRepository.GetFileId(car.Images[0]);
-
-                var fileId = fileInfo.Item1;
-                var fileType = fileInfo.Item2;
-
-                var stream = await FileRepository.GetFile(fileId);
-
-                var mem = new MemoryStream();
-                stream.CopyTo(mem);
-
-                var bytes = FileRepository.StreamToByteArray(mem);
-                string base64 = FileRepository.ByteArrayToBase64String(bytes);
-
-                base64 = "data:" + fileType + ";base64," + base64;
-
-                car.Base64images.Add(base64);
-            }*/
             return car;
         }
 

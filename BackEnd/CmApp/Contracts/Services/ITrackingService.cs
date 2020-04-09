@@ -14,5 +14,6 @@ namespace CmApp.Contracts
         Task<TrackingEntity> InsertTracking(string carId, TrackingEntity tracking);
         Task<TrackingEntity> LookForTrackingData(string carId);
         Task<List<string>> LookForTrackingImages(string carId);
+        Task DownloadTrackingImages(string carId, List<string> urls);
     }
 }
