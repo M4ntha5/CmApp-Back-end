@@ -45,6 +45,8 @@ namespace CmApp.Services
         {
             userData.Email = userData.Email.ToLower();
             var user = await UserRepository.GetUserByEmail(userData.Email);
+            if (user == null)
+                throw new BusinessException("Such user does not exist");
             //check if email confirmed
             if (!user.EmailConfirmed)
                 throw new BusinessException("You must confirm your email, before loging in!");
@@ -185,17 +187,19 @@ namespace CmApp.Services
             await EmailRepository.SendPasswordResetEmail(email, token);
         }
 
-        public async Task ResetPassword(string token, User user)
+        public async Task ResetPassword(User user)
         {
             if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match");
 
-            var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(token);
+            var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(user.Token);
+            if(resetDetails == null)
+                throw new BusinessException("Error handling your password change. Please try again");
             var currentDate = DateTime.UtcNow;
 
             if (resetDetails.ValidUntil < currentDate)
                 throw new BusinessException("Your request has expired. Try one more time");
-            if (resetDetails.Token != token)
+            if (resetDetails.Token != user.Token)
                 throw new BusinessException("Error changing your password. Please try again");
 
             await UserRepository.ChangePassword(resetDetails.User, user.Password);

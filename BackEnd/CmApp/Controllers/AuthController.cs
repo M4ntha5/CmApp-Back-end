@@ -89,7 +89,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                await authService.ResetPassword(data.Token, data);
+                await authService.ResetPassword(data);
                 return Ok("Password successfully reseted. You can now log in");
             }
             catch (Exception ex)
