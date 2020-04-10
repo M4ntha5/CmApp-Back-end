@@ -1,12 +1,14 @@
 ﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
+using CmApp.Repositories;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +17,8 @@ namespace CmApp.Services
     public class AuthService : IAuthService
     {
         public IUserRepository UserRepository { get; set; }
+        public IEmailRepository EmailRepository { get; set; }
+        public PasswordResetRepository PasswordResetRepository { get; set; }
 
         public async Task<UserEntity> Me(string userId)
         {
@@ -32,6 +36,7 @@ namespace CmApp.Services
                 throw new BusinessException("User with this email already exists!");
 
             var insertedUser = await UserRepository.InsertUser(user);
+            await EmailRepository.SendEmailConfirmationEmail(insertedUser.Email, insertedUser.Id);
 
             return insertedUser == null ? false : true;
         }
@@ -40,6 +45,9 @@ namespace CmApp.Services
         {
             userData.Email = userData.Email.ToLower();
             var user = await UserRepository.GetUserByEmail(userData.Email);
+            //check if email confirmed
+            if (!user.EmailConfirmed)
+                throw new BusinessException("You must confirm your email, before loging in!");
 
             if (user != null && user.Id != null)
             {
@@ -130,6 +138,67 @@ namespace CmApp.Services
                 claims: claims
                 );
             return token;
+        }
+
+        public async Task ConfirmUserEmail(string token)
+        {
+            var user = await UserRepository.GetUserById(token);
+            if (user.EmailConfirmed)
+                throw new BusinessException("Email already confirmed!");
+            if (user == null || user.Deleted)
+                throw new BusinessException("No such a user!");
+
+            await UserRepository.ChangeEmailConfirmationFlag(user.Id);
+            await EmailRepository.SendWelcomeEmail(user.Email);
+        }
+        public async Task CreatePasswordResetToken(string email)
+        {
+            var user = await UserRepository.GetUserByEmail(email);
+            if (user == null)
+                throw new BusinessException("User with this email not registered");
+
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            string token = Convert.ToBase64String(
+                KeyDerivation.Pbkdf2(
+                    password: user.Id,
+                    salt: salt,
+                    prf: KeyDerivationPrf.HMACSHA1,
+                    iterationCount: 10000,
+                    numBytesRequested: 256 / 8
+                )
+            );
+
+            //reset token will be valid for 2 hours
+            var entity = new PasswordResetEntity
+            {
+                Token = token,
+                ValidUntil = DateTime.UtcNow.AddHours(2),
+                User = user.Id
+            };
+
+            await PasswordResetRepository.InsertPasswordReset(entity);
+            await EmailRepository.SendPasswordResetEmail(email, token);
+        }
+
+        public async Task ResetPassword(string token, User user)
+        {
+            if (user.Password != user.Password2)
+                throw new BusinessException("Passwords do not match");
+
+            var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(token);
+            var currentDate = DateTime.UtcNow;
+
+            if (resetDetails.ValidUntil < currentDate)
+                throw new BusinessException("Your request has expired. Try one more time");
+            if (resetDetails.Token != token)
+                throw new BusinessException("Error changing your password. Please try again");
+
+            await UserRepository.ChangePassword(resetDetails.User, user.Password);
         }
 
     }

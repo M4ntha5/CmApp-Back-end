@@ -141,5 +141,44 @@ namespace CmApp.Repositories
 
             return user;
         }
+        public async Task ChangeEmailConfirmationFlag(string userId)
+        {
+            var repo = new CodeMashRepository<UserEntity>(Client);
+
+            var update = Builders<UserEntity>.Update.Set("email_confirmed", true);
+
+            await repo.UpdateOneAsync(userId, update, new DatabaseUpdateOneOptions());
+        }
+
+        public async Task ChangePassword(string userId, string password)
+        {
+            var repo = new CodeMashRepository<UserEntity>(Client);
+
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            string hashedPass = Convert.ToBase64String(
+                KeyDerivation.Pbkdf2(
+                    password: password,
+                    salt: salt,
+                    prf: KeyDerivationPrf.HMACSHA1,
+                    iterationCount: 10000,
+                    numBytesRequested: 256 / 8
+                )
+            );
+
+            UpdateDefinition<UserEntity>[] updates =
+            {
+                Builders<UserEntity>.Update.Set("password", hashedPass),
+                Builders<UserEntity>.Update.Set("salt", Convert.ToBase64String(salt)),
+            };
+
+            var update = Builders<UserEntity>.Update.Combine(updates);
+
+            await repo.UpdateOneAsync(userId, update, new DatabaseUpdateOneOptions());
+        }
     }
 }

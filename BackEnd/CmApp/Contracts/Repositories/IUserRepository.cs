@@ -18,6 +18,7 @@ namespace CmApp.Contracts
         Task<List<UserEntity>> GetAllBlockedUsers();
         Task<List<UserEntity>> GetAllUnblockedUsers();
         Task<UserEntity> GetUserByEmail(string email);
-
+        Task ChangeEmailConfirmationFlag(string userId);
+        Task ChangePassword(string userId, string password);
     }
 }

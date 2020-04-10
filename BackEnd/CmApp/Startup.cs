@@ -26,14 +26,14 @@ namespace CmApp
         {
             services.AddCors();
 
-            Settings.ProjectId = Guid.Parse(Environment.GetEnvironmentVariable("ProjectId"));
+            /*Settings.ProjectId = Guid.Parse(Environment.GetEnvironmentVariable("ProjectId"));
             Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
             Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             Settings.DefaultImage = Environment.GetEnvironmentVariable("DefaultImage");
-            Settings.DefaultImageUrl = Environment.GetEnvironmentVariable("DefaultImageUrl");
+            Settings.DefaultImageUrl = Environment.GetEnvironmentVariable("DefaultImageUrl");*/
 
-            // Environment.SetEnvironmentVariable("TestUser", "this_is_user_key");
-            // Environment.SetEnvironmentVariable("TestAdmin", "this_is_admin_key");
+             Environment.SetEnvironmentVariable("TestUser", "this_is_user_key");
+             Environment.SetEnvironmentVariable("TestAdmin", "this_is_admin_key");
 
             var symmetricSecurityKeyDefault = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestUser")));

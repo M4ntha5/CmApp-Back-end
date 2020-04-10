@@ -14,7 +14,9 @@ namespace CmApp.Controllers
     {
         private readonly AuthService authService = new AuthService()
         {
-            UserRepository = new UserRepository()
+            UserRepository = new UserRepository(),
+            EmailRepository = new EmailRepository(),
+            PasswordResetRepository = new PasswordResetRepository()
         };
 
         // GET: api/Auth
@@ -43,7 +45,8 @@ namespace CmApp.Controllers
                 var response = await authService.Register(user);
 
                 if(response)
-                    return Ok("Success");
+                    return Ok($"Confirmation email has been sent to {user.Email} . " +
+                        $"If you can't find it, check your spam folder");
                 else
                     return BadRequest(response);                                     
             }
@@ -52,18 +55,61 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("me")]
-        public async Task<IActionResult> Me(string userId)
+
+        [HttpGet("email/confirm/{token}")]
+        public async Task<IActionResult> ConfirmEmail(string token)
         {
             try
             {
-                var user = await authService.Me(userId);
-                return Ok(user);
+                await authService.ConfirmUserEmail(token);
+                return Ok("Your email confirmed successfully. Now you can log in");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("password/reset/token")]
+        public async Task<IActionResult> CreatePasswordReset([FromBody] User user)
+        {
+            try
+            {
+                await authService.CreatePasswordResetToken(user.Email);
+                return Ok($"Email has been sent to {user.Email}, don't forget to check spam folder");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("password/reset")]
+        public async Task<IActionResult> ResetPassword([FromBody] User data)
+        {
+            try
+            {
+                await authService.ResetPassword(data.Token, data);
+                return Ok("Password successfully reseted. You can now log in");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /* [HttpGet("me")]
+         public async Task<IActionResult> Me(string userId)
+         {
+             try
+             {
+                 var user = await authService.Me(userId);
+                 return Ok(user);
+             }
+             catch (Exception ex)
+             {
+                 return BadRequest(ex.Message);
+             }
+         }*/
     }
 }

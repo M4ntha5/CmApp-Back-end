@@ -1,9 +1,5 @@
 ﻿using CmApp.Repositories;
 using NUnit.Framework;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Emails.Tests
@@ -21,10 +17,27 @@ namespace Emails.Tests
         {
             var repo = new EmailRepository();
 
-            var emails = new List<string> { "mantozerix@gmail.com" };
+            var email = "mantozerix@gmail.com";
 
-            await repo.SendUserConfirmationEmail(emails);
+            await repo.SendEmailConfirmationEmail(email, "my-token");
+        }
+        [Test]
+        public async Task SendPasswordResetEmail()
+        {
+            var repo = new EmailRepository();
 
+            var email = "mantozerix@gmail.com";
+
+            await repo.SendPasswordResetEmail(email, "my-token");
+        }
+        [Test]
+        public async Task SendWelcomeEmail()
+        {
+            var repo = new EmailRepository();
+
+            var email = "mantozerix@gmail.com";
+
+            await repo.SendWelcomeEmail(email);
         }
     }
 }
