@@ -1,26 +1,44 @@
-﻿using CmApp.Utils;
-using CodeMash.Client;
-using CodeMash.Notifications.Email.Services;
-using Isidos.CodeMash.ServiceContracts;
-using System;
-using System.Collections.Generic;
+﻿using CmApp.Contracts;
+using CmApp.Utils;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System.Threading.Tasks;
 
 namespace CmApp.Repositories
 {
-    public class EmailRepository
+    public class EmailRepository : IEmailRepository
     {
-        private static CodeMashClient Client => new CodeMashClient(Settings.ApiKey, Settings.ProjectId);
-
-        public async Task SendUserConfirmationEmail(List<string> emails)
+        private readonly SendGridClient Client = new SendGridClient(Settings.SendGridApiKey);
+         
+        public async Task SendWelcomeEmail(string email)
         {
-            var emailService = new CodeMashEmailService(Client);
+            var message = new SendGridMessage();
+            message.SetFrom(Settings.SenderEmailAddress, Settings.SenderEmailAddressName);
+            message.AddTo(email);
+            message.SetTemplateId(Settings.WelcomeEmailTemplateId);
 
-            var response = await emailService.SendEmailAsync(new SendEmailRequest
-            {
-                TemplateId = Guid.Parse("1fb809cc-ea7f-47a3-a7ce-9b2b2c1168a8"),
-                Emails = emails
-            });
+            _ = await Client.SendEmailAsync(message);
+        }
+        public async Task SendEmailConfirmationEmail(string email, string token)
+        {
+            var message = new SendGridMessage();
+            message.SetFrom(Settings.SenderEmailAddress, Settings.SenderEmailAddressName);
+            message.AddTo(email);
+            message.SetTemplateId(Settings.EmailConfirmationTemplateId);
+            message.SetTemplateData(new { token });
+
+            _ = await Client.SendEmailAsync(message);
+        }
+
+        public async Task SendPasswordResetEmail(string email, string token)
+        {             
+            var message = new SendGridMessage();
+            message.SetFrom(Settings.SenderEmailAddress, Settings.SenderEmailAddressName);
+            message.AddTo(email);
+            message.SetTemplateId(Settings.PasswordResetEmailTemplateId);
+            message.SetTemplateData(new { token });
+
+            _ = await Client.SendEmailAsync(message);
         }
     }
 }

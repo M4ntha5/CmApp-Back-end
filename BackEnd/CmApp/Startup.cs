@@ -25,11 +25,15 @@ namespace CmApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            
-           // Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
-           // Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
-            Environment.SetEnvironmentVariable("TestUser", "this_is_user_key");
-            Environment.SetEnvironmentVariable("TestAdmin", "this_is_admin_key");
+
+            /*Settings.ProjectId = Guid.Parse(Environment.GetEnvironmentVariable("ProjectId"));
+            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
+            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
+            Settings.DefaultImage = Environment.GetEnvironmentVariable("DefaultImage");
+            Settings.DefaultImageUrl = Environment.GetEnvironmentVariable("DefaultImageUrl");*/
+
+             Environment.SetEnvironmentVariable("TestUser", "this_is_user_key");
+             Environment.SetEnvironmentVariable("TestAdmin", "this_is_admin_key");
 
             var symmetricSecurityKeyDefault = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestUser")));

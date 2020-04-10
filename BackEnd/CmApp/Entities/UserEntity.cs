@@ -18,6 +18,8 @@ namespace CmApp.Entities
         public DateTime BornDate { get; set; } = new DateTime(1900,01,01,0,0,0,DateTimeKind.Utc);
         [Field("email")]
         public string Email { get;set; }
+        [Field("email_confirmed")]
+        public bool EmailConfirmed { get; set; } = false;
         [Field("password")]
         public string Password { get; set; }
         [Field("salt")]

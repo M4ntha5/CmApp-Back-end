@@ -15,5 +15,8 @@ namespace CmApp.Contracts
         JwtSecurityToken GenerateDefaultToken(UserEntity user);
         JwtSecurityToken GenerateAdminToken(UserEntity user);
         Task<UserEntity> Me(string userId);
+        Task ConfirmUserEmail(string token);
+        Task CreatePasswordResetToken(string email);
+        Task ResetPassword(string token, User user);
     }
 }
