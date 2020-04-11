@@ -7,6 +7,8 @@
         public string Password2 { get; set; }
         public string Currency { get; set; }
         public string Token { get; set; }
+        public string Role { get; set; }
+        public bool Status { get; set; }
 
         public User(string email, string password1, string password2, string currency)
         {

@@ -34,6 +34,20 @@ namespace CmApp.Services
                 Sex = user.Sex
             };
             return userDetails;
+        }      
+
+        public async Task UpdateUserDetails(string userId, UserDetails user)
+        {
+            var entity = new UserEntity
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                BornDate = user.BornDate,
+                Country = user.Country,
+                Sex = user.Sex,
+                Id = userId
+            };
+            await UserRepository.UpdateUser(entity);
         }
 
         public async Task<List<UserEntity>> GetAllUsers()
@@ -54,20 +68,22 @@ namespace CmApp.Services
             return users;
         }
 
-        public async Task UpdateUserDetails(string userId, UserDetails user)
+        public async Task ChangeUserRole(string userId, string role)
         {
-            var entity = new UserEntity
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                BornDate = user.BornDate,
-                Country = user.Country,
-                Sex = user.Sex,
-                Id = userId
-            };
-            await UserRepository.UpdateUser(entity);
+            await UserRepository.ChangeUserRole(userId, role);
         }
-
+        public async Task BlockUser(string userId)
+        {
+            await UserRepository.BlockUser(userId);
+        }
+        public async Task UnblockUser(string userId)
+        {
+            await UserRepository.UnblockUser(userId);
+        }
+        public async Task DeleteUser(string userId)
+        {
+            await UserRepository.DeleteUser(userId);
+        }
 
     }
 }

@@ -48,6 +48,8 @@ namespace CmApp.Services
             //check if email confirmed
             if (!user.EmailConfirmed)
                 throw new BusinessException("You must confirm your email, before loging in!");
+            if (user.Blocked)
+                throw new BusinessException("Your accout has been blocked, please contact system administrato");
 
             if (user != null && user.Id != null)
             {
@@ -155,6 +157,8 @@ namespace CmApp.Services
         {
             var user = await UserRepository.GetUserByEmail(email);
             if (user == null)
+                throw new BusinessException("User with this email not registered");
+            if (!user.EmailConfirmed)
                 throw new BusinessException("User with this email not registered");
 
             byte[] salt = new byte[128 / 8];

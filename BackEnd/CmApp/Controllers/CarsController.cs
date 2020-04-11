@@ -118,5 +118,22 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Route("/api/allcars")]
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> AllCars()
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var cars = await carService.GetAllCars();
+                return Ok(cars);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
