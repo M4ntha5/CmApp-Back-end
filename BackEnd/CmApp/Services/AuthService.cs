@@ -45,6 +45,8 @@ namespace CmApp.Services
         {
             userData.Email = userData.Email.ToLower();
             var user = await UserRepository.GetUserByEmail(userData.Email);
+            if (user == null)
+                throw new BusinessException("Such user does not exist");
             //check if email confirmed
             if (!user.EmailConfirmed)
                 throw new BusinessException("You must confirm your email, before loging in!");
@@ -195,6 +197,7 @@ namespace CmApp.Services
                 throw new BusinessException("Passwords do not match");
 
             var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(user.Token);
+
             if (resetDetails == null)
                 throw new BusinessException("Error handling your password change. Please try again");
             var currentDate = DateTime.UtcNow;
