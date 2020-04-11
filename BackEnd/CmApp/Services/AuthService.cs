@@ -50,6 +50,8 @@ namespace CmApp.Services
             //check if email confirmed
             if (!user.EmailConfirmed)
                 throw new BusinessException("You must confirm your email, before loging in!");
+            if (user.Blocked)
+                throw new BusinessException("Your accout has been blocked, please contact system administrato");
 
             if (user != null && user.Id != null)
             {
@@ -158,6 +160,8 @@ namespace CmApp.Services
             var user = await UserRepository.GetUserByEmail(email);
             if (user == null)
                 throw new BusinessException("User with this email not registered");
+            if (!user.EmailConfirmed)
+                throw new BusinessException("User with this email not registered");
 
             byte[] salt = new byte[128 / 8];
             using (var rng = RandomNumberGenerator.Create())
@@ -193,7 +197,8 @@ namespace CmApp.Services
                 throw new BusinessException("Passwords do not match");
 
             var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(user.Token);
-            if(resetDetails == null)
+
+            if (resetDetails == null)
                 throw new BusinessException("Error handling your password change. Please try again");
             var currentDate = DateTime.UtcNow;
 

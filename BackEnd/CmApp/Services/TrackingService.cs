@@ -85,5 +85,14 @@ namespace CmApp.Services
 
             await ScraperService.DownloadAllTrackingImages(tracking, urls);
         }
+
+        public async Task SaveLastShowImagesStatus(string carId, bool status)
+        {
+            var tracking = await TrackingRepository.GetTrackingByCar(carId);
+            if (tracking == null)
+                throw new BusinessException("Tracking images for this car not found. Try again later");
+
+            await TrackingRepository.UpdateLastImageShowStatus(tracking.Id, status);
+        }
     }
 }

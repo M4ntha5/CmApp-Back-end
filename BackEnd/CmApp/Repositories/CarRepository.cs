@@ -55,17 +55,14 @@ namespace CmApp.Repositories
             var repo = new CodeMashRepository<CarEntity>(Client);
 
             var projection = Builders<CarEntity>.Projection
-                .Include(x => x.Images)
                 .Include(x => x.Make)
                 .Include(x => x.Model)
-                .Include(x => x.Vin);
+                .Include(x => x.Vin)
+                .Include(x => x.DateCreated)
+                .Include(x => x.ManufactureDate);
 
             var cars = await repo.FindAsync<CarEntity>(x => true, projection, null,
-                new DatabaseFindOptions
-                {
-                    //PageNumber = 0,
-                    //PageSize = 9
-                });       
+                new DatabaseFindOptions());     
 
             return cars.Items;
         }
@@ -82,13 +79,10 @@ namespace CmApp.Repositories
 
 
             var filter = Builders<CarEntity>.Filter.Eq("user", ObjectId.Parse(userId));
+            var sort = Builders<CarEntity>.Sort.Descending("created_at");
 
-            var cars = await repo.FindAsync<CarDisplay>(filter, projection, null,
-                new DatabaseFindOptions
-                {
-                    //PageNumber = 0,
-                    //PageSize = 9
-                });
+            var cars = await repo.FindAsync<CarDisplay>(filter, projection, sort,
+                new DatabaseFindOptions());
 
             return cars.Items;
         }

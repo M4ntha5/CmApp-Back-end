@@ -1,8 +1,6 @@
 ﻿using CmApp.Domains;
 using CmApp.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Contracts
@@ -15,5 +13,9 @@ namespace CmApp.Contracts
         Task<List<UserEntity>> GetAllBlockedUsers();
         Task<List<UserEntity>> GetAllUnblockedUsers();
         Task UpdateUserDetails(string userId, UserDetails user);
+        Task ChangeUserRole(string userId, string role);
+        Task BlockUser(string userId);
+        Task UnblockUser(string userId);
+        Task DeleteUser(string userId);
     }
 }

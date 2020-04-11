@@ -71,7 +71,15 @@ namespace CmApp.Repositories
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
 
-            var users = await repo.FindAsync(x=> !x.Deleted, new DatabaseFindOptions());
+            var projection = Builders<UserEntity>.Projection
+                .Include(x => x.Blocked)
+                .Include(x => x.Currency)
+                .Include(x => x.Email)
+                .Include(x => x.Id)
+                .Include(x => x.Role);
+
+            var users = await repo.FindAsync<UserEntity>(x=> !x.Deleted, projection, null,
+                new DatabaseFindOptions());
 
             return users.Items;
         }
@@ -177,6 +185,24 @@ namespace CmApp.Repositories
             };
 
             var update = Builders<UserEntity>.Update.Combine(updates);
+
+            await repo.UpdateOneAsync(userId, update, new DatabaseUpdateOneOptions());
+        }
+
+        public async Task ChangeUserRole(string userId, string role)
+        {
+            var repo = new CodeMashRepository<UserEntity>(Client);
+
+            var update = Builders<UserEntity>.Update.Set("role", role);
+
+            await repo.UpdateOneAsync(userId, update, new DatabaseUpdateOneOptions());
+        }
+
+        public async Task DeleteUser(string userId)
+        {
+            var repo = new CodeMashRepository<UserEntity>(Client);
+
+            var update = Builders<UserEntity>.Update.Set("deleted", true);
 
             await repo.UpdateOneAsync(userId, update, new DatabaseUpdateOneOptions());
         }

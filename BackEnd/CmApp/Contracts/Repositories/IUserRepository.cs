@@ -20,5 +20,8 @@ namespace CmApp.Contracts
         Task<UserEntity> GetUserByEmail(string email);
         Task ChangeEmailConfirmationFlag(string userId);
         Task ChangePassword(string userId, string password);
+        Task ChangeUserRole(string userId, string role);
+        Task DeleteUser(string userId);
     }
+
 }

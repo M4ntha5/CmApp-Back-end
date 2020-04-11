@@ -15,6 +15,8 @@ namespace CmApp.Entities
         public string Make { get; set; } = "";
         [Field("model")]
         public string Model { get; set; } = "";
+        [Field("show_images")]
+        public bool ShowImages { get; set; } = true;
         [Field("title")]
         public string Title { get; set; } = "";
         [Field("state")]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CmApp.Contracts;
+using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -145,6 +146,27 @@ namespace CmApp.Controllers
                     throw new Exception("Car does not exist");
 
                 await trackingService.DeleteTracking(carId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("images/status")]
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> SaveLastShowImagesStatus(string carId, [FromBody] User data)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+                var car = await carRepo.GetCarById(carId);
+                if (car.User != userId && role != "admin")
+                    throw new Exception("Car does not exist");
+
+                await trackingService.SaveLastShowImagesStatus(carId, data.Status);
                 return NoContent();
             }
             catch (Exception ex)

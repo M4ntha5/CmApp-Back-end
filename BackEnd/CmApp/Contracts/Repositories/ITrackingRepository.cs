@@ -16,6 +16,7 @@ namespace CmApp.Contracts
         Task UpdateCarTracking(string trackingId, TrackingEntity tracking);
         Task<TrackingEntity> GetTrackingByCar(string carId);
         Task DeleteTrackingImages(string recordId);
+        Task UpdateLastImageShowStatus(string trackingId, bool status);
 
     }
 }

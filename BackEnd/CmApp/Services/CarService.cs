@@ -322,37 +322,6 @@ namespace CmApp.Services
             var cars = await CarRepository.GetAllCars();
             if (cars.Count == 0)
                 throw new BusinessException("You do not have any cars yet!");
-
-            foreach (var car in cars)
-            {
-                if (car.Images.Count != 0)
-                {
-                    var fileInfo = FileRepository.GetFileId(car.Images[0]);
-                    car.Images = null;
-                    var fileId = fileInfo.Item1;
-
-                    var url = await FileRepository.GetFileUrl(fileId);
-
-                    car.MainImgUrl = url;
-                }
-                else
-                {
-                    var tracking = await TrackingRepository.GetTrackingByCar(car.Id);
-                    if (tracking.AuctionImages.Count != 0)
-                    {
-                        var fileInfo = FileRepository.GetFileId(tracking.AuctionImages[0]);
-                        car.Images = null;
-                        var fileId = fileInfo.Item1;
-
-                        var url = await FileRepository.GetFileUrl(fileId);
-
-                        car.MainImgUrl = url;
-                    }
-                    else
-                        car.MainImgUrl = Settings.DefaultImageUrl;
-                }
-
-            }
             return cars;
         }
         public async Task<CarEntity> GetCarById(string id)
