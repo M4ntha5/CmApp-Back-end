@@ -280,11 +280,14 @@ namespace CmApp.Services
                 //downloads all auction images and inserts into tracking collection
                 foreach (var img in imageUrls)
                 {
-                    Image image = DownloadImageFromUrl(img.Trim());
+                    //Image image = DownloadImageFromUrl(img.Trim());
+                    var webClient = new WebClient();
+                    var uri = new Uri(img.Trim());
+                    byte[] bytes = webClient.DownloadData(uri);
                     string imageName = tracking.Id + "_image" + counter + ".jpeg";
-                    var stream = new MemoryStream();
-                    image.Save(stream, ImageFormat.Jpeg);
-                    var bytes = FileRepository.StreamToByteArray(stream);
+                   // var stream = new MemoryStream();
+                    //image.Save(stream, ImageFormat.Jpeg);
+                    //var bytes = FileRepository.StreamToByteArray(stream);
                     //insert here
                     await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
                     counter++;
@@ -336,16 +339,19 @@ namespace CmApp.Services
 
         private Image DownloadImageFromUrl(string imageUrl)
         {
-            Image image;
-
             HttpWebRequest webRequest = (HttpWebRequest)HttpWebRequest.Create(imageUrl);
             webRequest.AllowWriteStreamBuffering = true;
             webRequest.Timeout = 30000;
 
             WebResponse webResponse = webRequest.GetResponse();
             Stream stream = webResponse.GetResponseStream();
-            image = Image.FromStream(stream);
+            Image image = Image.FromStream(stream);
             webResponse.Close();
+
+            var webClient = new WebClient();
+            var uri = new Uri(imageUrl);
+            byte[] imageBytes = webClient.DownloadData(uri);
+
 
             return image;
         }
