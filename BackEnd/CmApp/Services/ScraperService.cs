@@ -12,7 +12,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -23,7 +22,6 @@ namespace CmApp.Services
         private readonly string MBDecoderEndpoint = "https://www.mbdecoder.com/decode/";
         private readonly string AtlanticExpressEndpoint = "http://www.atlanticexpresscorp.com/services/tracking/?num=";
 
-        private readonly ICarRepository CarRepo = new CarRepository();
         private readonly IFileRepository FileRepository = new FileRepository();
         private readonly ITrackingRepository TrackingRepo = new TrackingRepository();
 

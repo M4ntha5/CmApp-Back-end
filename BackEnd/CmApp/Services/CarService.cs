@@ -279,7 +279,7 @@ namespace CmApp.Services
                 else
                 {
                     var tracking = await TrackingRepository.GetTrackingByCar(car.Id);
-                    if(tracking.AuctionImages.Count != 0)
+                    if(tracking.AuctionImages.Count != 0 && tracking.ShowImages)
                     {
                         var fileInfo = FileRepository.GetFileId(tracking.AuctionImages[0]);
                         var fileId = fileInfo.Item1;
