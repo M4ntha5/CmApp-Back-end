@@ -113,7 +113,7 @@ namespace CmApp.Repositories
             return response;
         }
 
-        public async Task UpdateLastImageShowStatus(string trackingId, bool status)
+        public async Task UpdateImageShowStatus(string trackingId, bool status)
         {
             var repo = new CodeMashRepository<TrackingEntity>(Client);
 

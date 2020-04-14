@@ -1,4 +1,5 @@
-﻿using CmApp.Repositories;
+﻿using CmApp.Domains;
+using CmApp.Repositories;
 using CmApp.Utils;
 using NUnit.Framework;
 using System;
@@ -10,30 +11,49 @@ namespace ExchangeRates
 {
     class ExchangeRatesApiTests
     {
+        ExchangeRatesRepository repo;
         [SetUp]
         public void Setup()
         {
-            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
-            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
+            repo = new ExchangeRatesRepository();
         }
 
         [Test]
         public async Task GetAll()
         {
-            var repo = new ExchangeRatesRepository();
-
             var result = await repo.GetAvailableCurrencies();
-
             Assert.AreNotEqual(0, result.Count);
         }
 
         [Test]
         public async Task GetAllCountries()
         {
-            var repo = new ExchangeRatesRepository();
-
-            await repo.GetAllCountries();
-
+            var curr = await repo.GetAllCountries();
+            Assert.NotNull(curr);
+        }
+        [Test]
+        public async Task GetSelectedExchangeRate()
+        {
+            var curr = await repo.GetSelectedExchangeRate("EUR");
+            Assert.IsNotNull(curr);
+        }
+        [Test]
+        public async Task GetSelectedExchangeRateBad()
+        {
+            var curr = await repo.GetSelectedExchangeRate("EURasdasd");
+            Assert.IsNull(curr);
+        }
+        [Test]
+        public async Task CalculateResult()
+        {
+            var input = new ExchangeInput
+            {
+                Amount = 10,
+                From = "USD",
+                To = "EUR"
+            };
+            var curr = await repo.CalculateResult(input);
+            Assert.NotZero(curr);
         }
     }
 }

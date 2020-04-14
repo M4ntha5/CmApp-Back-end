@@ -16,72 +16,58 @@ namespace Cars.Integration
         CarRepository carRepo;
         CarService carService;
         ScraperService scraperService;
+        FileRepository fileRepo;
+        string carId;
+
         [SetUp]
         public void Setup()
         {
-            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
-            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             carRepo = new CarRepository();
             scraperService = new ScraperService();
+            fileRepo = new FileRepository();
+
             carService = new CarService()
             {
                 CarRepository = carRepo,
-                WebScraper = scraperService
+                WebScraper = scraperService,
+                FileRepository = fileRepo,
+                SummaryRepository = new SummaryRepository(),
+                TrackingRepository = new TrackingRepository()
             };
-
+            carId = "5e94b2ee6189921bb45d99a6";
         }
 
         [Test]
         public async Task TestGetAllCars()
         {
             var cars = await carRepo.GetAllCars();
-
             Assert.AreNotEqual(0, cars.Count);           
         }
 
         [Test]
         public async Task TestInsertCar()
         {
-            string vin = "WBAGE11070DJ00378";
-            //var file = await carRepo.UploadImage(vin, "img.jpg");
+            string vin = "WBA7E2C37HG740629";
 
             var car = new CarEntity
             {
-                Images = new List<object>() { "", ""},
-                Vin = vin
+                Vin = vin,
+                Make = "BMW"
             };
             var response = await carService.InsertCar(car);
-
             Assert.AreEqual(vin, response.Vin);
         }
 
         [Test]
         public async Task TestUpdateCar()
         {
-            var carId = "5e4c2dfac0ae1700011a2c38";
-
-            var eq = new Equipment() { Name = "test3", Code = "test4" };
-            var list2 = new List<Equipment> { eq };
-
             var newCar = new CarEntity()
             {
                 BodyType = "BodyType",
-                Color = "Color",
-                Displacement = 2,
-                Drive = "Drive",
-                ManufactureDate = DateTime.Now,
-                Engine = "Engine",
-                Interior = "Interior",
-                Make = "Make",
-                Model = "Model",
-                Power = "Power",
-                Series = "Series",
-                Steering = "Steering",
-                Transmission = "Transmission",
-                Equipment = list2,
-                Images = new List<object>(),
-                Vin = "123"
-
+                User = "",
+                Make = "Mercedes-benz",
+                Model = "Mercedes-AMG CLS 63 Coupe",
+                Vin = "WDDLJ7EB1CA031646"
             };
             await carRepo.UpdateCar(carId, newCar);
         }
@@ -89,8 +75,7 @@ namespace Cars.Integration
         [Test]
         public async Task TestDeleteCar()
         {
-
-            var oldCar = await carRepo.GetCarById("5e4c2dfac0ae1700011a2c38");
+            var oldCar = await carRepo.GetCarById(carId);
 
             await carRepo.DeleteCar(oldCar.Id);
         }
@@ -98,21 +83,14 @@ namespace Cars.Integration
         [Test]
         public async Task TestGetCarById()
         {
-            var service = new CarService() { CarRepository = carRepo, WebScraper = new ScraperService() };
-
-            var carid = "5e4c2d3bc0ae17000119da0b";
-            var car = await service.GetCarById(carid);
-
-            Assert.AreEqual(carid, car.Id);
+            var car = await carService.GetCarById(carId);
+            Assert.AreEqual(carId, car.Id);
         }
         [Test]
         public async Task TestGetCarByVin()
         {
-            var service = new CarService() { CarRepository = carRepo, WebScraper = new ScraperService() };
-            var repo = new CarRepository();
-
             var vin = "WDDLJ7EB1CA031646";
-            var car = await repo.GetCarByVin(vin);
+            var car = await carRepo.GetCarByVin(vin);
 
             Assert.AreEqual(vin, car.Vin);
         }
@@ -120,29 +98,21 @@ namespace Cars.Integration
         [Test]
         public async Task TestFileUpload()
         {
-            string recordId = "5e4c2d3bc0ae17000119da0b";
+            var stream = await fileRepo.GetFile(Settings.DefaultImage);
 
-            var fileRepo = new FileRepository();
-            var stream = await fileRepo.GetFile("265b0467-f1fc-4579-8f87-9dae7877c45a");
             var mem = new MemoryStream();
             stream.CopyTo(mem);
-
             var bytes = fileRepo.StreamToByteArray(mem);
-
-
-
-            var result = await carRepo.UploadImageToCar(recordId, bytes, "img.png");
-            //Assert.AreNotEqual(null, result);
+            var result = await carRepo.UploadImageToCar(carId, bytes, "img.png");
+            Assert.AreNotEqual(null, result);
         }
 
         [Test]
         public async Task TestGetFile()
         {
-            var repo = new FileRepository();
-            var response = await repo.GetFile("265b0467-f1fc-4579-8f87-9dae7877c45a");
+            var response = await fileRepo.GetFile(Settings.DefaultImage);
 
             var mem = new MemoryStream();
-
             response.CopyTo(mem);
 
             if (mem.Length != 0)
@@ -155,19 +125,29 @@ namespace Cars.Integration
                     byteArray[count++] = Convert.ToByte(mem.ReadByte());
                 }
                 var base64 = Convert.ToBase64String(byteArray);
+                Assert.IsNotEmpty(base64);
             }
-            Assert.AreNotEqual(null, response);
+            Assert.IsNotNull(response);
         }
 
         [Test]
-        public async Task test()
+        public void TestInsertEmpty()
         {
-            var entity = new CarEntity
-            {
-                Vin = "165",
-                Make = "Opel"
-            };
-            var car = await carService.InsertCar(entity);
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await carRepo.InsertCar(null));
+        }
+
+        [Test]
+        public async Task GetAllUserCars()
+        {
+            var userId = "5e94b45c9b897c056c2a0a97";
+            var cars = await carRepo.GetAllUserCars(userId);
+            Assert.IsNotEmpty(cars);
+        }
+        [Test]
+        public async Task DeleteAllCarImages()
+        {
+            await carRepo.DeleteAllCarImages(carId);
         }
     }
 }

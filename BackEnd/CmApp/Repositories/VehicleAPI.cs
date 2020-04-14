@@ -11,8 +11,8 @@ namespace CmApp.Repositories
 {
     public class VehicleAPI
     {
-        private string Url = "https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/";
-        private const string Format = "?format=json";
+        private string Url = "https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformakeyear/make/";
+        private const string Format = "/vehicletype/car?format=json";
 
         public async Task<List<string>> GetAllMakeModels(string make)
         {

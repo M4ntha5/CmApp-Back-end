@@ -104,12 +104,11 @@ namespace CmApp.Repositories
 
             return car;
         }
-        public async Task UpdateCar(string id, CarEntity car)
+        public async Task UpdateCar(string carId, CarEntity car)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
 
             var update = Builders<CarEntity>.Update
-                .Set("make", car.Make)
                 .Set("model", car.Model)
                 .Set("manufacture_date", car.ManufactureDate)
                 .Set("series", car.Series)
@@ -125,7 +124,7 @@ namespace CmApp.Repositories
                 .Set("equipment", car.Equipment);
 
             _ = await repo.UpdateOneAsync(
-                car.Id,
+                carId,
                 update,
                 new DatabaseUpdateOneOptions()
             );
@@ -152,7 +151,7 @@ namespace CmApp.Repositories
                 });
             return response;
         }
-        public async Task DeleteAllCarImages(string recordId)
+        public async Task DeleteAllCarImages(string carId)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
 
@@ -162,7 +161,7 @@ namespace CmApp.Repositories
             };
             var update = Builders<CarEntity>.Update.Combine(updates);
 
-            await repo.UpdateOneAsync(recordId, update, new DatabaseUpdateOneOptions());
+            await repo.UpdateOneAsync(carId, update, new DatabaseUpdateOneOptions());
         }
 
         public async Task<List<CarMakes>> GetAllMakes()
@@ -175,5 +174,7 @@ namespace CmApp.Repositories
             );
             return makes.Items;
         }
+
+        
     }
 }

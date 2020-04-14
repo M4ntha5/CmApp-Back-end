@@ -92,7 +92,7 @@ namespace CmApp.Services
             if (tracking == null)
                 throw new BusinessException("Tracking images for this car not found. Try again later");
 
-            await TrackingRepository.UpdateLastImageShowStatus(tracking.Id, status);
+            await TrackingRepository.UpdateImageShowStatus(tracking.Id, status);
         }
     }
 }
