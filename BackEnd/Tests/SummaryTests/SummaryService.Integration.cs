@@ -1,4 +1,5 @@
-﻿using CmApp.Entities;
+﻿using CmApp;
+using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
 using CmApp.Utils;
@@ -15,39 +16,45 @@ namespace Summary.Integration
         SummaryRepository summaryRepo;
         SummaryService serviceRepo;
         string carId;
-        string summaryId;
 
         [SetUp]
         public void Setup()
         {
-            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
-            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
             summaryRepo = new SummaryRepository();
             serviceRepo = new SummaryService
             {
-                SummaryRepository = summaryRepo
+                SummaryRepository = summaryRepo,
+                ExchangeRepository = new ExchangeRatesRepository()
             };
-            carId = "5e563002ac98df000158536f";
-            summaryId = "5e58fa342578380001fdd341";
+            carId = "5e94b2ee6189921bb45d99a6";
         }
 
         [Test]
         public async Task GetSummaryByCarId()
         {
             var summary = await summaryRepo.GetSummaryByCarId(carId);     
-
             Assert.AreEqual(carId, summary.Car);
         }
 
         [Test]
         public async Task InsertSummary()
         {
-            var entity = new SummaryEntity { BoughtPrice = 25000 };
-
+            var entity = new SummaryEntity 
+            { 
+                BoughtPrice = 25000, 
+                BaseCurrency="EUR" ,
+                SelectedCurrency = "EUR",
+            };
             var summary = await serviceRepo.InsertCarSummary(carId, entity);
 
             Assert.AreEqual(entity.BoughtPrice, summary.BoughtPrice);
             Assert.AreEqual(carId, summary.Car);
+        }
+        [Test]
+        public void InsertEmptySummary()
+        {
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                   await summaryRepo.InsertSummary(null));
         }
 
         [Test]
@@ -55,13 +62,11 @@ namespace Summary.Integration
         {
             var entity = new SummaryEntity
             {
-                BoughtPrice = 5500,
                 Sold = true,
                 SoldDate = DateTime.Now,
                 SoldPrice = 8000,
             };
-
-           // await serviceRepo.UpdateSummary(carId, summaryId, entity);
+            await serviceRepo.UpdateSoldSummary(carId, entity);
         }
 
         [Test]

@@ -15,10 +15,16 @@ namespace CarsTests
     {
         ICarRepository carMock;
         IScraperService scraperMock;
+        IFileRepository fileMock;
+        ISummaryRepository summaryMock;
+        ITrackingRepository trackingMock;
 
         [SetUp]
         public void Setup()
         {
+            trackingMock = Substitute.For<ITrackingRepository>();
+            summaryMock = Substitute.For<ISummaryRepository>();
+            fileMock = Substitute.For<IFileRepository>();
             carMock = Substitute.For<ICarRepository>();
             scraperMock = Substitute.For<IScraperService>();
         }
@@ -54,7 +60,6 @@ namespace CarsTests
                 Vin = "123",
                 Images = new List<object>(),
                 Equipment = new List<Equipment> { new Equipment() },
-                Model = "328",
                 Id = "1",
                 Make = "BMW"
             };
@@ -66,7 +71,10 @@ namespace CarsTests
             var carService = new CarService
             {
                 CarRepository = carMock,
-                WebScraper = scraperMock
+                WebScraper = scraperMock,
+                FileRepository = fileMock,
+                SummaryRepository = summaryMock,
+                TrackingRepository = trackingMock
             };
 
             var carDetails = await carService.InsertCar(car);

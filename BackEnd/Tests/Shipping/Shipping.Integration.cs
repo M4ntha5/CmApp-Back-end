@@ -1,7 +1,6 @@
 ﻿using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
-using CmApp.Utils;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -11,42 +10,43 @@ namespace Shipping.Integration
     class Shipping
     {
         ShippingService shippingService;
-
+        ShippingRepository shippingRepo;
+        string carId;
         [SetUp]
         public void Setup()
         {
-            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
-            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
+            shippingRepo = new ShippingRepository();
             shippingService = new ShippingService()
             {
-                ShippingRepository = new ShippingRepository(),
+                ShippingRepository = shippingRepo,
                 SummaryRepository = new SummaryRepository(),
+                ExchangeRepository = new ExchangeRatesRepository()
             };
+            carId = "5e94b2ee6189921bb45d99a6";
         }
 
         [Test]
         public async Task TestGetShipping()
         {
-            var carId = "5e563002ac98df000158536f";
-
             var shipping = await shippingService.GetShipping(carId);
-
             Assert.AreEqual(carId, shipping.Car);
         }
 
         [Test]
         public async Task TestInsertShipping()
         {
-
             var entity = new ShippingEntity
             {
                 AuctionFee = 1,
+                AuctionFeeCurrency = "EUR",
                 Customs = 2,
                 TransferFee = 3,
                 TransportationFee = 4,
+                TransportationFeeCurrency = "EUR",
+                CustomsCurrency = "EUR",
+                TransferFeeCurrency = "EUR",
+                BaseCurrency = "EUR",
             };
-
-            var carId = "5e563002ac98df000158536f";
 
             var shipping = await shippingService.InsertShipping(carId, entity);
 
@@ -56,10 +56,13 @@ namespace Shipping.Integration
         [Test]
         public async Task TestDeleteShipping()
         {
-
-            var carId = "5e563002ac98df000158536f";
-
             await shippingService.DeleteShipping(carId);
+        }
+        [Test]
+        public void TestInsertEmptyShipping()
+        {
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await shippingRepo.InsertShipping(null));
         }
 
         [Test]
@@ -67,13 +70,16 @@ namespace Shipping.Integration
         {
             var entity = new ShippingEntity
             {
-                AuctionFee = 11,
-                Customs = 22,
-                TransferFee = 33,
-                TransportationFee = 44
+                AuctionFee = 1,
+                AuctionFeeCurrency = "EUR",
+                Customs = 2,
+                TransferFee = 3,
+                TransportationFee = 4,
+                TransportationFeeCurrency = "EUR",
+                CustomsCurrency = "EUR",
+                TransferFeeCurrency = "EUR",
+                BaseCurrency = "EUR",
             };
-
-            var carId = "5e563002ac98df000158536f";
 
             await shippingService.UpdateShipping(carId, entity);
         }

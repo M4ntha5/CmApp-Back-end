@@ -12,24 +12,26 @@ namespace Tracking.Integration
     class Tracking
     {
         TrackingService trackingService;
+        TrackingRepository trackingRepo;
+        string carId;
         [SetUp]
         public void Setup()
         {
-            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
-            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
+            trackingRepo = new TrackingRepository();
             trackingService = new TrackingService()
             {
-                TrackingRepository = new TrackingRepository(),
+                TrackingRepository = trackingRepo,
+                ScraperService = new ScraperService(),
+                CarRepository = new CarRepository(),
+                FileRepository = new FileRepository()
             };
+            carId = "5e94b2ee6189921bb45d99a6";
         }
 
         [Test]
         public async Task TestGetTracking()
         {
-            var carId = "5e5b8bdf257838000157a023";
-
             var tracking = await trackingService.GetTracking(carId);
-
             Assert.AreEqual(carId, tracking.Car);
         }
         [Test]
@@ -42,10 +44,8 @@ namespace Tracking.Integration
                 ContainerNumber = "321",
                 Url = "myuri",
             };
-            var carId = "5e5b8bdf257838000157a023";
 
             var tracking = await trackingService.InsertTracking(carId, entity);
-
             Assert.AreEqual(carId, tracking.Car);
         }
 
@@ -59,17 +59,37 @@ namespace Tracking.Integration
                 ContainerNumber = "naujas",
                 Url = "naujas",
             };
-            var carId = "5e5b8bdf257838000157a023";
-
             await trackingService.UpdateTracking(carId, entity);
         }
 
         [Test]
         public async Task TestDeleteTracking()
         {
-            var carId = "5e562fd1ac98df000158536c";
-
             await trackingService.DeleteTracking(carId);
+        }
+        [Test]
+        public async Task TestDeleteTrackingImages()
+        {
+            await trackingRepo.DeleteTrackingImages("5e94bef563a2911854ac16f1");
+        }
+
+        [Test]
+        public async Task TestUploadImageToTracking()
+        {
+            await trackingRepo.UploadImageToTracking(
+                "5e94bef563a2911854ac16f1", new byte[0], "test.png");
+        }
+        [Test]
+        public async Task TestUpdateImageShowStatus()
+        {
+            await trackingRepo.UpdateImageShowStatus(
+                "5e94bef563a2911854ac16f1", false);
+        }
+        [Test]
+        public void TestInsertEmpty()
+        {
+            Assert.ThrowsAsync<ArgumentNullException>(async ()=>
+                await trackingRepo.InsertTracking(null));
         }
     }
 }

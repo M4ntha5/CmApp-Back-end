@@ -1,35 +1,39 @@
 ﻿using CmApp.Repositories;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace VechicleAPI.Tests
 {
     class MakesAPi
     {
+        VehicleAPI vehicleRepo;
+        CarRepository carRepo;
         [SetUp]
         public void Setup()
         {
-
+            carRepo = new CarRepository();
+            vehicleRepo = new VehicleAPI();
         }
 
         [Test]
         public async Task GetAll()
         {
-            var repo = new VehicleAPI();
             var make = "BMW";
-            var result = await repo.GetAllMakeModels(make);
-
+            var result = await vehicleRepo.GetAllMakeModels(make);
+            Assert.IsNotEmpty(result);
         }
 
         [Test]
         public async Task GetAllMakes()
         {
-            var repo = new CarRepository();
-            var makes = await repo.GetAllMakes();
+            var makes = await carRepo.GetAllMakes();
+            Assert.IsNotEmpty(makes);
+        }
+        [Test]
+        public async Task BadUrl()
+        {
+            var makes = await vehicleRepo.GetAllMakeModels("asd/asd/asd/df");
+            Assert.IsNull(makes);
         }
     }
 }
