@@ -5,6 +5,7 @@ using CmApp.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -79,6 +80,7 @@ namespace CmApp.Services
 
             carEntity.Equipment = equipment;
             carEntity.Vin = car.Vin.ToUpper();
+            carEntity.MainImageUrl = Settings.DefaultImageUrl;
 
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(carEntity);
@@ -96,10 +98,17 @@ namespace CmApp.Services
                     var imgName = insertedCar.Id + "_image" + count + "." + imageType;
 
                     var bytes = FileRepository.Base64ToByteArray(base64);
-                    await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    var res = await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    if (count == 1)
+                    {
+                        var url = await FileRepository.GetFileUrl(res.Key);
+                        await CarRepository.UpdateCarMainImg(insertedCar.Id, url);
+                    }
+                    
                     count++;
                 }
             }
+
            /* else
             {
                 var defaultImg = await FileRepository.GetFile(Settings.DefaultImage);
@@ -165,6 +174,7 @@ namespace CmApp.Services
             carEntity.Equipment = equipment;
             carEntity.Vin = car.Vin.ToUpper();
 
+            carEntity.MainImageUrl = Settings.DefaultImageUrl;
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(carEntity);
 
@@ -181,7 +191,12 @@ namespace CmApp.Services
                     var imgName = insertedCar.Id + "_image" + count + "." + imageType;
 
                     var bytes = FileRepository.Base64ToByteArray(base64);
-                    await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    var res = await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    if (count == 1)
+                    {
+                        var url = await FileRepository.GetFileUrl(res.Key);
+                        await CarRepository.UpdateCarMainImg(insertedCar.Id, url);
+                    }
                     count++;
                 }
             }
@@ -205,6 +220,12 @@ namespace CmApp.Services
                 throw new BusinessException("Can not insert car, because car is empty!");
 
             car.Vin = car.Vin.ToUpper();
+            string mainImg = "";
+            if (car.Base64images.Count > 0)
+                mainImg = car.Base64images[0];
+            else
+                mainImg = Settings.DefaultImageUrl;
+            car.MainImageUrl = mainImg;
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(car);
 
@@ -221,7 +242,12 @@ namespace CmApp.Services
                     var imgName = insertedCar.Id + "_image" + count + "." + imageType;
 
                     var bytes = FileRepository.Base64ToByteArray(base64);
-                    await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    var res = await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
+                    if (count == 1)
+                    {
+                        var url = await FileRepository.GetFileUrl(res.Key);
+                        await CarRepository.UpdateCarMainImg(insertedCar.Id, url);
+                    }
                     count++;
                 }
             }
@@ -241,6 +267,11 @@ namespace CmApp.Services
 
         public async Task<CarEntity> InsertCar(CarEntity car)
         {
+            var userCars = await GetAllUserCars(car.User);
+            var userVins = userCars.Select(x => x.Vin).ToList();
+            if (userVins.Contains(car.Vin))
+                throw new BusinessException("There is already a car with this VIN number");
+
             if (car.Make == null || car.Make == "")
                 throw new BusinessException("Make not defined");
             if (car.Make == "BMW" && car.Model == "")
@@ -274,7 +305,7 @@ namespace CmApp.Services
 
                     var url = await FileRepository.GetFileUrl(fileId);
 
-                    car.MainImgUrl = url;
+                    car.MainImageUrl = url;
                 }
                 else
                 {
@@ -286,10 +317,10 @@ namespace CmApp.Services
 
                         var url = await FileRepository.GetFileUrl(fileId);
 
-                        car.MainImgUrl = url;
+                        car.MainImageUrl = url;
                     }
                     else
-                        car.MainImgUrl = Settings.DefaultImageUrl;
+                        car.MainImageUrl = Settings.DefaultImageUrl;
                 }
                     
             }
@@ -329,7 +360,7 @@ namespace CmApp.Services
             var car = await CarRepository.GetCarById(id);
             if (car == null)
                 throw new BusinessException("Car with provided id does not exists!");
-            car.MainImgUrl = Settings.DefaultImageUrl;
+            car.MainImageUrl = Settings.DefaultImageUrl;
 
             return car;
         }

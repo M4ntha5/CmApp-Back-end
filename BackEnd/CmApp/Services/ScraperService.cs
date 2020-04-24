@@ -22,7 +22,7 @@ namespace CmApp.Services
         private readonly string MBDecoderEndpoint = "https://www.mbdecoder.com/decode/";
         private readonly string AtlanticExpressEndpoint = "http://www.atlanticexpresscorp.com/services/tracking/?num=";
 
-        private readonly IFileRepository FileRepository = new FileRepository();
+       // private readonly IFileRepository FileRepository = new FileRepository();
         private readonly ITrackingRepository TrackingRepo = new TrackingRepository();
 
         public Dictionary<string, string> GetVehicleInfo(string vin, string make)

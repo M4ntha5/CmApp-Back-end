@@ -10,7 +10,7 @@ namespace CmApp.Services
     {
         public IShippingRepository ShippingRepository { get; set; }
         public ISummaryRepository SummaryRepository { get; set; }
-        public IExchangeRatesRepository ExchangeRepository { get; set; }
+        public IExchangeService ExchangeRepository { get; set; }
 
         public async Task DeleteShipping(string carId)
         {

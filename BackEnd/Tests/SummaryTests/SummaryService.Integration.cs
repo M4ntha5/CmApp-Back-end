@@ -24,7 +24,7 @@ namespace Summary.Integration
             serviceRepo = new SummaryService
             {
                 SummaryRepository = summaryRepo,
-                ExchangeRepository = new ExchangeRatesRepository()
+                ExchangeRepository = new ExchangeService()
             };
             carId = "5e94b2ee6189921bb45d99a6";
         }

@@ -151,7 +151,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                ExchangeRatesRepository repo = new ExchangeRatesRepository();
+                ExchangeService repo = new ExchangeService();
                 var countries = await repo.GetAllCountries();
                 return Ok(countries);
             }

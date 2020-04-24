@@ -44,7 +44,8 @@ namespace CmApp.Repositories
                 Transmission = car.Transmission,
                 Equipment = car.Equipment,
                 Vin = car.Vin,
-                User = car.User
+                User = car.User,
+                MainImageUrl = car.MainImageUrl  
             };
             var response = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
             return response;
@@ -75,8 +76,8 @@ namespace CmApp.Repositories
                 .Include(x => x.Make)
                 .Include(x => x.Model)
                 .Include(x => x.Vin)
-                .Include(x => x.User);
-
+                .Include(x => x.User)
+                .Include(x => x.MainImageUrl);
 
             var filter = Builders<CarEntity>.Filter.Eq("user", ObjectId.Parse(userId));
             var sort = Builders<CarEntity>.Sort.Descending("created_at");
@@ -122,6 +123,19 @@ namespace CmApp.Repositories
                 .Set("color", car.Color)
                 .Set("interior", car.Interior)
                 .Set("equipment", car.Equipment);
+
+            _ = await repo.UpdateOneAsync(
+                carId,
+                update,
+                new DatabaseUpdateOneOptions()
+            );
+        }
+        public async Task UpdateCarMainImg(string carId, string imageUrl)
+        {
+            var repo = new CodeMashRepository<CarEntity>(Client);
+
+            var update = Builders<CarEntity>.Update
+                .Set("main_image_url", imageUrl);
 
             _ = await repo.UpdateOneAsync(
                 carId,

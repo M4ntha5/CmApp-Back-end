@@ -17,5 +17,6 @@ namespace CmApp.Contracts
         Task<CarEntity> GetCarByVin(string vin);
         Task<List<CarDisplay>> GetAllUserCars(string userId);
         Task DeleteAllCarImages(string recordId);
+        Task UpdateCarMainImg(string carId, string imageUrl);
     }
 }

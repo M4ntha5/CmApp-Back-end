@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CmApp.Contracts
 {
-    public interface IExchangeRatesRepository
+    public interface IExchangeService
     {
         Task<double> CalculateResult(ExchangeInput input);
         Task<List<string>> GetAvailableCurrencies();

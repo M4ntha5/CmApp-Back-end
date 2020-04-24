@@ -18,7 +18,7 @@ namespace CmApp.Controllers
         {
             ShippingRepository = new ShippingRepository(),
             SummaryRepository = new SummaryRepository(),
-            ExchangeRepository = new ExchangeRatesRepository()
+            ExchangeRepository = new ExchangeService()
         };
         private readonly CarRepository carRepo = new CarRepository();
 

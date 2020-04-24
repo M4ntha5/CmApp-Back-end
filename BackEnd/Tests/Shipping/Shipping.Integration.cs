@@ -20,7 +20,7 @@ namespace Shipping.Integration
             {
                 ShippingRepository = shippingRepo,
                 SummaryRepository = new SummaryRepository(),
-                ExchangeRepository = new ExchangeRatesRepository()
+                ExchangeRepository = new ExchangeService()
             };
             carId = "5e94b2ee6189921bb45d99a6";
         }

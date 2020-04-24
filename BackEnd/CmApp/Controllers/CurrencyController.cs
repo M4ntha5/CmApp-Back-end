@@ -13,7 +13,7 @@ namespace CmApp.Controllers
     [ApiController]
     public class CurrencyController : ControllerBase
     {
-        private readonly ExchangeRatesRepository repo = new ExchangeRatesRepository();
+        private readonly ExchangeService repo = new ExchangeService();
 
         // GET: api/Currency
         [HttpGet]
