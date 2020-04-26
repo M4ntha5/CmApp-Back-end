@@ -70,6 +70,8 @@ namespace CmApp.Services
                 carEntity.BodyType = "Coupe";
             else if (carEntity.BodyType == "SAV")
                 carEntity.BodyType = "SUV";
+            else if (carEntity.BodyType == "LIM")
+                carEntity.BodyType = "Limousine";
 
 
             var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make);

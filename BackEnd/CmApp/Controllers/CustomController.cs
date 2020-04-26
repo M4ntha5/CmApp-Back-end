@@ -111,20 +111,22 @@ namespace CmApp.Controllers
         [Route("api/get-image")]
         [Authorize(Roles = "user, admin")]
         [HttpPost]
-        public async Task<IActionResult> GetImages([FromBody] object image)
+        public async Task<IActionResult> GetImage([FromBody] object image)
         {
             try
             {
                 FileRepository fileRepo = new FileRepository();
-                List<string> imgs = new List<string>();
+                //List<string> imgs = new List<string>();
                 //images.RemoveAt(0);
                 //foreach (var image in images)
                 //{
-                    var fileInfo = fileRepo.GetFileId(image);
+                var fileInfo = fileRepo.GetFileId(image);
 
-                    var fileId = fileInfo.Item1;
-                    var fileType = fileInfo.Item2;
+                var fileId = fileInfo.Item1;
+                var fileType = fileInfo.Item2;
 
+                var fileUrl = await fileRepo.GetFileUrl(fileId);
+                /*
                     var stream = await fileRepo.GetFile(fileId);
 
                     var mem = new MemoryStream();
@@ -134,7 +136,43 @@ namespace CmApp.Controllers
                     string base64 = fileRepo.ByteArrayToBase64String(bytes);
 
                     base64 = "data:" + fileType + ";base64," + base64;
+                    */
+                   // imgs.Add(base64);
+               // }
+                return Ok(fileUrl);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Route("api/get-image2")]
+        [Authorize(Roles = "user, admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetImage2([FromBody] object image)
+        {
+            try
+            {
+                FileRepository fileRepo = new FileRepository();
+                //List<string> imgs = new List<string>();
+                //images.RemoveAt(0);
+                //foreach (var image in images)
+                //{
+                var fileInfo = fileRepo.GetFileId(image);
 
+                var fileId = fileInfo.Item1;
+                var fileType = fileInfo.Item2;
+            
+                var stream = await fileRepo.GetFile(fileId);
+
+                var mem = new MemoryStream();
+                stream.CopyTo(mem);
+
+                var bytes = fileRepo.StreamToByteArray(mem);
+                string base64 = fileRepo.ByteArrayToBase64String(bytes);
+
+                base64 = "data:" + fileType + ";base64," + base64;
+                    
                    // imgs.Add(base64);
                // }
                 return Ok(base64);
@@ -144,6 +182,7 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [Route("api/countries")]
         [Authorize(Roles = "user, admin")]
         [HttpGet]

@@ -37,7 +37,8 @@ namespace ScraperTests
         [Test]
         public void TestGetVehicleInfo()
         {
-            var equipment = scraperService.GetVehicleInfo(Vin, "BMW");
+            var vin = "WBS1J5C56JVD36905";
+            var equipment = scraperService.GetVehicleInfo(vin, "BMW");
 
             Assert.IsNotEmpty(equipment);
         }

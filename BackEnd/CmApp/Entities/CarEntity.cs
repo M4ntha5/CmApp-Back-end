@@ -44,7 +44,6 @@ namespace CmApp.Entities
         [Field("images")]
         public List<object> Images { get; set; } = new List<object>();
         public List<string> Base64images { get; set; } = new List<string>();
-        [Field("main_image_url")]
         public string MainImageUrl { get; set; } = "";
 
     }
