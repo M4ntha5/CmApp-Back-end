@@ -334,6 +334,9 @@ namespace CmApp.Services
         {
             if (car.User != userId)
                 throw new BusinessException("Car does not exist");
+            if(car.Equipment.Count != car.Equipment.Distinct().Count())
+                throw new BusinessException("Car cannot have multiple equipment with the same code!");
+
             await CarRepository.UpdateCar(carId, car);
             await CarRepository.DeleteAllCarImages(carId);
 

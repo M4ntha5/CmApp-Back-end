@@ -116,29 +116,12 @@ namespace CmApp.Controllers
             try
             {
                 FileRepository fileRepo = new FileRepository();
-                //List<string> imgs = new List<string>();
-                //images.RemoveAt(0);
-                //foreach (var image in images)
-                //{
                 var fileInfo = fileRepo.GetFileId(image);
 
                 var fileId = fileInfo.Item1;
                 var fileType = fileInfo.Item2;
 
                 var fileUrl = await fileRepo.GetFileUrl(fileId);
-                /*
-                    var stream = await fileRepo.GetFile(fileId);
-
-                    var mem = new MemoryStream();
-                    stream.CopyTo(mem);
-
-                    var bytes = fileRepo.StreamToByteArray(mem);
-                    string base64 = fileRepo.ByteArrayToBase64String(bytes);
-
-                    base64 = "data:" + fileType + ";base64," + base64;
-                    */
-                   // imgs.Add(base64);
-               // }
                 return Ok(fileUrl);
             }
             catch (Exception ex)
@@ -154,10 +137,6 @@ namespace CmApp.Controllers
             try
             {
                 FileRepository fileRepo = new FileRepository();
-                //List<string> imgs = new List<string>();
-                //images.RemoveAt(0);
-                //foreach (var image in images)
-                //{
                 var fileInfo = fileRepo.GetFileId(image);
 
                 var fileId = fileInfo.Item1;
@@ -172,9 +151,7 @@ namespace CmApp.Controllers
                 string base64 = fileRepo.ByteArrayToBase64String(bytes);
 
                 base64 = "data:" + fileType + ";base64," + base64;
-                    
-                   // imgs.Add(base64);
-               // }
+                
                 return Ok(base64);
             }
             catch (Exception ex)
