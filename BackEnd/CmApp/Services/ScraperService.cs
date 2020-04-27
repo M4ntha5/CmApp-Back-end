@@ -108,7 +108,7 @@ namespace CmApp.Services
             {
                 var website = MDecoderEndpoint + vin;
                 
-                var web = new HtmlWeb();
+               /* var web = new HtmlWeb();
                 HtmlDocument result = web.Load(website);
                 //var st = doc.DocumentNode;
 
@@ -119,14 +119,14 @@ namespace CmApp.Services
                 //------------------------------------------------------------
                 //recaptcha bypass
                 if (dataSiteKey != null && dataSiteKey.Length > 0)
-                    result = await BypassRecaptcha(website, dataSiteKey);
+                    result = await BypassRecaptcha(website, dataSiteKey);*/
 
-               /* HttpClient http = new HttpClient();
+                HttpClient http = new HttpClient();
                 var response = await http.GetByteArrayAsync(website);
                 String source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
                 source = WebUtility.HtmlDecode(source);
                 HtmlDocument result = new HtmlDocument();
-                result.LoadHtml(source);*/
+                result.LoadHtml(source);
 
                 List<HtmlNode> tables = result.DocumentNode.Descendants().Where
                 (x => (x.Name == "table" && x.Attributes["class"] != null &&
@@ -147,7 +147,7 @@ namespace CmApp.Services
             try
             {
                 var website = MBDecoderEndpoint + vin;
-                var result = await GetPrimarySiteDocument(website);
+              /*  var result = await GetPrimarySiteDocument(website);
                 if (result == null)
                     throw new BusinessException("Error getting data from tracking page!");
 
@@ -158,7 +158,14 @@ namespace CmApp.Services
                 //------------------------------------------------------------
                 //recaptcha bypass
                 if (dataSiteKey != null && dataSiteKey.Length > 0)
-                    result = await BypassRecaptcha(website, dataSiteKey);
+                    result = await BypassRecaptcha(website, dataSiteKey);*/
+
+                HttpClient http = new HttpClient();
+                var response = await http.GetByteArrayAsync(website);
+                String source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
+                source = WebUtility.HtmlDecode(source);
+                HtmlDocument result = new HtmlDocument();
+                result.LoadHtml(source);
 
                 List<HtmlNode> tables = result.DocumentNode.Descendants().Where
                 (x => (x.Name == "table" && x.Attributes["class"] != null &&
