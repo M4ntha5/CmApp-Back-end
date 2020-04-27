@@ -191,7 +191,7 @@ namespace CmApp.Controllers
                     throw new Exception("You can not access this resource!");
 
                 await UserService.ChangeUserRole(userId, data.Role);
-                return Ok("Role sccessfully shanged!");
+                return Ok("Role sccessfully changed!");
             }
             catch (Exception ex)
             {

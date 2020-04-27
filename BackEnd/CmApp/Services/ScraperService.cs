@@ -22,7 +22,7 @@ namespace CmApp.Services
         private readonly string MBDecoderEndpoint = "https://www.mbdecoder.com/decode/";
         private readonly string AtlanticExpressEndpoint = "http://www.atlanticexpresscorp.com/services/tracking/?num=";
 
-        private readonly IFileRepository FileRepository = new FileRepository();
+       // private readonly IFileRepository FileRepository = new FileRepository();
         private readonly ITrackingRepository TrackingRepo = new TrackingRepository();
 
         public Dictionary<string, string> GetVehicleInfo(string vin, string make)
@@ -107,12 +107,26 @@ namespace CmApp.Services
             try
             {
                 var website = MDecoderEndpoint + vin;
-                HttpClient http = new HttpClient();
+                
+                var web = new HtmlWeb();
+                HtmlDocument result = web.Load(website);
+                //var st = doc.DocumentNode;
+
+                //check if captcha exists
+                var dataSiteKey = result.DocumentNode.Descendants().Where
+                (x => (x.Name == "div") && x.Attributes["class"] != null &&
+                   x.Attributes["class"].Value.Contains("g-recaptcha")).ToArray();
+                //------------------------------------------------------------
+                //recaptcha bypass
+                if (dataSiteKey != null && dataSiteKey.Length > 0)
+                    result = await BypassRecaptcha(website, dataSiteKey);
+
+               /* HttpClient http = new HttpClient();
                 var response = await http.GetByteArrayAsync(website);
                 String source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
                 source = WebUtility.HtmlDecode(source);
                 HtmlDocument result = new HtmlDocument();
-                result.LoadHtml(source);
+                result.LoadHtml(source);*/
 
                 List<HtmlNode> tables = result.DocumentNode.Descendants().Where
                 (x => (x.Name == "table" && x.Attributes["class"] != null &&
@@ -133,12 +147,18 @@ namespace CmApp.Services
             try
             {
                 var website = MBDecoderEndpoint + vin;
-                HttpClient http = new HttpClient();
-                var response = await http.GetByteArrayAsync(website);
-                String source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
-                source = WebUtility.HtmlDecode(source);
-                HtmlDocument result = new HtmlDocument();
-                result.LoadHtml(source);
+                var result = await GetPrimarySiteDocument(website);
+                if (result == null)
+                    throw new BusinessException("Error getting data from tracking page!");
+
+                                //check if captcha exists
+                var dataSiteKey = result.DocumentNode.Descendants().Where
+                (x => (x.Name == "div") && x.Attributes["class"] != null &&
+                   x.Attributes["class"].Value.Contains("g-recaptcha")).ToArray();
+                //------------------------------------------------------------
+                //recaptcha bypass
+                if (dataSiteKey != null && dataSiteKey.Length > 0)
+                    result = await BypassRecaptcha(website, dataSiteKey);
 
                 List<HtmlNode> tables = result.DocumentNode.Descendants().Where
                 (x => (x.Name == "table" && x.Attributes["class"] != null &&

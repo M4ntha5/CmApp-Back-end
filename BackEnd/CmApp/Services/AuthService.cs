@@ -51,7 +51,7 @@ namespace CmApp.Services
             if (!user.EmailConfirmed)
                 throw new BusinessException("You must confirm your email, before loging in!");
             if (user.Blocked)
-                throw new BusinessException("Your accout has been blocked, please contact system administrato");
+                throw new BusinessException("Your accout has been blocked, please contact system administrator");
 
             if (user != null && user.Id != null)
             {

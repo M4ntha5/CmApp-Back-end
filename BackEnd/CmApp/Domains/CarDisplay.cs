@@ -18,7 +18,8 @@ namespace CmApp.Domains
         public string Vin { get; set; }
         [Field("images")]
         public List<object> Images { get; set; } = new List<object>();
-        public string MainImgUrl { get; set; } = "";
+        [Field("main_image_url")]
+        public string MainImageUrl { get; set; } = "";
         [Field("summary")]
         public List<SummaryEntity> Summary { get; set; } = new List<SummaryEntity>();
 

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using CmApp.Domains;
-using CmApp.Entities;
+﻿using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CmApp.Controllers
 {

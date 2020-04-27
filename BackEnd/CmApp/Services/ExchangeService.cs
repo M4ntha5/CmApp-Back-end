@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace CmApp.Repositories
 {
-    public class ExchangeRatesRepository : IExchangeRatesRepository
+    public class ExchangeService : IExchangeService
     {
         //base currency allways EUR
         private readonly string Url = "https://api.exchangeratesapi.io/latest";

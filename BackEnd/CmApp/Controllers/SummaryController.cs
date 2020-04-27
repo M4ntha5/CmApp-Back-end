@@ -17,7 +17,7 @@ namespace CmApp.Controllers
         private readonly SummaryService summaryService = new SummaryService()
         {
             SummaryRepository = new SummaryRepository(),
-            ExchangeRepository = new ExchangeRatesRepository(),
+            ExchangeRepository = new ExchangeService(),
         };
         private readonly CarRepository carRepo = new CarRepository();
 
