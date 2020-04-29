@@ -9,29 +9,20 @@ using CmApp.Repositories;
 using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Utils;
+using CmApp;
 
 namespace ScraperTests
 {
     public class ScraperTests
     {
-        string Vin = "WBA7E2C37HG740629";
+        readonly string Vin = "WBA7E2C37HG740629";
         ScraperService scraperService;
-        CarService carService;
         CarRepository carRepo;
         [SetUp]
         public void Setup()
         {
-            Vin = "wba3b1g58ens79736";
             scraperService = new ScraperService();
             carRepo = new CarRepository();
-            carService = new CarService()
-            {
-                CarRepository = new CarRepository(),
-                FileRepository = new FileRepository(),
-                SummaryRepository = new SummaryRepository(),
-                WebScraper = new ScraperService(),
-                TrackingRepository = new TrackingRepository()
-            };
         }
 
         [Test]
@@ -39,16 +30,32 @@ namespace ScraperTests
         {
             var vin = "WBS1J5C56JVD36905";
             var equipment = scraperService.GetVehicleInfo(vin, "BMW");
-
             Assert.IsNotEmpty(equipment);
+
+            vin = "WDDLJ7EB1CA031646";
+            equipment = scraperService.GetVehicleInfo(vin, "Mercedes-benz");
+            Assert.IsNotEmpty(equipment);
+
+            Assert.Throws<BusinessException>(() =>
+                scraperService.GetVehicleInfo(null, "Mercedes-benz"));
+
         }
 
         [Test]
         public void TestGetVehicleEquipment()
         {
             var equipment = scraperService.GetVehicleEquipment(Vin, "BMW");
-
             Assert.IsNotEmpty(equipment);
+
+            Assert.Throws<AggregateException>(() =>
+                scraperService.GetVehicleEquipment(null, "BMW"));
+
+            var vin = "WDDLJ7EB1CA031646";
+            equipment = scraperService.GetVehicleEquipment(vin, "Mercedes-benz");
+            Assert.IsNotEmpty(equipment);
+            Assert.Throws<AggregateException>(() =>
+                scraperService.GetVehicleEquipment(null, "Mercedes-benz"));
+
         }
 
         [Test]
@@ -59,27 +66,37 @@ namespace ScraperTests
             //vin = "WBS1J5C56JVD36905";
             //vin = "WBA3A9G51FNT09002";
 
-            var trackingId = "5e94b20b5f110b46841f531c";
+            var trackingId = "5ea961711d20e577d470a50e";
 
-            var cars = await carRepo.GetAllCars();
-            await scraperService.TrackingScraper(cars[0], trackingId);
+            var car = await carRepo.GetCarById("5ea9616f1d20e577d470a50d");
+            await scraperService.TrackingScraper(car, trackingId);
 
         }
 
         [Test]
-        public async Task TestMBScraper()
+        public async Task DownloadAllTrackingImages()
         {
-            var vin = "WDDLJ7EB1CA031646";
-            var make = "Mercedes-benz";
-
-            var car = new CarEntity()
+            var tracking = new TrackingEntity()
             {
-                Vin = vin,
-                Make = make
+                Id = "5ea728d644d20049748fed0a",
+                AuctionImages = new List<object>()
             };
 
-            var result = await carService.InsertCar(car);
-            Assert.AreNotEqual(null, result);
+            var urls  = new List<string> {Settings.DefaultImageUrl};
+
+            await scraperService.DownloadAllTrackingImages(tracking, urls);
+
+            await scraperService.DownloadAllTrackingImages(tracking, new List<string>());
+
+            tracking = new TrackingEntity()
+            {
+                Id = "5ea728d644d20049748fed0a",
+                AuctionImages = new List<object>{ new {}}
+            };
+
+            await scraperService.DownloadAllTrackingImages(tracking, new List<string>());
+
         }
+    
     }
 }

@@ -97,14 +97,6 @@ namespace CmApp.Repositories
             return car;
         }
 
-        public async Task<CarEntity> GetCarByVin(string vin)
-        {
-            var repo = new CodeMashRepository<CarEntity>(Client);
-
-            var car = await repo.FindOneAsync(x => x.Vin == vin, new DatabaseFindOneOptions());
-
-            return car;
-        }
         public async Task UpdateCar(string carId, CarEntity car)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
@@ -130,7 +122,7 @@ namespace CmApp.Repositories
                 new DatabaseUpdateOneOptions()
             );
         }
-        public async Task UpdateCarMainImg(string carId, string imageUrl)
+       /* public async Task UpdateCarMainImg(string carId, string imageUrl)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
 
@@ -142,7 +134,7 @@ namespace CmApp.Repositories
                 update,
                 new DatabaseUpdateOneOptions()
             );
-        }
+        }*/
 
         public async Task DeleteCar(string carId)
         {

@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System.Threading.Tasks;
 
-namespace Emails.Tests
+namespace EmailsTests
 {
     class EmailsTests
     {

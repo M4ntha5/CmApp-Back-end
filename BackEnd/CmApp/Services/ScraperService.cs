@@ -147,18 +147,6 @@ namespace CmApp.Services
             try
             {
                 var website = MBDecoderEndpoint + vin;
-              /*  var result = await GetPrimarySiteDocument(website);
-                if (result == null)
-                    throw new BusinessException("Error getting data from tracking page!");
-
-                                //check if captcha exists
-                var dataSiteKey = result.DocumentNode.Descendants().Where
-                (x => (x.Name == "div") && x.Attributes["class"] != null &&
-                   x.Attributes["class"].Value.Contains("g-recaptcha")).ToArray();
-                //------------------------------------------------------------
-                //recaptcha bypass
-                if (dataSiteKey != null && dataSiteKey.Length > 0)
-                    result = await BypassRecaptcha(website, dataSiteKey);*/
 
                 HttpClient http = new HttpClient();
                 var response = await http.GetByteArrayAsync(website);
@@ -349,7 +337,7 @@ namespace CmApp.Services
             {
                 var split = dataSiteKey[0].OuterHtml.Split("\"");
                 var key = split[3]; //sites recaptch key
-                var repo = new Recaptcha2captcha();
+                var repo = new Recaptcha2captchaRepository();
                 recaptchaToken = repo.Start(key, website);
 
                 if (recaptchaToken != null)
@@ -364,7 +352,7 @@ namespace CmApp.Services
             return result;
         }
 
-        private Image DownloadImageFromUrl(string imageUrl)
+       /* private Image DownloadImageFromUrl(string imageUrl)
         {
             HttpWebRequest webRequest = (HttpWebRequest)HttpWebRequest.Create(imageUrl);
             webRequest.AllowWriteStreamBuffering = true;
@@ -381,6 +369,6 @@ namespace CmApp.Services
 
 
             return image;
-        }
+        }*/
     }
 }

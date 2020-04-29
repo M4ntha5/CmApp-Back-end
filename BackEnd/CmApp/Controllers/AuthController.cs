@@ -26,8 +26,6 @@ namespace CmApp.Controllers
             try
             {
                 var jwt = await authService.Login(user);
-                if (jwt == null)
-                    return BadRequest("This user doesn't exist");
 
                 return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
             }
@@ -44,11 +42,10 @@ namespace CmApp.Controllers
             {
                 var response = await authService.Register(user);
 
-                if(response)
-                    return Ok($"Confirmation email has been sent to {user.Email} . " +
-                        $"If you can't find it, check your spam folder");
-                else
-                    return BadRequest(response);                                     
+                
+                return Ok($"Confirmation email has been sent to {user.Email} . " +
+                     $"If you can't find it, check your spam folder");
+                                               
             }
             catch (Exception ex)
             {
@@ -98,18 +95,5 @@ namespace CmApp.Controllers
             }
         }
 
-        /* [HttpGet("me")]
-         public async Task<IActionResult> Me(string userId)
-         {
-             try
-             {
-                 var user = await authService.Me(userId);
-                 return Ok(user);
-             }
-             catch (Exception ex)
-             {
-                 return BadRequest(ex.Message);
-             }
-         }*/
     }
 }

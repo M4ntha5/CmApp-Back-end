@@ -20,13 +20,13 @@ namespace CmApp.Services
         public IEmailRepository EmailRepository { get; set; }
         public PasswordResetRepository PasswordResetRepository { get; set; }
 
-        public async Task<UserEntity> Me(string userId)
+       /* public async Task<UserEntity> Me(string userId)
         {
             var user = await UserRepository.GetUserById(userId);
             if (user == null)
                 throw new BusinessException("No such user");
             return user;           
-        }
+        }*/
 
         public async Task<bool> Register(User user)
         {
@@ -147,10 +147,10 @@ namespace CmApp.Services
         public async Task ConfirmUserEmail(string token)
         {
             var user = await UserRepository.GetUserById(token);
-            if (user.EmailConfirmed)
-                throw new BusinessException("Email already confirmed!");
             if (user == null || user.Deleted)
                 throw new BusinessException("No such a user!");
+            if (user.EmailConfirmed)
+                throw new BusinessException("Email already confirmed!");  
 
             await UserRepository.ChangeEmailConfirmationFlag(user.Id);
             await EmailRepository.SendWelcomeEmail(user.Email);

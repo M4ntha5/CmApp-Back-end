@@ -25,7 +25,7 @@ namespace CmApp.Repositories
             client.DefaultRequestHeaders.Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            HttpResponseMessage response = client.GetAsync(Url).Result;
+            HttpResponseMessage response = await client.GetAsync(Url);
       
             if (response.IsSuccessStatusCode)
             {
@@ -69,7 +69,7 @@ namespace CmApp.Repositories
 
         public async Task<double> CalculateResult(ExchangeInput input)
         {
-            if (input.From == "" || input.To == "" || input.Amount < 1)
+            if (input == null || input.From == "" || input.To == "" || input.Amount < 1)
                 throw new BusinessException("Input data was in incorect format!");
 
             var rates = await GetSelectedExchangeRate(input.From);

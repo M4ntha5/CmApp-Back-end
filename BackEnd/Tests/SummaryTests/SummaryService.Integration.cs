@@ -9,13 +9,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Summary.Integration
+namespace SummaryTests
 {
     class SummaryServiceTests
     {
         SummaryRepository summaryRepo;
         SummaryService serviceRepo;
-        string carId;
+        string carId, summaryId;
 
         [SetUp]
         public void Setup()
@@ -26,7 +26,8 @@ namespace Summary.Integration
                 SummaryRepository = summaryRepo,
                 ExchangeRepository = new ExchangeService()
             };
-            carId = "5e94b2ee6189921bb45d99a6";
+            carId = "5ea728c744d20049748fed09";
+            summaryId = "5ea930c8f3c276556c7a4cc0";
         }
 
         [Test]
@@ -35,6 +36,11 @@ namespace Summary.Integration
             var summary = await summaryRepo.GetSummaryByCarId(carId);     
             Assert.AreEqual(carId, summary.Car);
         }
+        [Test]
+        public async Task InsertTotalByCar()
+        {
+            await summaryRepo.InsertTotalByCar(summaryId, 50);
+        }
 
         [Test]
         public async Task InsertSummary()
@@ -42,17 +48,21 @@ namespace Summary.Integration
             var entity = new SummaryEntity 
             { 
                 BoughtPrice = 25000, 
-                BaseCurrency="EUR" ,
+                BaseCurrency="" ,
                 SelectedCurrency = "EUR",
             };
-            var summary = await serviceRepo.InsertCarSummary(carId, entity);
+            Assert.ThrowsAsync<BusinessException>(async () => 
+                await serviceRepo.InsertCarSummary(carId, entity));
 
-            Assert.AreEqual(entity.BoughtPrice, summary.BoughtPrice);
+            entity = new SummaryEntity 
+            { 
+                BoughtPrice = 25000, 
+                BaseCurrency="EUR" ,
+                SelectedCurrency = "USD",
+            };
+            var summary = await serviceRepo.InsertCarSummary(carId, entity);
             Assert.AreEqual(carId, summary.Car);
-        }
-        [Test]
-        public void InsertEmptySummary()
-        {
+
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
                    await summaryRepo.InsertSummary(null));
         }
@@ -67,12 +77,24 @@ namespace Summary.Integration
                 SoldPrice = 8000,
             };
             await serviceRepo.UpdateSoldSummary(carId, entity);
+
+            entity.CreatedAt = new DateTime(2020,04,28);
+            await serviceRepo.UpdateSoldSummary(carId, entity);
+
+            entity.CreatedAt = new DateTime(2020,04,20);
+            await serviceRepo.UpdateSoldSummary(carId, entity);
+
+            entity.CreatedAt = new DateTime(2020,04,29,12,3,0);
+            await serviceRepo.UpdateSoldSummary(carId, entity);
+
+            entity.CreatedAt = new DateTime(2020,04,29,15,35,0);
+            await serviceRepo.UpdateSoldSummary(carId, entity);
         }
 
         [Test]
         public async Task DeleteSummary()
         {
-            await serviceRepo.DeleteSummary(carId);
+           await serviceRepo.DeleteSummary(carId);
         }
     }
 }
