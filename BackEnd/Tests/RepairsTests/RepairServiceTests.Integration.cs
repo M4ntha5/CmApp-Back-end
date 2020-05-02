@@ -1,95 +1,80 @@
-﻿using CmApp.Entities;
+﻿using CmApp;
+using CmApp.Entities;
 using CmApp.Repositories;
+using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RepairsTests.Integration
+namespace RepairsTests
 {
     class RepairServiceTestsIntegration
     {
         RepairRepository repairRepo;
+        RepairService repairService;
         string carId;
         string repairId;
         [SetUp]
         public void Setup()
         {
             repairRepo = new RepairRepository();
-            carId = "5e94b2ee6189921bb45d99a6";
-            repairId = "5e94b93a99ad482e68e3761a";
+            repairService = new RepairService()
+            {
+                RepairRepository = repairRepo,
+                SummaryRepository = new SummaryRepository()
+            };
+            
+            carId = "5ea728c744d20049748fed09";
+            repairId = "5ea99138db38aa85d006c808";
         }
 
         [Test]
         public async Task TestGetAllCarRepairs()
         {
-            var repairs = await repairRepo.GetAllRepairsByCarId(carId);
+            var repairs = await repairService.GetAllSelectedCarRepairs(carId);
             Assert.AreNotEqual(null, repairs);
         }
 
         [Test]
         public async Task TestGetSelectedCarRepair()
         {
-            var repairs = await repairRepo.GetCarRepairById(carId, repairId);
-
+            var repairs = await repairService.GetSelectedCarRepairById(carId, repairId);
             Assert.AreEqual(repairId, repairs.Id);
             Assert.AreEqual(carId, repairs.Car);
-        }
 
-        [Test]
-        public async Task TestDeleteSelectedCarRepair()
-        {
-            var response = await repairRepo.DeleteRepair(carId, repairId);
-            Assert.IsTrue(response.IsAcknowledged);
-            Assert.AreEqual(1, response.DeletedCount);
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await repairService.GetSelectedCarRepairById(carId, "5ea991381438aa85d006c808"));
         }
+             
 
         [Test]
         public async Task TestUpdateSelectedCarRepair()
         {
             var repair = new RepairEntity() { Name = "kapotas", Price = 200, Car = carId };
-            await repairRepo.UpdateRepair(repairId, repair);
+            await repairService.UpdateSelectedCarRepair(repairId,carId, repair);
         }
+
+        [Test]
+        public async Task TestDeleteSelectedCarRepair()
+        {
+            await repairService.DeleteSelectedCarRepair(carId, repairId);
+            await repairService.DeleteAllCarRepairs(carId);
+        }    
 
         [Test]
         public async Task TestInsertCarRepair()
         {
             var repair = new RepairEntity { Name = "k.p p.sparnas", Price = 250, Car = carId };
 
-            var response = await repairRepo.InsertRepair(repair);
+            await repairService.InsertCarRepairs(carId, new List<RepairEntity>{repair });
 
-            Assert.AreEqual(carId, response.Car);
-            Assert.AreEqual(repair.Name, response.Name);
-        }
-        [Test]
-        public async Task TestDeleMultipleCarRepairs()
-        {
-            await repairRepo.DeleteMultipleRepairs(carId);
-        }
-
-        [Test]
-        public async Task TestInsertMultipleRepairs()
-        {
-            var repairs = new List<RepairEntity>
-            {
-                new RepairEntity { Name = "k.p p.sparnas", Price = 250, Car = carId },
-                new RepairEntity { Name = "k.p p.sparnas", Price = 250, Car = carId },
-                new RepairEntity { Name = "k.p p.sparnas", Price = 250, Car = carId },
-                new RepairEntity { Name = "k.p p.sparnas", Price = 250, Car = carId },
-                new RepairEntity { Name = "k.p p.sparnas", Price = 250, Car = carId },
-                new RepairEntity { Name = "k.p p.sparnas", Price = 250, Car = carId },
-                new RepairEntity { Name = "k.p p.sparnas", Price = 250, Car = carId }
-            };
-
-            await repairRepo.InsertMultipleRepairs(repairs);
-        }
-        [Test]
-        public void TestInsertEmpty()
-        {
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await repairRepo.InsertRepair(null));
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await repairRepo.InsertMultipleRepairs(null));
+
         }
+
     }
 }

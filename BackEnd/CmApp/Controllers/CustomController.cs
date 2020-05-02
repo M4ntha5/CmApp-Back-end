@@ -29,7 +29,7 @@ namespace CmApp.Controllers
 
         [HttpGet]
         [Route("/api/makes")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> GetAllMakes()
         {
             try
@@ -46,7 +46,7 @@ namespace CmApp.Controllers
         }
         [HttpGet]
         [Route("/api/makes/{makeName}/models")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> GetAllMakeModels(string makeName)
         {
             try
@@ -63,7 +63,7 @@ namespace CmApp.Controllers
 
         // GET: api/Custom
         [Route("api/user-car-names")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         [HttpGet]
         public async Task<IActionResult> GetCarNames()
         {
@@ -88,7 +88,7 @@ namespace CmApp.Controllers
         // DELETE: api/ApiWithActions/5
         [Route("api/cars/{carId}/delete-repairs")]
         [HttpDelete("{repairId}")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> DeleteAllCarRepairs(string carId)
         {
             try
@@ -96,7 +96,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 await repairService.DeleteAllCarRepairs(carId);
@@ -109,7 +109,7 @@ namespace CmApp.Controllers
         }
 
         [Route("api/get-image")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         [HttpPost]
         public async Task<IActionResult> GetImage([FromBody] object image)
         {
@@ -130,7 +130,7 @@ namespace CmApp.Controllers
             }
         }
         [Route("api/get-image2")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         [HttpPost]
         public async Task<IActionResult> GetImage2([FromBody] object image)
         {

@@ -46,8 +46,9 @@ namespace CmApp.Services
                 Country = user.Country,
                 Sex = user.Sex,
                 Id = userId
-            };
+            };          
             await UserRepository.UpdateUser(entity);
+
         }
 
         public async Task<List<UserEntity>> GetAllUsers()
@@ -63,6 +64,12 @@ namespace CmApp.Services
         }
 
         public async Task<List<UserEntity>> GetAllUnblockedUsers()
+        {
+            var users = await UserRepository.GetAllUnblockedUsers();
+            return users;
+        }
+
+        public async Task<List<UserEntity>> ChangePassword()
         {
             var users = await UserRepository.GetAllUnblockedUsers();
             return users;

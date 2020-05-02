@@ -19,7 +19,7 @@ namespace CmApp.Repositories
         {
             var repo = new CodeMashRepository<PasswordResetEntity>(Client);
 
-            var reset = await repo.InsertOneAsync(resetEntity, new DatabaseInsertOneOptions());
+            await repo.InsertOneAsync(resetEntity, new DatabaseInsertOneOptions());
         }
 
         public async Task<PasswordResetEntity> GetPasswordResetByToken(string token)

@@ -206,5 +206,12 @@ namespace CmApp.Repositories
 
             await repo.UpdateOneAsync(userId, update, new DatabaseUpdateOneOptions());
         }
+
+        public async Task DeleteResetToken(string resetId)
+        {
+            var repo = new CodeMashRepository<PasswordResetEntity>(Client);
+
+            await repo.DeleteOneAsync(resetId);
+        }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -20,13 +21,13 @@ namespace CmApp.Services
         public IEmailRepository EmailRepository { get; set; }
         public PasswordResetRepository PasswordResetRepository { get; set; }
 
-        public async Task<UserEntity> Me(string userId)
+       /* public async Task<UserEntity> Me(string userId)
         {
             var user = await UserRepository.GetUserById(userId);
             if (user == null)
                 throw new BusinessException("No such user");
             return user;           
-        }
+        }*/
 
         public async Task<bool> Register(User user)
         {
@@ -147,10 +148,10 @@ namespace CmApp.Services
         public async Task ConfirmUserEmail(string token)
         {
             var user = await UserRepository.GetUserById(token);
-            if (user.EmailConfirmed)
-                throw new BusinessException("Email already confirmed!");
             if (user == null || user.Deleted)
                 throw new BusinessException("No such a user!");
+            if (user.EmailConfirmed)
+                throw new BusinessException("Email already confirmed!");  
 
             await UserRepository.ChangeEmailConfirmationFlag(user.Id);
             await EmailRepository.SendWelcomeEmail(user.Email);
@@ -163,7 +164,16 @@ namespace CmApp.Services
             if (!user.EmailConfirmed)
                 throw new BusinessException("User with this email not registered");
 
-            byte[] salt = new byte[128 / 8];
+            Random random = new Random();
+
+            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+            var token = new string(Enumerable.Repeat(chars, 64)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+
+
+
+           /* byte[] salt = new byte[128 / 8];
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(salt);
@@ -177,7 +187,7 @@ namespace CmApp.Services
                     iterationCount: 10000,
                     numBytesRequested: 256 / 8
                 )
-            );
+            );*/
 
             //reset token will be valid for 2 hours
             var entity = new PasswordResetEntity
@@ -196,7 +206,10 @@ namespace CmApp.Services
             if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match");
 
-            var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(user.Token);
+            byte[] bytes = Encoding.Default.GetBytes(user.Token);
+            var token = Encoding.UTF8.GetString(bytes);
+
+            var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(token);
 
             if (resetDetails == null)
                 throw new BusinessException("Error handling your password change. Please try again");
@@ -208,6 +221,15 @@ namespace CmApp.Services
                 throw new BusinessException("Error changing your password. Please try again");
 
             await UserRepository.ChangePassword(resetDetails.User, user.Password);
+            await UserRepository.DeleteResetToken(resetDetails.Id);
+        }
+
+        public async Task ResetPassword(string userId, User user)
+        {
+            if (user.Password != user.Password2)
+                throw new BusinessException("Passwords do not match");
+
+            await UserRepository.ChangePassword(userId, user.Password);
         }
 
     }

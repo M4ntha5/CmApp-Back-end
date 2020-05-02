@@ -1,11 +1,12 @@
-﻿using CmApp.Entities;
+﻿using CmApp;
+using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
 
-namespace Shipping.Integration
+namespace ShippingTests
 {
     class Shipping
     {
@@ -22,7 +23,7 @@ namespace Shipping.Integration
                 SummaryRepository = new SummaryRepository(),
                 ExchangeRepository = new ExchangeService()
             };
-            carId = "5e94b2ee6189921bb45d99a6";
+            carId = "5ea728c744d20049748fed09";
         }
 
         [Test]
@@ -38,19 +39,23 @@ namespace Shipping.Integration
             var entity = new ShippingEntity
             {
                 AuctionFee = 1,
-                AuctionFeeCurrency = "EUR",
+                AuctionFeeCurrency = "USD",
                 Customs = 2,
+                CustomsCurrency = "USD",
                 TransferFee = 3,
+                TransferFeeCurrency = "USD",
                 TransportationFee = 4,
-                TransportationFeeCurrency = "EUR",
-                CustomsCurrency = "EUR",
-                TransferFeeCurrency = "EUR",
+                TransportationFeeCurrency = "USD",
                 BaseCurrency = "EUR",
             };
+            entity.AuctionFeeCurrency = null;
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await shippingService.InsertShipping(carId, entity));
 
+            entity.AuctionFeeCurrency = "USD";
             var shipping = await shippingService.InsertShipping(carId, entity);
 
-            Assert.AreEqual(entity.Car, shipping.Car);
+            Assert.AreEqual(carId, shipping.Car);
         }
 
         [Test]

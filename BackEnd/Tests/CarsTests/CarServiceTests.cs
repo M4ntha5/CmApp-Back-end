@@ -1,4 +1,5 @@
 ﻿using CmApp.Contracts;
+using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -63,7 +64,12 @@ namespace CarsTests
                 Id = "1",
                 Make = "BMW"
             };
+            var carDet = new CarDisplay
+            {
+                Vin = "1232",
+            };
 
+            carMock.GetAllUserCars(Arg.Any<string>()).Returns(new List<CarDisplay>{carDet });
             scraperMock.GetVehicleEquipment(Arg.Any<string>(), Arg.Any<string>()).Returns(eq);
             scraperMock.GetVehicleInfo(Arg.Any<string>(), Arg.Any<string>()).Returns(par);
             carMock.InsertCar(Arg.Any<CarEntity>()).Returns(car);

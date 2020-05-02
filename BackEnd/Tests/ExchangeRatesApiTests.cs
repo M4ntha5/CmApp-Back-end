@@ -1,4 +1,5 @@
-﻿using CmApp.Domains;
+﻿using CmApp;
+using CmApp.Domains;
 using CmApp.Repositories;
 using CmApp.Utils;
 using NUnit.Framework;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExchangeRates
+namespace ExchangeRatesTests
 {
     class ExchangeRatesApiTests
     {
@@ -54,6 +55,7 @@ namespace ExchangeRates
             };
             var curr = await repo.CalculateResult(input);
             Assert.NotZero(curr);
+            Assert.ThrowsAsync<BusinessException>(async () => await repo.CalculateResult(null));
         }
     }
 }

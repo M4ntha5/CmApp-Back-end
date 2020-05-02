@@ -1,31 +1,35 @@
-﻿using CmApp.Entities;
+﻿using CmApp;
+using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
 using CmApp.Utils;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
-namespace Tracking.Integration
+namespace TrackingTests
 {
     class Tracking
     {
         TrackingService trackingService;
         TrackingRepository trackingRepo;
+        FileRepository fileRepo;
         string carId;
         [SetUp]
         public void Setup()
         {
             trackingRepo = new TrackingRepository();
+            fileRepo = new FileRepository();
             trackingService = new TrackingService()
             {
                 TrackingRepository = trackingRepo,
                 ScraperService = new ScraperService(),
                 CarRepository = new CarRepository(),
-                FileRepository = new FileRepository()
+                FileRepository = fileRepo
             };
-            carId = "5e94b2ee6189921bb45d99a6";
+            carId = "5ea728c744d20049748fed09";
         }
 
         [Test]
@@ -47,6 +51,8 @@ namespace Tracking.Integration
 
             var tracking = await trackingService.InsertTracking(carId, entity);
             Assert.AreEqual(carId, tracking.Car);
+            Assert.ThrowsAsync<ArgumentNullException>(async ()=>
+                await trackingRepo.InsertTracking(null));
         }
 
         [Test]
@@ -55,9 +61,9 @@ namespace Tracking.Integration
             var entity = new TrackingEntity()
             {
                 AuctionImages = new List<object>(),
-                BookingNumber = "naujas",
-                ContainerNumber = "naujas",
-                Url = "naujas",
+                BookingNumber = "naujas2",
+                ContainerNumber = "naujas2",
+                Url = "naujas2",
             };
             await trackingService.UpdateTracking(carId, entity);
         }
@@ -70,26 +76,54 @@ namespace Tracking.Integration
         [Test]
         public async Task TestDeleteTrackingImages()
         {
-            await trackingRepo.DeleteTrackingImages("5e94bef563a2911854ac16f1");
+            await trackingRepo.DeleteTrackingImages("5ea961711d20e577d470a50e");
         }
 
         [Test]
         public async Task TestUploadImageToTracking()
         {
+            var stream = await fileRepo.GetFile(Settings.DefaultImage);
+
+            var mem = new MemoryStream();
+            stream.CopyTo(mem);
+            var bytes = fileRepo.StreamToByteArray(mem);
+
             await trackingRepo.UploadImageToTracking(
-                "5e94bef563a2911854ac16f1", new byte[0], "test.png");
+                "5ea71c52862b9f00040c7726", bytes, "test.png");
         }
         [Test]
         public async Task TestUpdateImageShowStatus()
         {
-            await trackingRepo.UpdateImageShowStatus(
-                "5e94bef563a2911854ac16f1", false);
+            await trackingService.SaveLastShowImagesStatus(
+                "5ea9616f1d20e577d470a50d", false);
+
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await trackingService.SaveLastShowImagesStatus(
+                    "5ea9616f1d20e5775570a50d", false));
+        }
+
+        [Test]
+        public async Task LookForTrackingData()
+        {
+            await trackingService.LookForTrackingData("5ea9616f1d20e577d470a50d");
+            await trackingService.LookForTrackingImages("5ea9616f1d20e577d470a50d");
+
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                 await trackingService.LookForTrackingImages("5ea9616f1550e577d470a50d"));
+
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                 await trackingService.LookForTrackingData("5ea9616f1d20e5711470a50d"));
+
         }
         [Test]
-        public void TestInsertEmpty()
+        public async Task DownloadTrackingImages()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(async ()=>
-                await trackingRepo.InsertTracking(null));
+            await trackingService.DownloadTrackingImages("5ea9616f1d20e577d470a50d",
+                new List<string>{Settings.DefaultImageUrl });
+
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                 await trackingService.DownloadTrackingImages("5ea9616f1d20e577d550a50d",
+                new List<string>{Settings.DefaultImageUrl }));
         }
     }
 }

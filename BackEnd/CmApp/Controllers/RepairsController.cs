@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CmApp.Controllers
 {
     [Route("/api/cars/{carId}/repairs")]
-    [Authorize(Roles = "user, admin", AuthenticationSchemes = "user, admin")]
+    [Authorize(Roles = "user", AuthenticationSchemes = "user")]
     [ApiController]
     public class RepairsController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace CmApp.Controllers
 
         // GET: api/cars/{carId}/Repairs
         [HttpGet]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Get(string carId)
         {
             try
@@ -32,7 +32,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 var repairs = await repairService.GetAllSelectedCarRepairs(carId);
@@ -46,7 +46,7 @@ namespace CmApp.Controllers
 
         // GET: api/cars/{carId}/Repairs/5
         [HttpGet("{repairId}")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Get(string carId, string repairId)
         {
             try
@@ -54,7 +54,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 var repair = await repairService.GetSelectedCarRepairById(carId, repairId);
@@ -68,7 +68,7 @@ namespace CmApp.Controllers
 
         // POST: api/cars/{carId}/Repairs
         [HttpPost]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Post(string carId, [FromBody] List<RepairEntity> repairs)
         {
             try
@@ -76,7 +76,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 await repairService.InsertCarRepairs(carId, repairs);
@@ -90,7 +90,7 @@ namespace CmApp.Controllers
 
         // PUT: api/cars/{carId}/Repairs/5
         [HttpPut("{repairId}")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Put(string carId, string repairId, [FromBody] RepairEntity repair)
         {
             try
@@ -98,7 +98,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 await repairService.UpdateSelectedCarRepair(repairId, carId, repair);
@@ -112,7 +112,7 @@ namespace CmApp.Controllers
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete()]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Delete(string carId)
         {
             try
@@ -120,7 +120,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 await repairService.DeleteAllCarRepairs(carId);

@@ -6,7 +6,7 @@ using CmApp.Utils;
 
 namespace CmApp.Domains
 {
-    public class Recaptcha2captcha
+    public class Recaptcha2captchaRepository
     {
         private string Captcha_service_key;
         private string Site_key;
@@ -116,7 +116,7 @@ namespace CmApp.Domains
 
         public string Start(string siteKey, string url)
         {
-            Recaptcha2captcha service = new Recaptcha2captcha();
+            Recaptcha2captchaRepository service = new Recaptcha2captchaRepository();
 
             // we set 2captcha service key and target google site_key
             service.SetServiceKey(Settings.CaptchaApiKey);
@@ -132,14 +132,14 @@ namespace CmApp.Domains
                 while (i++ <= 20)
                 {
                     System.Threading.Thread.Sleep(5000); // sleep 5 seconds
-                    gcaptchaToken = service.GetToken(resp.Substring(3, resp.Length - 3));
+                    gcaptchaToken = service.GetToken(resp[3..]);
                     if (gcaptchaToken.Contains("OK|"))
                         break;
                 }
 
                 if (gcaptchaToken.Contains("OK|"))
                 {
-                    var RecaptchaResponseToken = gcaptchaToken.Substring(3, gcaptchaToken.Length - 3);
+                    var RecaptchaResponseToken = gcaptchaToken[3..];
                     // make google to validate g-recaptcha-response token 
                     _ = service.GetValidate(RecaptchaResponseToken);
                     // submit form to the target site

@@ -20,6 +20,12 @@ namespace CmApp.Controllers
         {
             UserRepository = new UserRepository()
         };
+        private readonly AuthService authservice = new AuthService()
+        {
+            UserRepository = new UserRepository(),
+            PasswordResetRepository = new PasswordResetRepository(),
+            EmailRepository = new EmailRepository()
+        };
 
         // GET: api/Users
         [HttpGet]
@@ -192,6 +198,26 @@ namespace CmApp.Controllers
 
                 await UserService.ChangeUserRole(userId, data.Role);
                 return Ok("Role sccessfully changed!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Route("/api/users/{userId}/password/reset")]
+        [HttpPost]
+        [Authorize(Roles = "user")]
+        public async Task<IActionResult> ChangePassword(string userId, [FromBody] User data)
+        {
+            try
+            {
+                var authUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                if (authUserId != userId)
+                    throw new Exception("You can not access this resource!");
+
+                await authservice.ResetPassword(userId, data);
+                return Ok("Password sccessfully changed!");
             }
             catch (Exception ex)
             {

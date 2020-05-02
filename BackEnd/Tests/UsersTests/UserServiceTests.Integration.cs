@@ -2,68 +2,47 @@
 using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
+using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
 
-namespace UsersTests.Integration
+namespace UsersTestsTests
 {
     class UserServiceTests
     {
+        AuthService authService;
         UserRepository userRepo;
+        UserService userService;
         [SetUp]
         public void Setup()
-        {
+        {         
             userRepo = new UserRepository();
+            authService = new AuthService()
+            {
+                UserRepository = userRepo,
+                EmailRepository = new EmailRepository(),
+                PasswordResetRepository = new PasswordResetRepository()
+            };
+            userService = new UserService
+            {
+                UserRepository = userRepo
+            };
+            
         }
 
         [Test]
         public async Task InsertUser()
         {
-            var user = new User("testUser@user.com", "password", "password", "EUR");
+            var user = new User("user10@user.com", "password", "password", "EUR");
 
-            var resut = await userRepo.InsertUser(user);
-
-            Assert.AreEqual(user.Currency, resut.Currency);
+            var resut = await userService.InsertNewUser(user);
             Assert.AreEqual(user.Email, resut.Email);
-        }
 
-        [Test]
-        public async Task BlockUser()
-        {
-            var userId = "5e94b45c9b897c056c2a0a97";
-            await userRepo.BlockUser(userId);
-        }
-        [Test]
-        public async Task UnblockUser()
-        { 
-            var userId = "5e94b45c9b897c056c2a0a97";
-            await userRepo.UnblockUser(userId);
-        }
+            user = new User("user18@user.com", "password", "passw4ord", "EUR");
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await userService.InsertNewUser(user));
 
-        [Test]
-        public async Task GetAllUsers()
-        {
-            var users = await userRepo.GetAllUsers();
-            Assert.AreNotEqual(0, users.Count);
-        }
-
-        [Test]
-        public async Task GetAllBlockedUsers()
-        {
-            var users = await userRepo.GetAllBlockedUsers();
-            Assert.AreNotEqual(0, users.Count);
-        }
-
-        [Test]
-        public async Task GetAllUnblockedUsers()
-        {
-            var users = await userRepo.GetAllUnblockedUsers();
-            Assert.AreNotEqual(0, users.Count);
-        }
-        [Test]
-        public void InsertEmpty()
-        {
             Assert.ThrowsAsync<ArgumentNullException>(async ()=> 
                 await userRepo.InsertUser(null));
             Assert.ThrowsAsync<BusinessException>(async () =>
@@ -71,52 +50,191 @@ namespace UsersTests.Integration
         }
 
         [Test]
+        public async Task BlockUserAndUnblockUser()
+        {
+            var userId = "5ea974effb56e6922479d97a";
+            await userService.BlockUser(userId);
+            await userService.UnblockUser(userId);
+        }
+
+        [Test]
+        public async Task GetAllUsers()
+        {
+            var users = await userService.GetAllUsers();
+            Assert.AreNotEqual(0, users.Count);
+        }
+
+        [Test]
+        public async Task GetAllBlockedAndUnblockedUsers()
+        {
+            var users = await userService.GetAllBlockedUsers();
+            Assert.AreNotEqual(0, users.Count);
+            users = await userService.GetAllUnblockedUsers();
+            Assert.AreNotEqual(0, users.Count);
+        }
+
+        [Test]
         public async Task UpdateUser()
         {
-            var user = new UserEntity
+            var userId = "5ea974effb56e6922479d97a";
+            var user = new UserDetails
             {
-                Id = "5e94b45c9b897c056c2a0a97",
-                FirstName = "kopnas"
+                FirstName = "John",
+                LastName ="Doe"
             };
-            await userRepo.UpdateUser(user);
+            await userService.UpdateUserDetails(userId, user);
         }
+
         [Test]
         public async Task GetUserById()
         {
-            var user = await userRepo.GetUserById("5e94b45c9b897c056c2a0a97");
+            var user = await userService.GetSelectedUser("5ea974effb56e6922479d97a");
             Assert.IsNotNull(user);
         }
         [Test]
         public async Task GetUserByEmail()
         {
-            var user = await userRepo.GetUserByEmail("testUser@user.com");
+            var user = await userRepo.GetUserByEmail("user10@user.com");
             Assert.IsNotNull(user);
         }
 
         [Test]
         public async Task ChangeUserRole()
         {
-            var id = "5e94b45c9b897c056c2a0a97";
-            await userRepo.ChangeUserRole(id, "user");
+            var id = "5ea974effb56e6922479d97a";
+            await userService.ChangeUserRole(id, "user");
         }
         [Test]
         public async Task ChangePassword()
         {
-            var id = "5e94b45c9b897c056c2a0a97";
+            var id = "5ea9770d925c568c0407584b";
             await userRepo.ChangePassword(id, "password");
         }
         [Test]
         public async Task ChangeEmailConfirmationFlag()
         {
-            var id = "5e94b45c9b897c056c2a0a97";
+            var id = "5ea9770d925c568c0407584b";
             await userRepo.ChangeEmailConfirmationFlag(id);
         }
 
         [Test]
         public async Task DeleteUser()
         {
-            var id = "5e94c89f431ffe0001806e40";
-            await userRepo.DeleteUser(id);
+            var id = "5ea974effb56e6922479d97a";
+            await userService.DeleteUser(id);
         }
+
+        [Test]
+        public async Task InsertPasswordReset()
+        {
+            var repo = new PasswordResetRepository();
+            await repo.InsertPasswordReset(
+                new PasswordResetEntity
+                {
+                    Token = "token", 
+                    User = "5ea93b953ebbca201071af71",
+                    ValidUntil= new DateTime(2020,05,01),
+                });
+        }
+
+        [Test]
+        public async Task GetPasswordResetByToken()
+        {
+            var repo = new PasswordResetRepository();
+            var toke = await repo.GetPasswordResetByToken("token");
+            Assert.NotNull(toke);
+        }
+
+        [Test]
+        public void Tokens()
+        {
+            var user = new UserEntity
+            {
+                Email = "mantozerix@gmail.com",
+                Role = "user",
+                Currency = "EUR",
+                Id= "5e92d6b981569e0004f1dbbf"
+            };
+            var token = authService.GenerateDefaultToken(user);
+            Assert.NotNull(token);
+            user.Role = "admin";
+            token = authService.GenerateAdminToken(user);
+            Assert.NotNull(token);
+        }
+
+        [Test]
+        public async Task CreatePasswordResetToken()
+        {
+            await authService.CreatePasswordResetToken("mantozerix@gmail.com");
+        }
+
+        [Test]
+        public async Task ResetPassword()
+        {
+            var user = new User("mantozerix@gmail.com", "password", "password", "EUR"); 
+            
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await authService.ResetPassword(user));
+
+            user.Token = "bXTgmhy685hTGC7uTWyqGorJSLqLBZPuxkHFB/DdRZM=";
+            user.Password2 = "as";
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await authService.ResetPassword(user));
+
+           
+            user.Password2 = "password";
+            await authService.ResetPassword(user);
+
+        }            
+
+        [Test]
+        public async Task Login()
+        {
+            var user = new User("mantozerix@gmail.com", "password", "password", "EUR");                 
+            await authService.Login(user);
+
+            user = new User("mantas.daunoravicius@ktu.edu", "password", "password", "EUR");                 
+            await authService.Login(user);
+
+            user = new User("mantas.daunoravicius@ktu.edu", "passwor4d", "password", "EUR");                 
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await authService.Login(user));
+
+            user = new User("mantas.daunoraicius@ktu.edu", "passwor4d", "password", "EUR");                 
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await authService.Login(user));
+
+            user = new User("testUser@user.com", "passworod", "password", "EUR");                 
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await authService.Login(user));
+
+            user = new User("egle.da@live.com", "passwor4d", "password", "EUR");                 
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await authService.Login(user));
+        } 
+
+         [Test]
+        public async Task Register()
+        {
+            var user = new User("mantas.daunoravicius@ktu.edu", "password", "password", "EUR");                 
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await authService.Register(user));
+
+            user = new User("mantozerixasdaad@gmail.com", "password", "password", "EUR");                 
+            await authService.Register(user);
+
+        } 
+       [Test]
+        public async Task ConfirmUserEmail()
+        {               
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await authService.ConfirmUserEmail("5e94b45c92597c056c2a0a97"));
+
+            Assert.ThrowsAsync<BusinessException>(async () =>
+                await authService.ConfirmUserEmail("5e9353f7650a91000420e8d1"));  
+            
+            await authService.ConfirmUserEmail("5ea9770d925c568c0407584b");
+
+        } 
     }
 }
