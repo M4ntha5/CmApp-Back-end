@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -163,7 +164,16 @@ namespace CmApp.Services
             if (!user.EmailConfirmed)
                 throw new BusinessException("User with this email not registered");
 
-            byte[] salt = new byte[128 / 8];
+            Random random = new Random();
+
+            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+            var token = new string(Enumerable.Repeat(chars, 64)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+
+
+
+           /* byte[] salt = new byte[128 / 8];
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(salt);
@@ -177,7 +187,7 @@ namespace CmApp.Services
                     iterationCount: 10000,
                     numBytesRequested: 256 / 8
                 )
-            );
+            );*/
 
             //reset token will be valid for 2 hours
             var entity = new PasswordResetEntity
@@ -196,7 +206,10 @@ namespace CmApp.Services
             if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match");
 
-            var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(user.Token);
+            byte[] bytes = Encoding.Default.GetBytes(user.Token);
+            var token = Encoding.UTF8.GetString(bytes);
+
+            var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(token);
 
             if (resetDetails == null)
                 throw new BusinessException("Error handling your password change. Please try again");
@@ -208,6 +221,15 @@ namespace CmApp.Services
                 throw new BusinessException("Error changing your password. Please try again");
 
             await UserRepository.ChangePassword(resetDetails.User, user.Password);
+            await UserRepository.DeleteResetToken(resetDetails.Id);
+        }
+
+        public async Task ResetPassword(string userId, User user)
+        {
+            if (user.Password != user.Password2)
+                throw new BusinessException("Passwords do not match");
+
+            await UserRepository.ChangePassword(userId, user.Password);
         }
 
     }

@@ -25,7 +25,7 @@ namespace CmApp.Controllers
 
         // GET: api/Cars
         [HttpGet]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Get()
         {
             try
@@ -42,7 +42,7 @@ namespace CmApp.Controllers
 
         // GET: api/Cars/5
         [HttpGet("{carId}")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Get(string carId)
         {
             try
@@ -52,7 +52,7 @@ namespace CmApp.Controllers
 
                 var car = await carService.GetCarById(carId);
 
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new BusinessException("Car does not exist");
 
                 return Ok(car);
@@ -66,7 +66,7 @@ namespace CmApp.Controllers
 
         // POST: api/Cars
         [HttpPost]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Post([FromBody] CarEntity car)
         {
             try
@@ -85,7 +85,7 @@ namespace CmApp.Controllers
 
         // PUT: api/Cars/5
         [HttpPut("{carId}")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Put(string carId, [FromBody] CarEntity car)
         {
             try
@@ -103,7 +103,7 @@ namespace CmApp.Controllers
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{carId}")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Delete(string carId)
         {
             try

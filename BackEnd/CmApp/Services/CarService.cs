@@ -176,7 +176,6 @@ namespace CmApp.Services
             carEntity.Equipment = equipment;
             carEntity.Vin = car.Vin.ToUpper();
 
-            carEntity.MainImageUrl = Settings.DefaultImageUrl;
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(carEntity);
 
@@ -350,7 +349,9 @@ namespace CmApp.Services
                     await CarRepository.UploadImageToCar(carId, bytes, imageName);
                     counter++;
                 }
-            }         
+            }  
+            else
+                await CarRepository.DeleteAllCarImages(carId);
         }
         public async Task<List<CarEntity>> GetAllCars()
         {

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CmApp.Controllers
 {
     [Route("api/cars/{carId}/shipping")]
-    [Authorize(Roles = "user, admin", AuthenticationSchemes = "user, admin")]
+    [Authorize(Roles = "user", AuthenticationSchemes = "user")]
     [ApiController]
     public class ShippingController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace CmApp.Controllers
 
         // GET: api/cars/{carId}/shipping
         [HttpGet]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Get(string carId)
         {
             try
@@ -32,7 +32,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 var shipping = await shippingService.GetShipping(carId);
@@ -46,7 +46,7 @@ namespace CmApp.Controllers
 
         // POST: api/cars/{carId}/shipping
         [HttpPost]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Post(string carId, [FromBody] ShippingEntity shipping)
         {
             try
@@ -54,7 +54,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 var newShipping = await shippingService.InsertShipping(carId, shipping);
@@ -68,7 +68,7 @@ namespace CmApp.Controllers
 
         // PUT: api/cars/{carId}/shipping
         [HttpPut]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Put(string carId, [FromBody] ShippingEntity shipping)
         {
             try
@@ -76,7 +76,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 await shippingService.UpdateShipping(carId, shipping);
@@ -90,7 +90,7 @@ namespace CmApp.Controllers
 
         // DELETE: api/cars/{carId}/shipping
         [HttpDelete]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Delete(string carId)
         {
             try
@@ -98,7 +98,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-                if (car.User != userId && role != "admin")
+                if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 await shippingService.DeleteShipping(carId);
