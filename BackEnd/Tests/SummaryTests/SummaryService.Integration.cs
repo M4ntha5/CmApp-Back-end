@@ -94,7 +94,7 @@ namespace SummaryTests
         [Test]
         public async Task DeleteSummary()
         {
-           await serviceRepo.DeleteSummary(carId);
+           await summaryRepo.DeleteCarSummary(carId);
         }
     }
 }

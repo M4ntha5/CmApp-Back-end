@@ -5,9 +5,6 @@ using CmApp.Repositories;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -107,20 +104,7 @@ namespace CmApp.Services
             try
             {
                 var website = MDecoderEndpoint + vin;
-                
-               /* var web = new HtmlWeb();
-                HtmlDocument result = web.Load(website);
-                //var st = doc.DocumentNode;
-
-                //check if captcha exists
-                var dataSiteKey = result.DocumentNode.Descendants().Where
-                (x => (x.Name == "div") && x.Attributes["class"] != null &&
-                   x.Attributes["class"].Value.Contains("g-recaptcha")).ToArray();
-                //------------------------------------------------------------
-                //recaptcha bypass
-                if (dataSiteKey != null && dataSiteKey.Length > 0)
-                    result = await BypassRecaptcha(website, dataSiteKey);*/
-
+               
                 HttpClient http = new HttpClient();
                 var response = await http.GetByteArrayAsync(website);
                 String source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
@@ -300,9 +284,6 @@ namespace CmApp.Services
                     var uri = new Uri(img.Trim());
                     byte[] bytes = webClient.DownloadData(uri);
                     string imageName = tracking.Id + "_image" + counter + ".jpeg";
-                   // var stream = new MemoryStream();
-                    //image.Save(stream, ImageFormat.Jpeg);
-                    //var bytes = FileRepository.StreamToByteArray(stream);
                     //insert here
                     await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
                     counter++;
@@ -351,24 +332,5 @@ namespace CmApp.Services
             }
             return result;
         }
-
-       /* private Image DownloadImageFromUrl(string imageUrl)
-        {
-            HttpWebRequest webRequest = (HttpWebRequest)HttpWebRequest.Create(imageUrl);
-            webRequest.AllowWriteStreamBuffering = true;
-            webRequest.Timeout = 30000;
-
-            WebResponse webResponse = webRequest.GetResponse();
-            Stream stream = webResponse.GetResponseStream();
-            Image image = Image.FromStream(stream);
-            webResponse.Close();
-
-            var webClient = new WebClient();
-            var uri = new Uri(imageUrl);
-            byte[] imageBytes = webClient.DownloadData(uri);
-
-
-            return image;
-        }*/
     }
 }

@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,14 +19,6 @@ namespace CmApp.Services
         public IUserRepository UserRepository { get; set; }
         public IEmailRepository EmailRepository { get; set; }
         public PasswordResetRepository PasswordResetRepository { get; set; }
-
-       /* public async Task<UserEntity> Me(string userId)
-        {
-            var user = await UserRepository.GetUserById(userId);
-            if (user == null)
-                throw new BusinessException("No such user");
-            return user;           
-        }*/
 
         public async Task<bool> Register(User user)
         {
@@ -68,13 +59,9 @@ namespace CmApp.Services
                 if (hashedPass == user.Password)
                 {
                     if (user.Role == "user")
-                    {
                         return GenerateDefaultToken(user);
-                    }
                     if (user.Role == "admin")
-                    {
                         return GenerateAdminToken(user);
-                    }
                 }
                 else
                     throw new BusinessException("Incorrect password!");
@@ -170,24 +157,6 @@ namespace CmApp.Services
 
             var token = new string(Enumerable.Repeat(chars, 64)
               .Select(s => s[random.Next(s.Length)]).ToArray());
-
-
-
-           /* byte[] salt = new byte[128 / 8];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-
-            string token = Convert.ToBase64String(
-                KeyDerivation.Pbkdf2(
-                    password: user.Id,
-                    salt: salt,
-                    prf: KeyDerivationPrf.HMACSHA1,
-                    iterationCount: 10000,
-                    numBytesRequested: 256 / 8
-                )
-            );*/
 
             //reset token will be valid for 2 hours
             var entity = new PasswordResetEntity

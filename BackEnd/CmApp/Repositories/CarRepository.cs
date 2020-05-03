@@ -122,19 +122,6 @@ namespace CmApp.Repositories
                 new DatabaseUpdateOneOptions()
             );
         }
-       /* public async Task UpdateCarMainImg(string carId, string imageUrl)
-        {
-            var repo = new CodeMashRepository<CarEntity>(Client);
-
-            var update = Builders<CarEntity>.Update
-                .Set("main_image_url", imageUrl);
-
-            _ = await repo.UpdateOneAsync(
-                carId,
-                update,
-                new DatabaseUpdateOneOptions()
-            );
-        }*/
 
         public async Task DeleteCar(string carId)
         {

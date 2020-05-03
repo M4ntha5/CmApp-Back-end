@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
@@ -15,13 +16,15 @@ namespace CmApp.Controllers
     [ApiController]
     public class SummaryController : ControllerBase
     {
-        private readonly SummaryService summaryService = new SummaryService()
+        private static readonly ISummaryRepository summaryRepository = new SummaryRepository();
+        private readonly ICarRepository carRepo = new CarRepository();
+        private readonly IAggregateRepository aggRepo = new AggregateRepository();
+        private readonly ISummaryService summaryService = new SummaryService()
         {
-            SummaryRepository = new SummaryRepository(),
+            SummaryRepository = summaryRepository,
             ExchangeRepository = new ExchangeService(),
         };
-        private readonly CarRepository carRepo = new CarRepository();
-        private readonly AggregateRepository aggRepo = new AggregateRepository();
+
 
         // GET: /api/cars/{carId}/summary
         [HttpGet]
@@ -36,7 +39,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                var summary = await summaryService.GetSummaryByCarId(carId);
+                var summary = await summaryRepository.GetSummaryByCarId(carId);
                 return Ok(summary);
             }
             catch (Exception ex)
@@ -102,7 +105,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await summaryService.DeleteSummary(carId);
+                await summaryRepository.DeleteCarSummary(carId);
                 return NoContent();
             }
             catch (Exception ex)

@@ -16,13 +16,14 @@ namespace CmApp.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private static readonly IUserRepository userRepository = new UserRepository();
         private readonly IUserService UserService = new UserService()
         {
-            UserRepository = new UserRepository()
+            UserRepository = userRepository
         };
-        private readonly AuthService authservice = new AuthService()
+        private readonly IAuthService authservice = new AuthService()
         {
-            UserRepository = new UserRepository(),
+            UserRepository = userRepository,
             PasswordResetRepository = new PasswordResetRepository(),
             EmailRepository = new EmailRepository()
         };
@@ -39,7 +40,7 @@ namespace CmApp.Controllers
                 if (role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                var users = await UserService.GetAllUsers();
+                var users = await userRepository.GetAllUsers();
                 
                 return Ok(users);
             }
@@ -132,7 +133,7 @@ namespace CmApp.Controllers
                 if (authUserId != userId && role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                await UserService.BlockUser(userId);
+                await userRepository.BlockUser(userId);
                 return Ok("Selected user scuccessfully blocked!");
             }
             catch (Exception ex)
@@ -154,7 +155,7 @@ namespace CmApp.Controllers
                 if (authUserId != userId && role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                await UserService.UnblockUser(userId);
+                await userRepository.UnblockUser(userId);
                 return Ok("Selected user scuccessfully unblocked!");
             }
             catch (Exception ex)
@@ -175,7 +176,7 @@ namespace CmApp.Controllers
                 if (authUserId != userId && role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                await UserService.DeleteUser(userId);
+                await userRepository.DeleteUser(userId);
                 return Ok("Selected user scuccessfully deleted!");
             }
             catch (Exception ex)
@@ -196,7 +197,7 @@ namespace CmApp.Controllers
                 if (authUserId != userId && userRole != "admin")
                     throw new Exception("You can not access this resource!");
 
-                await UserService.ChangeUserRole(userId, data.Role);
+                await userRepository.ChangeUserRole(userId, data.Role);
                 return Ok("Role sccessfully changed!");
             }
             catch (Exception ex)

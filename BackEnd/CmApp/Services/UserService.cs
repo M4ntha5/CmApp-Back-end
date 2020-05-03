@@ -1,7 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -50,47 +49,5 @@ namespace CmApp.Services
             await UserRepository.UpdateUser(entity);
 
         }
-
-        public async Task<List<UserEntity>> GetAllUsers()
-        {
-            var users = await UserRepository.GetAllUsers();
-            return users;
-        }
-
-        public async Task<List<UserEntity>> GetAllBlockedUsers()
-        {
-            var users = await UserRepository.GetAllBlockedUsers();
-            return users;
-        }
-
-        public async Task<List<UserEntity>> GetAllUnblockedUsers()
-        {
-            var users = await UserRepository.GetAllUnblockedUsers();
-            return users;
-        }
-
-        public async Task<List<UserEntity>> ChangePassword()
-        {
-            var users = await UserRepository.GetAllUnblockedUsers();
-            return users;
-        }
-
-        public async Task ChangeUserRole(string userId, string role)
-        {
-            await UserRepository.ChangeUserRole(userId, role);
-        }
-        public async Task BlockUser(string userId)
-        {
-            await UserRepository.BlockUser(userId);
-        }
-        public async Task UnblockUser(string userId)
-        {
-            await UserRepository.UnblockUser(userId);
-        }
-        public async Task DeleteUser(string userId)
-        {
-            await UserRepository.DeleteUser(userId);
-        }
-
     }
 }

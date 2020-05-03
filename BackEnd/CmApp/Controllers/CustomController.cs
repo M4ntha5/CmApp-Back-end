@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CmApp.Contracts;
-using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -18,14 +17,9 @@ namespace CmApp.Controllers
     [ApiController]
     public class CustomController : ControllerBase
     {
-        private readonly CarRepository carRepo = new CarRepository();
+        private readonly ICarRepository carRepository = new CarRepository();
         private readonly VehicleAPI vehicleAPI = new VehicleAPI();
-        private readonly RepairService repairService = new RepairService
-        {
-            RepairRepository = new RepairRepository(),
-            SummaryRepository = new SummaryRepository()
-        };
-
+        private static readonly IRepairRepository repairRepository = new RepairRepository();
 
         [HttpGet]
         [Route("/api/makes")]
@@ -34,7 +28,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                var makes = await carRepo.GetAllMakes();
+                var makes = await carRepository.GetAllMakes();
                 List<string> namesOnly = makes.Select(x => x.Name).ToList();
                 namesOnly.Sort();
                 return Ok(namesOnly);
@@ -70,7 +64,7 @@ namespace CmApp.Controllers
             try
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var cars = await carRepo.GetAllUserCars(userId);
+                var cars = await carRepository.GetAllUserCars(userId);
                 var result = new List<object>();
                 foreach (var car in cars)
                     result.Add(new { value = car.Id, text = car.Make + " " + car.Model });
@@ -95,11 +89,11 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await repairService.DeleteAllCarRepairs(carId);
+                await repairRepository.DeleteMultipleRepairs(carId);
                 return Ok();
             }
             catch (Exception ex)

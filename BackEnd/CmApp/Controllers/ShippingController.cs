@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -14,13 +15,14 @@ namespace CmApp.Controllers
     [ApiController]
     public class ShippingController : ControllerBase
     {
-        private readonly ShippingService shippingService = new ShippingService
+        private static readonly IShippingRepository shippingRepository = new ShippingRepository();
+        private readonly IShippingService shippingService = new ShippingService
         {
-            ShippingRepository = new ShippingRepository(),
+            ShippingRepository = shippingRepository,
             SummaryRepository = new SummaryRepository(),
             ExchangeRepository = new ExchangeService()
         };
-        private readonly CarRepository carRepo = new CarRepository();
+        private readonly ICarRepository carRepo = new CarRepository();
 
         // GET: api/cars/{carId}/shipping
         [HttpGet]
@@ -35,7 +37,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                var shipping = await shippingService.GetShipping(carId);
+                var shipping = await shippingRepository.GetShippingByCar(carId);
                 return Ok(shipping);
             }
             catch (Exception ex)
@@ -101,7 +103,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await shippingService.DeleteShipping(carId);
+                await shippingRepository.DeleteCarShipping(carId);
                 return NoContent();
             }
             catch (Exception ex)

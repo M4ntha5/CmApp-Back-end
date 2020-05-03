@@ -96,7 +96,7 @@ namespace CmApp.Repositories
                 .Set("air_bag", tracking.AirBag)
                 .Set("radio", tracking.Radio);
 
-            _ = await repo.UpdateOneAsync(
+            await repo.UpdateOneAsync(
                 trackingId,
                 update,
                 new DatabaseUpdateOneOptions()

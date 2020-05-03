@@ -12,20 +12,11 @@ namespace CmApp.Services
         public ISummaryRepository SummaryRepository { get; set; }
         public IExchangeService ExchangeRepository { get; set; }
 
-        public async Task DeleteShipping(string carId)
-        {
-            await ShippingRepository.DeleteCarShipping(carId);
-        }
         public async Task UpdateShipping(string carId, ShippingEntity shipping)
         {
             shipping.Car = carId;
             var oldShipping = await ShippingRepository.GetShippingByCar(carId);
             await ShippingRepository.UpdateCarShipping(oldShipping.Id, shipping);
-        }
-        public async Task<ShippingEntity> GetShipping(string carId)
-        {
-            var shipping = await ShippingRepository.GetShippingByCar(carId);
-            return shipping;
         }
         public async Task<ShippingEntity> InsertShipping(string carId, ShippingEntity shipping)
         {

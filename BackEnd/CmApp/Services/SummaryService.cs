@@ -12,11 +12,6 @@ namespace CmApp.Services
         public ISummaryRepository SummaryRepository { get; set; }
         public IExchangeService ExchangeRepository { get; set; }
 
-        public async Task DeleteSummary(string carId)
-        {
-            await SummaryRepository.DeleteCarSummary(carId);
-        }
-
         public async Task UpdateSoldSummary(string carId, SummaryEntity summary)
         {
             summary.Car = carId;
@@ -35,16 +30,9 @@ namespace CmApp.Services
                     message = $"Sold within {time.Hours} hours";
 
             summary.SoldWithin = message;
-            var oldSummary = await GetSummaryByCarId(carId);
+            var oldSummary = await SummaryRepository.GetSummaryByCarId(carId);
             summary.Id = oldSummary.Id;
             await SummaryRepository.UpdateCarSoldSummary(summary);
-        }
-
-        public async Task<SummaryEntity> GetSummaryByCarId(string carId)
-        {
-            var summary = await SummaryRepository.GetSummaryByCarId(carId);       
-
-            return summary;
         }
 
         public async Task<SummaryEntity> InsertCarSummary(string carId, SummaryEntity summary)

@@ -53,23 +53,14 @@ namespace UsersTestsTests
         public async Task BlockUserAndUnblockUser()
         {
             var userId = "5ea974effb56e6922479d97a";
-            await userService.BlockUser(userId);
-            await userService.UnblockUser(userId);
+            await userRepo.BlockUser(userId);
+            await userRepo.UnblockUser(userId);
         }
 
         [Test]
         public async Task GetAllUsers()
         {
-            var users = await userService.GetAllUsers();
-            Assert.AreNotEqual(0, users.Count);
-        }
-
-        [Test]
-        public async Task GetAllBlockedAndUnblockedUsers()
-        {
-            var users = await userService.GetAllBlockedUsers();
-            Assert.AreNotEqual(0, users.Count);
-            users = await userService.GetAllUnblockedUsers();
+            var users = await userRepo.GetAllUsers();
             Assert.AreNotEqual(0, users.Count);
         }
 
@@ -102,7 +93,7 @@ namespace UsersTestsTests
         public async Task ChangeUserRole()
         {
             var id = "5ea974effb56e6922479d97a";
-            await userService.ChangeUserRole(id, "user");
+            await userRepo.ChangeUserRole(id, "user");
         }
         [Test]
         public async Task ChangePassword()
@@ -121,7 +112,7 @@ namespace UsersTestsTests
         public async Task DeleteUser()
         {
             var id = "5ea974effb56e6922479d97a";
-            await userService.DeleteUser(id);
+            await userRepo.DeleteUser(id);
         }
 
         [Test]

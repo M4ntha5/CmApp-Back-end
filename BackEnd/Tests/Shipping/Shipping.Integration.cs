@@ -29,7 +29,7 @@ namespace ShippingTests
         [Test]
         public async Task TestGetShipping()
         {
-            var shipping = await shippingService.GetShipping(carId);
+            var shipping = await shippingRepo.GetShippingByCar(carId);
             Assert.AreEqual(carId, shipping.Car);
         }
 
@@ -61,7 +61,7 @@ namespace ShippingTests
         [Test]
         public async Task TestDeleteShipping()
         {
-            await shippingService.DeleteShipping(carId);
+            await shippingRepo.DeleteCarShipping(carId);
         }
         [Test]
         public void TestInsertEmptyShipping()

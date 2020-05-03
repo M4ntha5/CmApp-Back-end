@@ -84,22 +84,6 @@ namespace CmApp.Repositories
             return users.Items;
         }
 
-        public async Task<List<UserEntity>> GetAllBlockedUsers()
-        {
-            var repo = new CodeMashRepository<UserEntity>(Client);
-
-            var users = await repo.FindAsync(x => x.Blocked, new DatabaseFindOptions());
-
-            return users.Items;
-        }
-        public async Task<List<UserEntity>> GetAllUnblockedUsers()
-        {
-            var repo = new CodeMashRepository<UserEntity>(Client);
-
-            var users = await repo.FindAsync(x => !x.Blocked, new DatabaseFindOptions());
-
-            return users.Items;
-        }
         public async Task BlockUser(string userId)
         {
             var repo = new CodeMashRepository<UserEntity>(Client);

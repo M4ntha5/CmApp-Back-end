@@ -13,48 +13,11 @@ namespace CmApp.Services
         public IFileRepository FileRepository { get; set; }
         public IScraperService ScraperService { get; set; }
 
-        public async Task DeleteTracking(string carId)
-        {
-            await TrackingRepository.DeleteCarTracking(carId);
-        }
         public async Task UpdateTracking(string carId, TrackingEntity tracking)
         {
             tracking.Car = carId;
             var oldTracking = await TrackingRepository.GetTrackingByCar(carId);
             await TrackingRepository.UpdateCarTracking(oldTracking.Id, tracking);
-        }
-        public async Task<TrackingEntity> GetTracking(string carId)
-        {
-            var tracking = await TrackingRepository.GetTrackingByCar(carId);
-                
-            /*if (tracking != null && tracking.AuctionImages != null && tracking.AuctionImages.Count > 0)
-            {
-                //fetching only first image
-                var fileInfo = FileRepository.GetFileId(tracking.AuctionImages[0]);
-
-                var fileId = fileInfo.Item1;
-                var fileType = fileInfo.Item2;
-
-                var stream = await FileRepository.GetFile(fileId);
-
-                var mem = new MemoryStream();
-                stream.CopyTo(mem);
-
-                var bytes = FileRepository.StreamToByteArray(mem);
-                string base64 = FileRepository.ByteArrayToBase64String(bytes);
-
-                base64 = "data:" + fileType + ";base64," + base64;
-
-                tracking.Base64images.Add(base64);
-            }*/
-
-            return tracking;
-        }
-        public async Task<TrackingEntity> InsertTracking(string carId, TrackingEntity tracking)
-        {
-            tracking.Car = carId;
-            var newTracking = await TrackingRepository.InsertTracking(tracking);
-            return newTracking;
         }
 
         public async Task<TrackingEntity> LookForTrackingData(string carId)

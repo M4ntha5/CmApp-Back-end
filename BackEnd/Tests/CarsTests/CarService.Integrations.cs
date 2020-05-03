@@ -200,14 +200,6 @@ namespace CarsTests
         }
 
         [Test]
-        public async Task GetAllUserCars()
-        {
-            await carService.GetAllCars();
-
-            var cars = await carService.GetAllUserCars(userId);
-            Assert.IsNotEmpty(cars);
-        }
-        [Test]
         public async Task DeleteAllCarImages()
         {
             await carRepo.DeleteAllCarImages(carId);

@@ -17,14 +17,16 @@ namespace CmApp.Controllers
     [ApiController]
     public class TrackingController : ControllerBase
     {
+        private static readonly ITrackingRepository trackingRepository = new TrackingRepository();
+        private static readonly ICarRepository carRepository = new CarRepository();
         private readonly ITrackingService trackingService = new TrackingService()
         {
-            TrackingRepository = new TrackingRepository(),
-            CarRepository = new CarRepository(),
+            TrackingRepository = trackingRepository,
+            CarRepository = carRepository,
             ScraperService = new ScraperService(),
             FileRepository = new FileRepository()
         };
-        private readonly ICarRepository carRepo = new CarRepository();
+        
 
         // GET: api/cars/{carId}/tracking
         [HttpGet]
@@ -35,11 +37,11 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                var tracking = await trackingService.GetTracking(carId);
+                var tracking = await trackingRepository.GetTrackingByCar(carId);
                 if (tracking == null)
                     throw new BusinessException("There is no tracking info yet");
                 return Ok(tracking);
@@ -59,7 +61,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -81,7 +83,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -119,7 +121,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -141,11 +143,11 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await trackingService.DeleteTracking(carId);
+                await trackingRepository.DeleteCarTracking(carId);
                 return NoContent();
             }
             catch (Exception ex)
@@ -162,7 +164,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 

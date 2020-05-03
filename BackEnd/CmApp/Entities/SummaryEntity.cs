@@ -24,6 +24,8 @@ namespace CmApp.Entities
         public string Car { get; set; }
         public string BaseCurrency { get; set; } = "";
         public string SelectedCurrency { get; set; } = "";
+        [Field("profit")]
+        public double Profit { get; set; }
 
     }
 }

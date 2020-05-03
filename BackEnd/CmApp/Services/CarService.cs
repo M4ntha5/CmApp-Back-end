@@ -1,10 +1,8 @@
 ﻿using CmApp.Contracts;
-using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -101,25 +99,10 @@ namespace CmApp.Services
 
                     var bytes = FileRepository.Base64ToByteArray(base64);
                     var res = await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-                   /* if (count == 1)
-                    {
-                        var url = await FileRepository.GetFileUrl(res.Key);
-                        await CarRepository.UpdateCarMainImg(insertedCar.Id, url);
-                    }*/
                     
                     count++;
                 }
             }
-
-           /* else
-            {
-                var defaultImg = await FileRepository.GetFile(Settings.DefaultImage);
-                using MemoryStream ms = new MemoryStream();
-                defaultImg.CopyTo(ms);
-                var bytes = ms.ToArray();
-                var imgName = "Default-image.jpg";
-                await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-            }*/
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
@@ -193,23 +176,9 @@ namespace CmApp.Services
 
                     var bytes = FileRepository.Base64ToByteArray(base64);
                     var res = await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-                   /* if (count == 1)
-                    {
-                        var url = await FileRepository.GetFileUrl(res.Key);
-                        await CarRepository.UpdateCarMainImg(insertedCar.Id, url);
-                    }*/
                     count++;
                 }
             }
-           /* else
-            {
-                var defaultImg = await FileRepository.GetFile(Settings.DefaultImage);
-                using MemoryStream ms = new MemoryStream();
-                defaultImg.CopyTo(ms);
-                var bytes = ms.ToArray();
-                var imgName = "Default-image.jpg";
-                await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-            }*/
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
@@ -239,23 +208,10 @@ namespace CmApp.Services
 
                     var bytes = FileRepository.Base64ToByteArray(base64);
                     var res = await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-                   /* if (count == 1)
-                    {
-                        var url = await FileRepository.GetFileUrl(res.Key);
-                        await CarRepository.UpdateCarMainImg(insertedCar.Id, url);
-                    }*/
                     count++;
                 }
             }
-           /* else
-            {
-                var defaultImg = await FileRepository.GetFile(Settings.DefaultImage);
-                using MemoryStream ms = new MemoryStream();
-                defaultImg.CopyTo(ms);
-                var bytes = ms.ToArray();
-                var imgName = "Default-image.jpg";
-                await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-            }*/
+
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
@@ -288,43 +244,6 @@ namespace CmApp.Services
 
             await CarRepository.DeleteCar(car.Id);
         }
-        public async Task<List<CarDisplay>> GetAllUserCars(string userid)
-        {
-            var cars = await CarRepository.GetAllUserCars(userid);
-            if (cars.Count == 0)
-                return cars;
-
-            foreach (var car in cars)
-            {
-                if (car.Images.Count != 0)
-                {
-                    var fileInfo = FileRepository.GetFileId(car.Images[0]);
-                    var fileId = fileInfo.Item1;
-
-                    var url = await FileRepository.GetFileUrl(fileId);
-
-                    car.MainImageUrl = url;
-                }
-                else
-                {
-                    var tracking = await TrackingRepository.GetTrackingByCar(car.Id);
-                    if(tracking.AuctionImages.Count != 0 && tracking.ShowImages)
-                    {
-                        var fileInfo = FileRepository.GetFileId(tracking.AuctionImages[0]);
-                        var fileId = fileInfo.Item1;
-
-                        var url = await FileRepository.GetFileUrl(fileId);
-
-                        car.MainImageUrl = url;
-                    }
-                    else
-                        car.MainImageUrl = Settings.DefaultImageUrl;
-                }
-                    
-            }
-            return cars;
-            
-        }
 
         public async Task UpdateCar(string userId, string carId, CarEntity car)
         {
@@ -352,12 +271,6 @@ namespace CmApp.Services
             }  
             else
                 await CarRepository.DeleteAllCarImages(carId);
-        }
-        public async Task<List<CarEntity>> GetAllCars()
-        {
-            var cars = await CarRepository.GetAllCars();
-
-            return cars;
         }
         public async Task<CarEntity> GetCarById(string id)
         {

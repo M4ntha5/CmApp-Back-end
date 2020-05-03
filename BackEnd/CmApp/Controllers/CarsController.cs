@@ -1,4 +1,5 @@
-﻿using CmApp.Entities;
+﻿using CmApp.Contracts;
+using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -14,9 +15,11 @@ namespace CmApp.Controllers
     [ApiController]
     public class CarsController : ControllerBase
     {
-        private readonly CarService carService = new CarService()
+        private static readonly ICarRepository carRepository = new CarRepository();
+        private static readonly AggregateRepository aggregateRepository = new AggregateRepository();
+        private readonly ICarService carService = new CarService()
         {
-            CarRepository = new CarRepository(),
+            CarRepository = carRepository,
             WebScraper = new ScraperService(),
             SummaryRepository = new SummaryRepository(),
             FileRepository = new FileRepository(),
@@ -30,8 +33,8 @@ namespace CmApp.Controllers
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var cars = await carService.GetAllUserCars(userId);
+                var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+                var cars = await aggregateRepository.GetUserCars(userEmail);
                 return Ok(cars);
             }
             catch(Exception ex)
@@ -126,7 +129,7 @@ namespace CmApp.Controllers
             try
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var cars = await carService.GetAllCars();
+                var cars = await carRepository.GetAllCars();
                 return Ok(cars);
             }
             catch (Exception ex)

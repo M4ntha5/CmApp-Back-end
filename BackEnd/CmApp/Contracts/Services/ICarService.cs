@@ -10,9 +10,7 @@ namespace CmApp.Contracts
         Task<CarEntity> InsertCar(CarEntity car);
         Task DeleteCar(string userId, string carId);
         Task<CarEntity> GetCarById(string carId);
-        Task<List<CarEntity>> GetAllCars();
         Task UpdateCar(string userId, string carId, CarEntity car);
-        Task<List<CarDisplay>> GetAllUserCars(string userid);
 
     }
 }
