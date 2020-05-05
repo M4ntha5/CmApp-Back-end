@@ -5,8 +5,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CmApp.Contracts;
+using CmApp.Domains;
 using CmApp.Repositories;
-using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,7 @@ namespace CmApp.Controllers
     public class CustomController : ControllerBase
     {
         private readonly ICarRepository carRepository = new CarRepository();
-        private readonly VehicleAPI vehicleAPI = new VehicleAPI();
+        private readonly IExternalAPIService externalAPI = new ExternalAPIService();
         private static readonly IRepairRepository repairRepository = new RepairRepository();
 
         [HttpGet]
@@ -45,7 +45,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                var makes = await vehicleAPI.GetAllMakeModels(makeName);
+                var makes = await externalAPI.GetAllMakeModels(makeName);
                 makes.Sort();
                 return Ok(makes);
             }
@@ -161,7 +161,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                ExchangeService repo = new ExchangeService();
+                ExternalAPIService repo = new ExternalAPIService();
                 var countries = await repo.GetAllCountries();
                 return Ok(countries);
             }
@@ -169,6 +169,8 @@ namespace CmApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }     
+        }                
+       
+        
     }
 }

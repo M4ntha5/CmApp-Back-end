@@ -16,13 +16,18 @@ namespace CmApp.Controllers
     public class ShippingController : ControllerBase
     {
         private static readonly IShippingRepository shippingRepository = new ShippingRepository();
-        private readonly IShippingService shippingService = new ShippingService
+        private static readonly ICarRepository carRepo = new CarRepository();
+        private readonly ICarService carService = new CarService
         {
-            ShippingRepository = shippingRepository,
             SummaryRepository = new SummaryRepository(),
-            ExchangeRepository = new ExchangeService()
+            ExternalAPIService = new ExternalAPIService(),
+            CarRepository = carRepo,
+            FileRepository = new FileRepository(),
+            ShippingRepository = shippingRepository,
+            TrackingRepository = new TrackingRepository(),
+            WebScraper = new ScraperService() 
         };
-        private readonly ICarRepository carRepo = new CarRepository();
+        
 
         // GET: api/cars/{carId}/shipping
         [HttpGet]
@@ -59,7 +64,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                var newShipping = await shippingService.InsertShipping(carId, shipping);
+                var newShipping = await carService.InsertShipping(carId, shipping);
                 return Ok(newShipping);
             }
             catch (Exception ex)
@@ -81,7 +86,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await shippingService.UpdateShipping(carId, shipping);
+                await carService.UpdateShipping(carId, shipping);
                 return NoContent();
             }
             catch (Exception ex)

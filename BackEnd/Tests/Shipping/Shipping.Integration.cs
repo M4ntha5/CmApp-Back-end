@@ -10,18 +10,18 @@ namespace ShippingTests
 {
     class Shipping
     {
-        ShippingService shippingService;
-        ShippingRepository shippingRepo;
+        CarService shippingService;
+        ShippingRepository carRepo;
         string carId;
         [SetUp]
         public void Setup()
         {
-            shippingRepo = new ShippingRepository();
-            shippingService = new ShippingService()
+            carRepo = new ShippingRepository();
+            shippingService = new CarService()
             {
-                ShippingRepository = shippingRepo,
+                ShippingRepository = carRepo,
                 SummaryRepository = new SummaryRepository(),
-                ExchangeRepository = new ExchangeService()
+                ExternalAPIService = new ExternalAPIService()
             };
             carId = "5ea728c744d20049748fed09";
         }
@@ -29,7 +29,7 @@ namespace ShippingTests
         [Test]
         public async Task TestGetShipping()
         {
-            var shipping = await shippingRepo.GetShippingByCar(carId);
+            var shipping = await carRepo.GetShippingByCar(carId);
             Assert.AreEqual(carId, shipping.Car);
         }
 
@@ -61,13 +61,13 @@ namespace ShippingTests
         [Test]
         public async Task TestDeleteShipping()
         {
-            await shippingRepo.DeleteCarShipping(carId);
+            await carRepo.DeleteCarShipping(carId);
         }
         [Test]
         public void TestInsertEmptyShipping()
         {
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
-                await shippingRepo.InsertShipping(null));
+                await carRepo.InsertShipping(null));
         }
 
         [Test]

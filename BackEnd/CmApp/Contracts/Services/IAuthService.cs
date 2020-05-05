@@ -15,5 +15,7 @@ namespace CmApp.Contracts
         Task CreatePasswordResetToken(string email);
         Task ResetPassword(User user);
         Task ResetPassword(string userId, User user);
+        Task<UserDetails> GetSelectedUser(string userId);
+        Task UpdateUserDetails(string userId, UserDetails user);
     }
 }

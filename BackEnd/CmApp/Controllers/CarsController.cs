@@ -16,14 +16,16 @@ namespace CmApp.Controllers
     public class CarsController : ControllerBase
     {
         private static readonly ICarRepository carRepository = new CarRepository();
-        private static readonly AggregateRepository aggregateRepository = new AggregateRepository();
+        private static readonly IAggregateRepository aggregateRepository = new AggregateRepository();
         private readonly ICarService carService = new CarService()
         {
             CarRepository = carRepository,
             WebScraper = new ScraperService(),
             SummaryRepository = new SummaryRepository(),
             FileRepository = new FileRepository(),
-            TrackingRepository = new TrackingRepository()
+            TrackingRepository = new TrackingRepository(),
+            ShippingRepository = new ShippingRepository(),
+            ExternalAPIService = new ExternalAPIService()
         };
 
         // GET: api/Cars
@@ -53,7 +55,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
 
-                var car = await carService.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
 
                 if (car.User != userId)
                     throw new BusinessException("Car does not exist");

@@ -60,7 +60,7 @@ namespace CmApp.Repositories
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
 
-            var filter = Builders<UserEntity>.Filter.Eq("_id", BsonObjectId.Create(carId));
+            var filter = Builders<UserEntity>.Filter.Eq("_id", BsonObjectId.Create(carId)); 
 
             var user = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
 
@@ -196,6 +196,23 @@ namespace CmApp.Repositories
             var repo = new CodeMashRepository<PasswordResetEntity>(Client);
 
             await repo.DeleteOneAsync(resetId);
+        }
+
+        public async Task InsertPasswordReset(PasswordResetEntity resetEntity)
+        {
+            var repo = new CodeMashRepository<PasswordResetEntity>(Client);
+
+            await repo.InsertOneAsync(resetEntity, new DatabaseInsertOneOptions());
+        }
+
+        public async Task<PasswordResetEntity> GetPasswordResetByToken(string token)
+        {
+            var repo = new CodeMashRepository<PasswordResetEntity>(Client);
+
+            var filter = Builders<PasswordResetEntity>.Filter.Eq("token", token);
+
+            var resetDetails = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
+            return resetDetails;
         }
     }
 }

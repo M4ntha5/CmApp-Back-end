@@ -19,6 +19,8 @@ namespace CmApp.Contracts
         Task ChangeUserRole(string userId, string role);
         Task DeleteUser(string userId);
         Task DeleteResetToken(string resetId);
+        Task InsertPasswordReset(PasswordResetEntity resetEntity);
+        Task<PasswordResetEntity> GetPasswordResetByToken(string token);
     }
 
 }

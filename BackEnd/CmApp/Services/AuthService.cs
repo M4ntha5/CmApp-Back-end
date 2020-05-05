@@ -18,7 +18,6 @@ namespace CmApp.Services
     {
         public IUserRepository UserRepository { get; set; }
         public IEmailRepository EmailRepository { get; set; }
-        public PasswordResetRepository PasswordResetRepository { get; set; }
 
         public async Task<bool> Register(User user)
         {
@@ -166,7 +165,7 @@ namespace CmApp.Services
                 User = user.Id
             };
 
-            await PasswordResetRepository.InsertPasswordReset(entity);
+            await UserRepository.InsertPasswordReset(entity);
             await EmailRepository.SendPasswordResetEmail(email, token);
         }
 
@@ -178,7 +177,7 @@ namespace CmApp.Services
             byte[] bytes = Encoding.Default.GetBytes(user.Token);
             var token = Encoding.UTF8.GetString(bytes);
 
-            var resetDetails = await PasswordResetRepository.GetPasswordResetByToken(token);
+            var resetDetails = await UserRepository.GetPasswordResetByToken(token);
 
             if (resetDetails == null)
                 throw new BusinessException("Error handling your password change. Please try again");
@@ -201,5 +200,37 @@ namespace CmApp.Services
             await UserRepository.ChangePassword(userId, user.Password);
         }
 
+        public async Task<UserDetails> GetSelectedUser(string userId)
+        {
+            var user = await UserRepository.GetUserById(userId);
+            var userDetails = new UserDetails
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                BornDate = user.BornDate,
+                Country = user.Country,
+                Currency = user.Currency,
+                LastName = user.LastName,
+                Sex = user.Sex
+            };
+            return userDetails;
+        }      
+
+        public async Task UpdateUserDetails(string userId, UserDetails user)
+        {
+            var entity = new UserEntity
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                BornDate = user.BornDate,
+                Country = user.Country,
+                Sex = user.Sex,
+                Id = userId
+            };          
+            await UserRepository.UpdateUser(entity);
+
+        }
+
     }
+
 }

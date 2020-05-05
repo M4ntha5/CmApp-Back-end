@@ -9,6 +9,5 @@ namespace CmApp.Contracts
         Task DeleteCarShipping(string carId);
         Task UpdateCarShipping(string shippingId, ShippingEntity shipping);
         Task<ShippingEntity> GetShippingByCar(string carId);
-
     }
 }
