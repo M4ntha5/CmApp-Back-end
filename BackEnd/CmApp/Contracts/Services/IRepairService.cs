@@ -10,5 +10,6 @@ namespace CmApp.Contracts
         Task<List<RepairEntity>> GetAllSelectedCarRepairs(string carId);
         Task InsertCarRepairs(string carId, List<RepairEntity> repairs);
         Task<RepairEntity> GetSelectedCarRepairById(string carId, string repairid);
+        Task DeleteMultipleRepairs(string carId);
     }
 }

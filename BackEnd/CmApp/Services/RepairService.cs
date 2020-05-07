@@ -38,5 +38,13 @@ namespace CmApp.Services
 
             return response;
         }
+        public async Task DeleteMultipleRepairs(string carId)
+        {
+            var summary = await SummaryRepository.GetSummaryByCarId(carId);
+            var repairs = await RepairRepository.GetAllRepairsByCarId(carId);
+            var repairsTotal = repairs.Sum(x => x.Price);
+            await SummaryRepository.InsertTotalByCar(summary.Id, summary.Total - repairsTotal);
+            await RepairRepository.DeleteMultipleRepairs(carId);
+        }
     }
 }

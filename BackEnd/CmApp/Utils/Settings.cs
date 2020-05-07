@@ -4,8 +4,6 @@ namespace CmApp.Utils
 {
     public static class Settings
     {
-
-        // prod
         public static Guid ProjectId { get; set; }
         public static string ApiKey { get; set; }
         public static string CaptchaApiKey { get; set; }

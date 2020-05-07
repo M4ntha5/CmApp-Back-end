@@ -18,7 +18,6 @@ namespace CmApp.Controllers
     {
         private readonly ICarRepository carRepository = new CarRepository();
         private readonly IExternalAPIService externalAPI = new ExternalAPIService();
-        private static readonly IRepairRepository repairRepository = new RepairRepository();
 
         [HttpGet]
         [Route("/api/makes")]
@@ -72,28 +71,6 @@ namespace CmApp.Controllers
                     return Ok(result);
                 else
                     throw new Exception("No cars yet");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-        // DELETE: api/ApiWithActions/5
-        [Route("api/cars/{carId}/delete-repairs")]
-        [HttpDelete("{repairId}")]
-        [Authorize(Roles = "user")]
-        public async Task<IActionResult> DeleteAllCarRepairs(string carId)
-        {
-            try
-            {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
-
-                await repairRepository.DeleteMultipleRepairs(carId);
-                return Ok();
             }
             catch (Exception ex)
             {
