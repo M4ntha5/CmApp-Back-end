@@ -24,7 +24,7 @@ namespace RepairsTests
                 RepairRepository = repairRepo,
                 SummaryRepository = new SummaryRepository()
             };
-            
+
             carId = "5ea728c744d20049748fed09";
             repairId = "5ea99138db38aa85d006c808";
         }
@@ -46,7 +46,7 @@ namespace RepairsTests
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await repairService.GetSelectedCarRepairById(carId, "5ea991381438aa85d006c808"));
         }
-             
+
 
         [Test]
         public async Task TestUpdateSelectedCarRepair()
@@ -59,14 +59,14 @@ namespace RepairsTests
         public async Task TestDeleteSelectedCarRepair()
         {
             await repairRepo.DeleteMultipleRepairs(carId);
-        }    
+        }
 
         [Test]
         public async Task TestInsertCarRepair()
         {
             var repair = new RepairEntity { Name = "k.p p.sparnas", Price = 250, Car = carId };
 
-            await repairService.InsertCarRepairs(carId, new List<RepairEntity>{repair });
+            await repairService.InsertCarRepairs(carId, new List<RepairEntity> { repair });
 
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await repairRepo.InsertRepair(null));

@@ -1,11 +1,7 @@
 ﻿using CmApp;
 using CmApp.Domains;
 using CmApp.Repositories;
-using CmApp.Utils;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ExchangeRatesTests

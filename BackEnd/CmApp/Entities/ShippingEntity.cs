@@ -21,6 +21,6 @@ namespace CmApp.Entities
         public string AuctionFeeCurrency { get; set; }
         public string TransferFeeCurrency { get; set; }
         public string TransportationFeeCurrency { get; set; }
-       
+
     }
 }

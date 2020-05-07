@@ -1,13 +1,10 @@
 ﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
-using CmApp.Repositories;
 using CmApp.Services;
 using NSubstitute;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CarsTests
@@ -48,7 +45,7 @@ namespace CarsTests
             carMock.Received().GetAllCars();
             Assert.AreEqual(cars.Count, response.Count);
             Assert.AreEqual(cars[0].Model, response[0].Model);
-            
+
         }
 
         [Test]
@@ -69,7 +66,7 @@ namespace CarsTests
                 Vin = "1232",
             };
 
-            carMock.GetAllUserCars(Arg.Any<string>()).Returns(new List<CarDisplay>{carDet });
+            carMock.GetAllUserCars(Arg.Any<string>()).Returns(new List<CarDisplay> { carDet });
             scraperMock.GetVehicleEquipment(Arg.Any<string>(), Arg.Any<string>()).Returns(eq);
             scraperMock.GetVehicleInfo(Arg.Any<string>(), Arg.Any<string>()).Returns(par);
             carMock.InsertCar(Arg.Any<CarEntity>()).Returns(car);

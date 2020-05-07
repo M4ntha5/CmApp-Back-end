@@ -15,9 +15,9 @@ namespace CmApp.Entities
         [Field("country")]
         public string Country { get; set; } = "";
         [Field("born_date")]
-        public DateTime BornDate { get; set; } = new DateTime(1900,01,01,0,0,0,DateTimeKind.Utc);
+        public DateTime BornDate { get; set; } = new DateTime(1900, 01, 01, 0, 0, 0, DateTimeKind.Utc);
         [Field("email")]
-        public string Email { get;set; }
+        public string Email { get; set; }
         [Field("email_confirmed")]
         public bool EmailConfirmed { get; set; } = false;
         [Field("password")]

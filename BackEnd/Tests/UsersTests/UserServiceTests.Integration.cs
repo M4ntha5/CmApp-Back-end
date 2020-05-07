@@ -15,7 +15,7 @@ namespace UsersTestsTests
         UserRepository userRepo;
         [SetUp]
         public void Setup()
-        {         
+        {
             userRepo = new UserRepository();
             authService = new AuthService()
             {
@@ -23,7 +23,7 @@ namespace UsersTestsTests
                 EmailRepository = new EmailRepository(),
             };
 
-            
+
         }
 
         [Test]
@@ -38,10 +38,10 @@ namespace UsersTestsTests
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await userRepo.InsertUser(user));
 
-            Assert.ThrowsAsync<ArgumentNullException>(async ()=> 
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await userRepo.InsertUser(null));
             Assert.ThrowsAsync<BusinessException>(async () =>
-                await userRepo.InsertUser(new User("","p","p2","")));
+                await userRepo.InsertUser(new User("", "p", "p2", "")));
         }
 
         [Test]
@@ -66,9 +66,9 @@ namespace UsersTestsTests
             var user = new UserEntity
             {
                 FirstName = "John",
-                LastName ="Doe",
+                LastName = "Doe",
                 Id = userId
-           
+
             };
             await userRepo.UpdateUser(user);
         }
@@ -118,9 +118,9 @@ namespace UsersTestsTests
             await userRepo.InsertPasswordReset(
                 new PasswordResetEntity
                 {
-                    Token = "token", 
+                    Token = "token",
                     User = "5ea93b953ebbca201071af71",
-                    ValidUntil= new DateTime(2020,05,01),
+                    ValidUntil = new DateTime(2020, 05, 01),
                 });
         }
 
@@ -139,7 +139,7 @@ namespace UsersTestsTests
                 Email = "mantozerix@gmail.com",
                 Role = "user",
                 Currency = "EUR",
-                Id= "5e92d6b981569e0004f1dbbf"
+                Id = "5e92d6b981569e0004f1dbbf"
             };
             var token = authService.GenerateDefaultToken(user);
             Assert.NotNull(token);
@@ -157,8 +157,8 @@ namespace UsersTestsTests
         [Test]
         public async Task ResetPassword()
         {
-            var user = new User("mantozerix@gmail.com", "password", "password", "EUR"); 
-            
+            var user = new User("mantozerix@gmail.com", "password", "password", "EUR");
+
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await authService.ResetPassword(user));
 
@@ -167,60 +167,60 @@ namespace UsersTestsTests
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await authService.ResetPassword(user));
 
-           
+
             user.Password2 = "password";
             await authService.ResetPassword(user);
 
-        }            
+        }
 
         [Test]
         public async Task Login()
         {
-            var user = new User("mantozerix@gmail.com", "password", "password", "EUR");                 
+            var user = new User("mantozerix@gmail.com", "password", "password", "EUR");
             await authService.Login(user);
 
-            user = new User("mantas.daunoravicius@ktu.edu", "password", "password", "EUR");                 
+            user = new User("mantas.daunoravicius@ktu.edu", "password", "password", "EUR");
             await authService.Login(user);
 
-            user = new User("mantas.daunoravicius@ktu.edu", "passwor4d", "password", "EUR");                 
+            user = new User("mantas.daunoravicius@ktu.edu", "passwor4d", "password", "EUR");
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await authService.Login(user));
 
-            user = new User("mantas.daunoraicius@ktu.edu", "passwor4d", "password", "EUR");                 
+            user = new User("mantas.daunoraicius@ktu.edu", "passwor4d", "password", "EUR");
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await authService.Login(user));
 
-            user = new User("testUser@user.com", "passworod", "password", "EUR");                 
+            user = new User("testUser@user.com", "passworod", "password", "EUR");
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await authService.Login(user));
 
-            user = new User("egle.da@live.com", "passwor4d", "password", "EUR");                 
+            user = new User("egle.da@live.com", "passwor4d", "password", "EUR");
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await authService.Login(user));
-        } 
+        }
 
-         [Test]
+        [Test]
         public async Task Register()
         {
-            var user = new User("mantas.daunoravicius@ktu.edu", "password", "password", "EUR");                 
+            var user = new User("mantas.daunoravicius@ktu.edu", "password", "password", "EUR");
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await authService.Register(user));
 
-            user = new User("mantozerixasdaad@gmail.com", "password", "password", "EUR");                 
+            user = new User("mantozerixasdaad@gmail.com", "password", "password", "EUR");
             await authService.Register(user);
 
-        } 
-       [Test]
+        }
+        [Test]
         public async Task ConfirmUserEmail()
-        {               
+        {
             Assert.ThrowsAsync<BusinessException>(async () =>
                 await authService.ConfirmUserEmail("5e94b45c92597c056c2a0a97"));
 
             Assert.ThrowsAsync<BusinessException>(async () =>
-                await authService.ConfirmUserEmail("5e9353f7650a91000420e8d1"));  
-            
+                await authService.ConfirmUserEmail("5e9353f7650a91000420e8d1"));
+
             await authService.ConfirmUserEmail("5ea9770d925c568c0407584b");
 
-        } 
+        }
     }
 }

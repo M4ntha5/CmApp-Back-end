@@ -13,7 +13,7 @@ namespace CmApp.Repositories
     public class FileRepository : IFileRepository
     {
         private static CodeMashClient Client => new CodeMashClient(Settings.ApiKey, Settings.ProjectId);
-        
+
         public async Task<Stream> GetFile(string fileId)
         {
             var filesRepo = new CodeMashFilesService(Client);

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using NSubstitute;
-using CmApp.Services;
-using System.Threading.Tasks;
-using CmApp.Repositories;
-using CmApp.Domains;
+﻿using CmApp;
 using CmApp.Entities;
+using CmApp.Repositories;
+using CmApp.Services;
 using CmApp.Utils;
-using CmApp;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ScraperTests
 {
@@ -82,7 +79,7 @@ namespace ScraperTests
                 AuctionImages = new List<object>()
             };
 
-            var urls  = new List<string> {Settings.DefaultImageUrl};
+            var urls = new List<string> { Settings.DefaultImageUrl };
 
             await scraperService.DownloadAllTrackingImages(tracking, urls);
 
@@ -91,12 +88,12 @@ namespace ScraperTests
             tracking = new TrackingEntity()
             {
                 Id = "5ea728d644d20049748fed0a",
-                AuctionImages = new List<object>{ new {}}
+                AuctionImages = new List<object> { new { } }
             };
 
             await scraperService.DownloadAllTrackingImages(tracking, new List<string>());
 
         }
-    
+
     }
 }

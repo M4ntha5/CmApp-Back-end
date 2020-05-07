@@ -7,7 +7,7 @@ namespace EmailsTests
     class EmailsTests
     {
         [SetUp]
-        public void SetUp ()
+        public void SetUp()
         {
 
         }

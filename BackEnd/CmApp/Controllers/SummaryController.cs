@@ -1,13 +1,13 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using CmApp.Contracts;
+﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CmApp.Controllers
 {
@@ -128,7 +128,7 @@ namespace CmApp.Controllers
                 var authUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-          
+
                 if (authUserId != userId)
                     throw new Exception("You cannot access this resource");
 

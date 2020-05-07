@@ -43,7 +43,7 @@ namespace CmApp.Repositories
                 .Select(x => x.Select(v => v.Value).ToList())
                 .ToList();
 
-            foreach(var ent in entities)
+            foreach (var ent in entities)
                 await repo.InsertManyAsync(ent, new DatabaseInsertManyOptions());
 
         }
@@ -65,7 +65,7 @@ namespace CmApp.Repositories
             FilterDefinition<RepairEntity>[] filters =
             {
                 Builders<RepairEntity>.Filter.Eq("car",  BsonObjectId.Create(carId)),
-                Builders<RepairEntity>.Filter.Eq("_id",  BsonObjectId.Create(repairId))               
+                Builders<RepairEntity>.Filter.Eq("_id",  BsonObjectId.Create(repairId))
             };
 
             var filter = Builders<RepairEntity>.Filter.And(filters);

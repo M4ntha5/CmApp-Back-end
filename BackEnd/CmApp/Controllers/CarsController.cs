@@ -39,10 +39,10 @@ namespace CmApp.Controllers
                 var cars = await aggregateRepository.GetUserCars(userEmail);
                 return Ok(cars);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
-            }       
+            }
         }
 
         // GET: api/Cars/5
@@ -116,7 +116,7 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 await carService.DeleteCar(userId, carId);
                 return NoContent();
-            }        
+            }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);

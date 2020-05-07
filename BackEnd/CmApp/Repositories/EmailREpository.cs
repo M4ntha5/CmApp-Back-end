@@ -9,7 +9,7 @@ namespace CmApp.Repositories
     public class EmailRepository : IEmailRepository
     {
         private readonly SendGridClient Client = new SendGridClient(Settings.SendGridApiKey);
-         
+
         public async Task SendWelcomeEmail(string email)
         {
             var message = new SendGridMessage();
@@ -31,7 +31,7 @@ namespace CmApp.Repositories
         }
 
         public async Task SendPasswordResetEmail(string email, string token)
-        {             
+        {
             var message = new SendGridMessage();
             message.SetFrom(Settings.SenderEmailAddress, Settings.SenderEmailAddressName);
             message.AddTo(email);

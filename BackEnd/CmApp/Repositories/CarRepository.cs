@@ -65,7 +65,7 @@ namespace CmApp.Repositories
                 .Include(x => x.ManufactureDate);
 
             var cars = await repo.FindAsync<CarEntity>(x => true, projection, null,
-                new DatabaseFindOptions());     
+                new DatabaseFindOptions());
 
             return cars.Items;
         }
@@ -139,7 +139,7 @@ namespace CmApp.Repositories
                 {
                     RecordId = recordId,
                     CollectionName = "cars",
-                    UniqueFieldName = "images",                  
+                    UniqueFieldName = "images",
                 });
             return response;
         }
@@ -167,6 +167,6 @@ namespace CmApp.Repositories
             return makes.Items;
         }
 
-        
+
     }
 }

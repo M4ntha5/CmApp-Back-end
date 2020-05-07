@@ -72,7 +72,7 @@ namespace CmApp.Repositories
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
 
-            var update = Builders<SummaryEntity>.Update.Set("total", Math.Round(total,2));
+            var update = Builders<SummaryEntity>.Update.Set("total", Math.Round(total, 2));
 
             await repo.UpdateOneAsync(
                 x => x.Id == summaryId,

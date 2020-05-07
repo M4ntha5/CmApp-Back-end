@@ -1,12 +1,12 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using CmApp.Contracts;
+﻿using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CmApp.Controllers
 {
@@ -25,9 +25,9 @@ namespace CmApp.Controllers
             FileRepository = new FileRepository(),
             ShippingRepository = shippingRepository,
             TrackingRepository = new TrackingRepository(),
-            WebScraper = new ScraperService() 
+            WebScraper = new ScraperService()
         };
-        
+
 
         // GET: api/cars/{carId}/shipping
         [HttpGet]

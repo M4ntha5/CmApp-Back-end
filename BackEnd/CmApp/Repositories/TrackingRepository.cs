@@ -32,14 +32,14 @@ namespace CmApp.Repositories
         public async Task<UploadRecordFileResponse> UploadImageToTracking(string recordId, byte[] bytes, string imgName)
         {
             var filesService = new CodeMashFilesService(Client);
- 
+
             var response = await filesService.UploadRecordFileAsync(bytes, imgName,
                 new UploadRecordFileRequest
                 {
                     RecordId = recordId,
                     CollectionName = "tracking",
                     UniqueFieldName = "auction_photos"
-                    
+
                 });
             return response;
         }
@@ -119,7 +119,7 @@ namespace CmApp.Repositories
 
             var update = Builders<TrackingEntity>.Update.Set("show_images", status);
 
-            await repo.UpdateOneAsync(trackingId, update, 
+            await repo.UpdateOneAsync(trackingId, update,
                 new DatabaseUpdateOneOptions());
         }
 

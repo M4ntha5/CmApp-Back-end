@@ -46,11 +46,11 @@ namespace CmApp.Repositories
                 .Set("transfer_fee", shipping.TransferFee)
                 .Set("transportation_fee", shipping.TransportationFee);
 
-           await repo.UpdateOneAsync(
-                shippingId,
-                update,
-                new DatabaseUpdateOneOptions()
-            );
+            await repo.UpdateOneAsync(
+                 shippingId,
+                 update,
+                 new DatabaseUpdateOneOptions()
+             );
         }
         public async Task<ShippingEntity> GetShippingByCar(string carId)
         {

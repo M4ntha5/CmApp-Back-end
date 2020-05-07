@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CmApp.Contracts;
+using CmApp.Domains;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using CmApp.Domains;
-using CmApp.Contracts;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CmApp.Repositories
 {
@@ -27,7 +27,7 @@ namespace CmApp.Repositories
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             HttpResponseMessage response = await client.GetAsync(Url);
-      
+
             if (response.IsSuccessStatusCode)
             {
                 var responseData = await response.Content.ReadAsStringAsync();
@@ -120,9 +120,9 @@ namespace CmApp.Repositories
                 var responseData = await response.Content.ReadAsStringAsync();
                 dynamic result = JsonConvert.DeserializeObject(responseData);
                 var countries = new List<string>();
-                foreach(var res in result)
+                foreach (var res in result)
                     countries.Add(Convert.ToString(res.name));
-                
+
                 client.Dispose();
                 return countries;
             }
