@@ -115,7 +115,8 @@ namespace CmApp.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete()]
+        //[Route("api/cars/{carId}/repairs")]
+        [HttpDelete]
         [Authorize(Roles = "user")]
         public async Task<IActionResult> Delete(string carId)
         {
@@ -127,8 +128,8 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await repairRepository.DeleteMultipleRepairs(carId);
-                return NoContent();
+                await repairService.DeleteMultipleRepairs(carId);
+                return Ok();
             }
             catch (Exception ex)
             {

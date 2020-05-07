@@ -1,3 +1,4 @@
+using CmApp.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Text;
 
 namespace CmApp
@@ -24,23 +26,23 @@ namespace CmApp
         {
             services.AddCors();
 
-            //Settings.ProjectId = Guid.Parse(Environment.GetEnvironmentVariable("ProjectId"));
-            // Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
-            // Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
-            //Settings.DefaultImage = Environment.GetEnvironmentVariable("DefaultImage");
-            //Settings.DefaultImageUrl = Environment.GetEnvironmentVariable("DefaultImageUrl");
-            //Settings.WelcomeEmailTemplateId = Environment.GetEnvironmentVariable("WelcomeEmailTemplateId");
-            // Settings.PasswordResetEmailTemplateId = Environment.GetEnvironmentVariable("PasswordResetEmailTemplateId");
-            // Settings.EmailConfirmationTemplateId = Environment.GetEnvironmentVariable("EmailConfirmationTemplateId");
-            // Settings.SendGridApiKey = Environment.GetEnvironmentVariable("SendGridApiKey");
-            // Settings.SenderEmailAddress = Environment.GetEnvironmentVariable("SenderEmailAddress");
-            // Settings.SenderEmailAddressName = Environment.GetEnvironmentVariable("SenderEmailAddressName");
+            Settings.ProjectId = Guid.Parse(Environment.GetEnvironmentVariable("ProjectId"));
+            Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");
+            Settings.CaptchaApiKey = Environment.GetEnvironmentVariable("CaptchaApiKey");
+            Settings.DefaultImage = Environment.GetEnvironmentVariable("DefaultImage");
+            Settings.DefaultImageUrl = Environment.GetEnvironmentVariable("DefaultImageUrl");
+            Settings.WelcomeEmailTemplateId = Environment.GetEnvironmentVariable("WelcomeEmailTemplateId");
+            Settings.PasswordResetEmailTemplateId = Environment.GetEnvironmentVariable("PasswordResetEmailTemplateId");
+            Settings.EmailConfirmationTemplateId = Environment.GetEnvironmentVariable("EmailConfirmationTemplateId");
+            Settings.SendGridApiKey = Environment.GetEnvironmentVariable("SendGridApiKey");
+            Settings.SenderEmailAddress = Environment.GetEnvironmentVariable("SenderEmailAddress");
+            Settings.SenderEmailAddressName = Environment.GetEnvironmentVariable("SenderEmailAddressName");
 
             var symmetricSecurityKeyDefault = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes("this_is_user_key"));//Environment.GetEnvironmentVariable("TestUser")));
+                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestUser")));
 
             var symmetricSecurityKeyAdmin = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes("this_is_admin_key"));//Environment.GetEnvironmentVariable("TestAdmin")));
+                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestAdmin")));
 
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
