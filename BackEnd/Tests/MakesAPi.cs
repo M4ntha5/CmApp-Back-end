@@ -8,14 +8,14 @@ namespace VechicleAPITests
 {
     class MakesAPi
     {
-        VehicleAPI vehicleRepo;
+        ExternalAPIService APIservice;
         CarRepository carRepo;
         FileRepository fileRepo;
         [SetUp]
         public void Setup()
         {
             carRepo = new CarRepository();
-            vehicleRepo = new VehicleAPI();
+            APIservice = new ExternalAPIService();
             fileRepo = new FileRepository();
         }
 
@@ -23,7 +23,7 @@ namespace VechicleAPITests
         public async Task GetAll()
         {
             var make = "BMW";
-            var result = await vehicleRepo.GetAllMakeModels(make);
+            var result = await APIservice.GetAllMakeModels(make);
             Assert.IsNotEmpty(result);
         }
 
@@ -36,7 +36,7 @@ namespace VechicleAPITests
         [Test]
         public async Task BadUrl()
         {
-            var makes = await vehicleRepo.GetAllMakeModels("asd/asd/asd/df");
+            var makes = await APIservice.GetAllMakeModels("asd/asd/asd/df");
             Assert.IsNull(makes);
         }
         [Test]

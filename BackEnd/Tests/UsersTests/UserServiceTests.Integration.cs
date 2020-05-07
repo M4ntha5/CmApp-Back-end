@@ -13,7 +13,6 @@ namespace UsersTestsTests
     {
         AuthService authService;
         UserRepository userRepo;
-        UserService userService;
         [SetUp]
         public void Setup()
         {         
@@ -22,12 +21,8 @@ namespace UsersTestsTests
             {
                 UserRepository = userRepo,
                 EmailRepository = new EmailRepository(),
-                PasswordResetRepository = new PasswordResetRepository()
             };
-            userService = new UserService
-            {
-                UserRepository = userRepo
-            };
+
             
         }
 
@@ -36,12 +31,12 @@ namespace UsersTestsTests
         {
             var user = new User("user10@user.com", "password", "password", "EUR");
 
-            var resut = await userService.InsertNewUser(user);
+            var resut = await userRepo.InsertUser(user);
             Assert.AreEqual(user.Email, resut.Email);
 
             user = new User("user18@user.com", "password", "passw4ord", "EUR");
             Assert.ThrowsAsync<BusinessException>(async () =>
-                await userService.InsertNewUser(user));
+                await userRepo.InsertUser(user));
 
             Assert.ThrowsAsync<ArgumentNullException>(async ()=> 
                 await userRepo.InsertUser(null));
@@ -53,23 +48,14 @@ namespace UsersTestsTests
         public async Task BlockUserAndUnblockUser()
         {
             var userId = "5ea974effb56e6922479d97a";
-            await userService.BlockUser(userId);
-            await userService.UnblockUser(userId);
+            await userRepo.BlockUser(userId);
+            await userRepo.UnblockUser(userId);
         }
 
         [Test]
         public async Task GetAllUsers()
         {
-            var users = await userService.GetAllUsers();
-            Assert.AreNotEqual(0, users.Count);
-        }
-
-        [Test]
-        public async Task GetAllBlockedAndUnblockedUsers()
-        {
-            var users = await userService.GetAllBlockedUsers();
-            Assert.AreNotEqual(0, users.Count);
-            users = await userService.GetAllUnblockedUsers();
+            var users = await userRepo.GetAllUsers();
             Assert.AreNotEqual(0, users.Count);
         }
 
@@ -77,18 +63,20 @@ namespace UsersTestsTests
         public async Task UpdateUser()
         {
             var userId = "5ea974effb56e6922479d97a";
-            var user = new UserDetails
+            var user = new UserEntity
             {
                 FirstName = "John",
-                LastName ="Doe"
+                LastName ="Doe",
+                Id = userId
+           
             };
-            await userService.UpdateUserDetails(userId, user);
+            await userRepo.UpdateUser(user);
         }
 
         [Test]
         public async Task GetUserById()
         {
-            var user = await userService.GetSelectedUser("5ea974effb56e6922479d97a");
+            var user = await userRepo.GetUserById("5ea974effb56e6922479d97a");
             Assert.IsNotNull(user);
         }
         [Test]
@@ -102,7 +90,7 @@ namespace UsersTestsTests
         public async Task ChangeUserRole()
         {
             var id = "5ea974effb56e6922479d97a";
-            await userService.ChangeUserRole(id, "user");
+            await userRepo.ChangeUserRole(id, "user");
         }
         [Test]
         public async Task ChangePassword()
@@ -121,14 +109,13 @@ namespace UsersTestsTests
         public async Task DeleteUser()
         {
             var id = "5ea974effb56e6922479d97a";
-            await userService.DeleteUser(id);
+            await userRepo.DeleteUser(id);
         }
 
         [Test]
         public async Task InsertPasswordReset()
         {
-            var repo = new PasswordResetRepository();
-            await repo.InsertPasswordReset(
+            await userRepo.InsertPasswordReset(
                 new PasswordResetEntity
                 {
                     Token = "token", 
@@ -140,8 +127,7 @@ namespace UsersTestsTests
         [Test]
         public async Task GetPasswordResetByToken()
         {
-            var repo = new PasswordResetRepository();
-            var toke = await repo.GetPasswordResetByToken("token");
+            var toke = await userRepo.GetPasswordResetByToken("token");
             Assert.NotNull(toke);
         }
 

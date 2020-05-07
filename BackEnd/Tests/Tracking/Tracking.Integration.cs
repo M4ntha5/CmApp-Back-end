@@ -35,7 +35,7 @@ namespace TrackingTests
         [Test]
         public async Task TestGetTracking()
         {
-            var tracking = await trackingService.GetTracking(carId);
+            var tracking = await trackingRepo.GetTrackingByCar(carId);
             Assert.AreEqual(carId, tracking.Car);
         }
         [Test]
@@ -47,9 +47,10 @@ namespace TrackingTests
                 BookingNumber = "123",
                 ContainerNumber = "321",
                 Url = "myuri",
+                Car = carId
             };
 
-            var tracking = await trackingService.InsertTracking(carId, entity);
+            var tracking = await trackingRepo.InsertTracking(entity);
             Assert.AreEqual(carId, tracking.Car);
             Assert.ThrowsAsync<ArgumentNullException>(async ()=>
                 await trackingRepo.InsertTracking(null));
@@ -71,7 +72,7 @@ namespace TrackingTests
         [Test]
         public async Task TestDeleteTracking()
         {
-            await trackingService.DeleteTracking(carId);
+            await trackingRepo.DeleteCarTracking(carId);
         }
         [Test]
         public async Task TestDeleteTrackingImages()

@@ -12,11 +12,11 @@ namespace ExchangeRatesTests
 {
     class ExchangeRatesApiTests
     {
-        ExchangeService repo;
+        ExternalAPIService repo;
         [SetUp]
         public void Setup()
         {
-            repo = new ExchangeService();
+            repo = new ExternalAPIService();
         }
 
         [Test]

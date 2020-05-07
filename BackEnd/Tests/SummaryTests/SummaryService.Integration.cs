@@ -14,17 +14,17 @@ namespace SummaryTests
     class SummaryServiceTests
     {
         SummaryRepository summaryRepo;
-        SummaryService serviceRepo;
+        CarService carService;
         string carId, summaryId;
 
         [SetUp]
         public void Setup()
         {
             summaryRepo = new SummaryRepository();
-            serviceRepo = new SummaryService
+            carService = new CarService
             {
                 SummaryRepository = summaryRepo,
-                ExchangeRepository = new ExchangeService()
+                ExternalAPIService = new ExternalAPIService()
             };
             carId = "5ea728c744d20049748fed09";
             summaryId = "5ea930c8f3c276556c7a4cc0";
@@ -52,7 +52,7 @@ namespace SummaryTests
                 SelectedCurrency = "EUR",
             };
             Assert.ThrowsAsync<BusinessException>(async () => 
-                await serviceRepo.InsertCarSummary(carId, entity));
+                await carService.InsertCarSummary(carId, entity));
 
             entity = new SummaryEntity 
             { 
@@ -60,7 +60,7 @@ namespace SummaryTests
                 BaseCurrency="EUR" ,
                 SelectedCurrency = "USD",
             };
-            var summary = await serviceRepo.InsertCarSummary(carId, entity);
+            var summary = await carService.InsertCarSummary(carId, entity);
             Assert.AreEqual(carId, summary.Car);
 
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
@@ -76,25 +76,25 @@ namespace SummaryTests
                 SoldDate = DateTime.Now,
                 SoldPrice = 8000,
             };
-            await serviceRepo.UpdateSoldSummary(carId, entity);
+            await carService.UpdateSoldSummary(carId, entity);
 
             entity.CreatedAt = new DateTime(2020,04,28);
-            await serviceRepo.UpdateSoldSummary(carId, entity);
+            await carService.UpdateSoldSummary(carId, entity);
 
             entity.CreatedAt = new DateTime(2020,04,20);
-            await serviceRepo.UpdateSoldSummary(carId, entity);
+            await carService.UpdateSoldSummary(carId, entity);
 
             entity.CreatedAt = new DateTime(2020,04,29,12,3,0);
-            await serviceRepo.UpdateSoldSummary(carId, entity);
+            await carService.UpdateSoldSummary(carId, entity);
 
             entity.CreatedAt = new DateTime(2020,04,29,15,35,0);
-            await serviceRepo.UpdateSoldSummary(carId, entity);
+            await carService.UpdateSoldSummary(carId, entity);
         }
 
         [Test]
         public async Task DeleteSummary()
         {
-           await serviceRepo.DeleteSummary(carId);
+           await summaryRepo.DeleteCarSummary(carId);
         }
     }
 }

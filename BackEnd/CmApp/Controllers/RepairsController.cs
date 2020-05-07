@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -15,12 +16,14 @@ namespace CmApp.Controllers
     [ApiController]
     public class RepairsController : ControllerBase
     {
-        private readonly RepairService repairService = new RepairService
+        private static readonly IRepairRepository repairRepository = new RepairRepository();
+        private readonly ICarRepository carRepository = new CarRepository();
+        private readonly IRepairService repairService = new RepairService
         {
-            RepairRepository = new RepairRepository(),
+            RepairRepository = repairRepository,
             SummaryRepository = new SummaryRepository()
         };
-        private readonly CarRepository carRepo = new CarRepository();
+        
 
         // GET: api/cars/{carId}/Repairs
         [HttpGet]
@@ -31,7 +34,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -53,7 +56,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -75,7 +78,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -97,11 +100,12 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await repairService.UpdateSelectedCarRepair(repairId, carId, repair);
+                repair.Car = carId;
+                await repairRepository.UpdateRepair(repairId, repair);
                 return NoContent();
             }
             catch (Exception ex)
@@ -119,11 +123,11 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await repairService.DeleteAllCarRepairs(carId);
+                await repairRepository.DeleteMultipleRepairs(carId);
                 return NoContent();
             }
             catch (Exception ex)

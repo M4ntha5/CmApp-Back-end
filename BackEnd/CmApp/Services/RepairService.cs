@@ -11,15 +11,6 @@ namespace CmApp.Services
         public IRepairRepository RepairRepository { get; set; }
         public ISummaryRepository SummaryRepository { get; set; }
 
-        public async Task DeleteSelectedCarRepair(string carId, string repairId)
-        {
-            await RepairRepository.DeleteRepair(carId, repairId);
-        }
-        public async Task DeleteAllCarRepairs(string carId)
-        {
-            await RepairRepository.DeleteMultipleRepairs(carId);
-        }
-
         public async Task<List<RepairEntity>> GetAllSelectedCarRepairs(string carId)
         {
             var repairs = await RepairRepository.GetAllRepairsByCarId(carId);
@@ -47,11 +38,5 @@ namespace CmApp.Services
 
             return response;
         }
-        public async Task UpdateSelectedCarRepair(string repairid, string carId, RepairEntity repair)
-        {
-            repair.Car = carId;
-            await RepairRepository.UpdateRepair(repairid, repair);
-        }
-
     }
 }

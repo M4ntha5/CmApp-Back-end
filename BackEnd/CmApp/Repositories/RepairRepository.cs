@@ -74,21 +74,6 @@ namespace CmApp.Repositories
             return repair;
         }
 
-        public async Task<DatabaseDeleteOneResponse> DeleteRepair(string carId, string repairId)
-        {
-            var repo = new CodeMashRepository<RepairEntity>(Client);
-
-            FilterDefinition<RepairEntity>[] filters =
-            {
-                Builders<RepairEntity>.Filter.Eq("_id",  BsonObjectId.Create(repairId)),
-                Builders<RepairEntity>.Filter.Eq("car",  BsonObjectId.Create(carId))
-            };
-
-            var filter = Builders<RepairEntity>.Filter.And(filters);
-
-            var response = await repo.DeleteOneAsync(filter);
-            return response;
-        }
         public async Task DeleteMultipleRepairs(string carId)
         {
             var repo = new CodeMashRepository<RepairEntity>(Client);

@@ -52,14 +52,13 @@ namespace RepairsTests
         public async Task TestUpdateSelectedCarRepair()
         {
             var repair = new RepairEntity() { Name = "kapotas", Price = 200, Car = carId };
-            await repairService.UpdateSelectedCarRepair(repairId,carId, repair);
+            await repairRepo.UpdateRepair(repairId, repair);
         }
 
         [Test]
         public async Task TestDeleteSelectedCarRepair()
         {
-            await repairService.DeleteSelectedCarRepair(carId, repairId);
-            await repairService.DeleteAllCarRepairs(carId);
+            await repairRepo.DeleteMultipleRepairs(carId);
         }    
 
         [Test]

@@ -1,9 +1,5 @@
-﻿
-using CmApp.Entities;
+﻿using CmApp.Entities;
 using Isidos.CodeMash.ServiceContracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Contracts

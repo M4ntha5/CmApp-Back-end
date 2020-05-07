@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
@@ -15,13 +16,20 @@ namespace CmApp.Controllers
     [ApiController]
     public class SummaryController : ControllerBase
     {
-        private readonly SummaryService summaryService = new SummaryService()
+        private static readonly ISummaryRepository summaryRepository = new SummaryRepository();
+        private static readonly ICarRepository carRepo = new CarRepository();
+        private readonly IAggregateRepository aggRepo = new AggregateRepository();
+        private readonly ICarService carService = new CarService()
         {
-            SummaryRepository = new SummaryRepository(),
-            ExchangeRepository = new ExchangeService(),
+            SummaryRepository = summaryRepository,
+            ExternalAPIService = new ExternalAPIService(),
+            CarRepository = carRepo,
+            FileRepository = new FileRepository(),
+            ShippingRepository = new ShippingRepository(),
+            TrackingRepository = new TrackingRepository(),
+            WebScraper = new ScraperService()
         };
-        private readonly CarRepository carRepo = new CarRepository();
-        private readonly AggregateRepository aggRepo = new AggregateRepository();
+
 
         // GET: /api/cars/{carId}/summary
         [HttpGet]
@@ -36,7 +44,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                var summary = await summaryService.GetSummaryByCarId(carId);
+                var summary = await summaryRepository.GetSummaryByCarId(carId);
                 return Ok(summary);
             }
             catch (Exception ex)
@@ -58,7 +66,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                var newSummary = await summaryService.InsertCarSummary(carId, summary);
+                var newSummary = await carService.InsertCarSummary(carId, summary);
                 return Ok(newSummary);
             }
             catch (Exception ex)
@@ -80,7 +88,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await summaryService.UpdateSoldSummary(carId, summary);
+                await carService.UpdateSoldSummary(carId, summary);
                 return NoContent();
             }
             catch (Exception ex)
@@ -102,7 +110,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await summaryService.DeleteSummary(carId);
+                await summaryRepository.DeleteCarSummary(carId);
                 return NoContent();
             }
             catch (Exception ex)

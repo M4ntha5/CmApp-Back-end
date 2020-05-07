@@ -27,5 +27,15 @@ namespace AggregateTests
             var stats = await repo.GetCarStats(from, to, user);
             Assert.IsNotNull(stats);
         }
+        [Test]
+        public async Task UserCarsListAggregate()
+        {
+            var repo = new AggregateRepository();
+            var user = "mantozerix@gmail.com";
+
+            var cars = await repo.GetUserCars(user);
+            Assert.IsNotNull(cars);
+        }
+
     }
 }

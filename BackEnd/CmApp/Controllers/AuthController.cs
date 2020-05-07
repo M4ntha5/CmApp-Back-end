@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -12,11 +13,11 @@ namespace CmApp.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService authService = new AuthService()
+        private readonly IExternalAPIService externalAPI = new ExternalAPIService();
+        private readonly IAuthService authService = new AuthService()
         {
             UserRepository = new UserRepository(),
-            EmailRepository = new EmailRepository(),
-            PasswordResetRepository = new PasswordResetRepository()
+            EmailRepository = new EmailRepository()
         };
 
         // GET: api/Auth
@@ -26,7 +27,6 @@ namespace CmApp.Controllers
             try
             {
                 var jwt = await authService.Login(user);
-
                 return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
             }
             catch(Exception ex)
@@ -41,7 +41,6 @@ namespace CmApp.Controllers
             try
             {
                 var response = await authService.Register(user);
-
                 
                 return Ok($"Confirmation email has been sent to {user.Email} . " +
                      $"If you can't find it, check your spam folder");
@@ -89,6 +88,40 @@ namespace CmApp.Controllers
                 await authService.ResetPassword(data);
                 return Ok("Password successfully reseted. You can now log in");
             }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // GET: api/Currency
+        [Route("/api/currency")]
+        [HttpGet]
+        public async Task<IActionResult> GetAvailableCurrencies()
+        {
+            try
+            {
+                //all rates names
+                var names = await externalAPI.GetAvailableCurrencies();
+                return Ok(names);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // POST: api/Currency
+        [Route("/api/currency")]
+        [HttpPost]
+        public async Task<IActionResult> CalculateExchangeResult([FromBody] ExchangeInput input)
+        {
+            try
+            {
+                //calculates result here
+                var result = await externalAPI.CalculateResult(input);
+                return Ok(result);
+            }          
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);

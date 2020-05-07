@@ -46,7 +46,7 @@ namespace CmApp.Repositories
                 .Set("transfer_fee", shipping.TransferFee)
                 .Set("transportation_fee", shipping.TransportationFee);
 
-            _ = await repo.UpdateOneAsync(
+           await repo.UpdateOneAsync(
                 shippingId,
                 update,
                 new DatabaseUpdateOneOptions()

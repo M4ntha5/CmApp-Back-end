@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -14,13 +15,19 @@ namespace CmApp.Controllers
     [ApiController]
     public class ShippingController : ControllerBase
     {
-        private readonly ShippingService shippingService = new ShippingService
+        private static readonly IShippingRepository shippingRepository = new ShippingRepository();
+        private static readonly ICarRepository carRepo = new CarRepository();
+        private readonly ICarService carService = new CarService
         {
-            ShippingRepository = new ShippingRepository(),
             SummaryRepository = new SummaryRepository(),
-            ExchangeRepository = new ExchangeService()
+            ExternalAPIService = new ExternalAPIService(),
+            CarRepository = carRepo,
+            FileRepository = new FileRepository(),
+            ShippingRepository = shippingRepository,
+            TrackingRepository = new TrackingRepository(),
+            WebScraper = new ScraperService() 
         };
-        private readonly CarRepository carRepo = new CarRepository();
+        
 
         // GET: api/cars/{carId}/shipping
         [HttpGet]
@@ -35,7 +42,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                var shipping = await shippingService.GetShipping(carId);
+                var shipping = await shippingRepository.GetShippingByCar(carId);
                 return Ok(shipping);
             }
             catch (Exception ex)
@@ -57,7 +64,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                var newShipping = await shippingService.InsertShipping(carId, shipping);
+                var newShipping = await carService.InsertShipping(carId, shipping);
                 return Ok(newShipping);
             }
             catch (Exception ex)
@@ -79,7 +86,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await shippingService.UpdateShipping(carId, shipping);
+                await carService.UpdateShipping(carId, shipping);
                 return NoContent();
             }
             catch (Exception ex)
@@ -101,7 +108,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await shippingService.DeleteShipping(carId);
+                await shippingRepository.DeleteCarShipping(carId);
                 return NoContent();
             }
             catch (Exception ex)

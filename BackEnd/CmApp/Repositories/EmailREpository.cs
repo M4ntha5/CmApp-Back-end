@@ -17,7 +17,7 @@ namespace CmApp.Repositories
             message.AddTo(email);
             message.SetTemplateId(Settings.WelcomeEmailTemplateId);
 
-            _ = await Client.SendEmailAsync(message);
+            await Client.SendEmailAsync(message);
         }
         public async Task SendEmailConfirmationEmail(string email, string token)
         {
@@ -27,7 +27,7 @@ namespace CmApp.Repositories
             message.SetTemplateId(Settings.EmailConfirmationTemplateId);
             message.SetTemplateData(new { token });
 
-            _ = await Client.SendEmailAsync(message);
+            await Client.SendEmailAsync(message);
         }
 
         public async Task SendPasswordResetEmail(string email, string token)
@@ -38,7 +38,7 @@ namespace CmApp.Repositories
             message.SetTemplateId(Settings.PasswordResetEmailTemplateId);
             message.SetTemplateData(new { token });
 
-            _ = await Client.SendEmailAsync(message);
+            await Client.SendEmailAsync(message);
         }
     }
 }

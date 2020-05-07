@@ -45,7 +45,9 @@ namespace CmApp.Repositories
                 Equipment = car.Equipment,
                 Vin = car.Vin,
                 User = car.User,
-                MainImageUrl = car.MainImageUrl  
+                DateCreated = DateTime.Now,
+                Images = new List<object>(),
+                Base64images = new List<string>()
             };
             var response = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
             return response;
@@ -72,17 +74,14 @@ namespace CmApp.Repositories
             var repo = new CodeMashRepository<CarEntity>(Client);
 
             var projection = Builders<CarEntity>.Projection
-                .Include(x => x.Images)
                 .Include(x => x.Make)
                 .Include(x => x.Model)
                 .Include(x => x.Vin)
-                .Include(x => x.User)
-                .Include(x => x.MainImageUrl);
+                .Include(x => x.User);
 
             var filter = Builders<CarEntity>.Filter.Eq("user", ObjectId.Parse(userId));
-            var sort = Builders<CarEntity>.Sort.Descending("created_at");
 
-            var cars = await repo.FindAsync<CarDisplay>(filter, projection, sort,
+            var cars = await repo.FindAsync<CarDisplay>(filter, projection, null,
                 new DatabaseFindOptions());
 
             return cars.Items;
@@ -122,19 +121,6 @@ namespace CmApp.Repositories
                 new DatabaseUpdateOneOptions()
             );
         }
-       /* public async Task UpdateCarMainImg(string carId, string imageUrl)
-        {
-            var repo = new CodeMashRepository<CarEntity>(Client);
-
-            var update = Builders<CarEntity>.Update
-                .Set("main_image_url", imageUrl);
-
-            _ = await repo.UpdateOneAsync(
-                carId,
-                update,
-                new DatabaseUpdateOneOptions()
-            );
-        }*/
 
         public async Task DeleteCar(string carId)
         {
