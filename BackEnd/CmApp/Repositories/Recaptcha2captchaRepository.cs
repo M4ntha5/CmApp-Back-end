@@ -1,8 +1,8 @@
-﻿using System.IO;
+﻿using CmApp.Utils;
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
-using CmApp.Utils;
 
 namespace CmApp.Domains
 {
@@ -32,7 +32,7 @@ namespace CmApp.Domains
                 ServicePointManager.Expect100Continue = false;
                 var request = (HttpWebRequest)WebRequest.Create("http://2captcha.com/in.php");
 
-                var postData = "key=" + Captcha_service_key + "&method=userrecaptcha&googlekey=" 
+                var postData = "key=" + Captcha_service_key + "&method=userrecaptcha&googlekey="
                     + Site_key + "&pageurl=" + Page_url;
 
                 var data = Encoding.ASCII.GetBytes(postData);
@@ -147,7 +147,7 @@ namespace CmApp.Domains
 
                     return RecaptchaResponseToken;
                 }
-                else               
+                else
                     return null;
 
             }
@@ -155,5 +155,5 @@ namespace CmApp.Domains
                 return null;
         }
     }
-    
+
 }

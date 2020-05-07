@@ -1,11 +1,11 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using CmApp.Contracts;
+﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Repositories;
 using CmApp.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 
 namespace CmApp.Controllers
 {
@@ -29,7 +29,7 @@ namespace CmApp.Controllers
                 var jwt = await authService.Login(user);
                 return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -41,10 +41,10 @@ namespace CmApp.Controllers
             try
             {
                 var response = await authService.Register(user);
-                
+
                 return Ok($"Confirmation email has been sent to {user.Email} . " +
                      $"If you can't find it, check your spam folder");
-                                               
+
             }
             catch (Exception ex)
             {
@@ -121,7 +121,7 @@ namespace CmApp.Controllers
                 //calculates result here
                 var result = await externalAPI.CalculateResult(input);
                 return Ok(result);
-            }          
+            }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);

@@ -22,7 +22,7 @@ namespace CmApp.Repositories
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user), "Cannot insert user in db, because user is empty");
-            if(user.Password != user.Password2)
+            if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match!!");
 
             //password hashing
@@ -43,7 +43,7 @@ namespace CmApp.Repositories
             );
 
             var entity = new UserEntity
-            { 
+            {
                 Email = user.Email,
                 Password = hashedPass,
                 Salt = Convert.ToBase64String(salt),
@@ -60,7 +60,7 @@ namespace CmApp.Repositories
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
 
-            var filter = Builders<UserEntity>.Filter.Eq("_id", BsonObjectId.Create(carId)); 
+            var filter = Builders<UserEntity>.Filter.Eq("_id", BsonObjectId.Create(carId));
 
             var user = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
 
@@ -78,7 +78,7 @@ namespace CmApp.Repositories
                 .Include(x => x.Id)
                 .Include(x => x.Role);
 
-            var users = await repo.FindAsync<UserEntity>(x=> !x.Deleted, projection, null,
+            var users = await repo.FindAsync<UserEntity>(x => !x.Deleted, projection, null,
                 new DatabaseFindOptions());
 
             return users.Items;
@@ -90,7 +90,7 @@ namespace CmApp.Repositories
 
             var updateDefinition = Builders<UserEntity>.Update.Set(x => x.Blocked, true);
 
-            await repo.UpdateOneAsync(x=> x.Id == userId, updateDefinition, new DatabaseUpdateOneOptions());
+            await repo.UpdateOneAsync(x => x.Id == userId, updateDefinition, new DatabaseUpdateOneOptions());
         }
         public async Task UnblockUser(string userId)
         {

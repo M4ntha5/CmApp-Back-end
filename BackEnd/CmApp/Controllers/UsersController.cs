@@ -1,13 +1,13 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using CmApp.Contracts;
+﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Repositories;
 using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CmApp.Controllers
 {
@@ -20,7 +20,7 @@ namespace CmApp.Controllers
         private readonly IAuthService AuthService = new AuthService()
         {
             UserRepository = UserRepository,
-            EmailRepository = new EmailRepository()  
+            EmailRepository = new EmailRepository()
         };
 
         // GET: api/Users
@@ -36,10 +36,10 @@ namespace CmApp.Controllers
                     throw new Exception("You can not access this resource!");
 
                 var users = await UserRepository.GetAllUsers();
-                
+
                 return Ok(users);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -113,7 +113,7 @@ namespace CmApp.Controllers
             }
         }
 
-        
+
         [HttpGet("unblock/{userId}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UnblockUser(string userId)

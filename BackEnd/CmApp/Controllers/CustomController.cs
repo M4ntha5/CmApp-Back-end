@@ -1,15 +1,14 @@
-﻿using System;
+﻿using CmApp.Contracts;
+using CmApp.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Repositories;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CmApp.Controllers
 {
@@ -135,7 +134,7 @@ namespace CmApp.Controllers
 
                 var fileId = fileInfo.Item1;
                 var fileType = fileInfo.Item2;
-            
+
                 var stream = await fileRepo.GetFile(fileId);
 
                 var mem = new MemoryStream();
@@ -145,7 +144,7 @@ namespace CmApp.Controllers
                 string base64 = fileRepo.ByteArrayToBase64String(bytes);
 
                 base64 = "data:" + fileType + ";base64," + base64;
-                
+
                 return Ok(base64);
             }
             catch (Exception ex)
@@ -169,8 +168,8 @@ namespace CmApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }                
-       
-        
+        }
+
+
     }
 }

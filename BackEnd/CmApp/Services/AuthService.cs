@@ -1,7 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
-using CmApp.Repositories;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -137,7 +136,7 @@ namespace CmApp.Services
             if (user == null || user.Deleted)
                 throw new BusinessException("No such a user!");
             if (user.EmailConfirmed)
-                throw new BusinessException("Email already confirmed!");  
+                throw new BusinessException("Email already confirmed!");
 
             await UserRepository.ChangeEmailConfirmationFlag(user.Id);
             await EmailRepository.SendWelcomeEmail(user.Email);
@@ -214,7 +213,7 @@ namespace CmApp.Services
                 Sex = user.Sex
             };
             return userDetails;
-        }      
+        }
 
         public async Task UpdateUserDetails(string userId, UserDetails user)
         {
@@ -226,7 +225,7 @@ namespace CmApp.Services
                 Country = user.Country,
                 Sex = user.Sex,
                 Id = userId
-            };          
+            };
             await UserRepository.UpdateUser(entity);
 
         }

@@ -45,10 +45,10 @@ namespace VechicleAPITests
             var makes = await fileRepo.GetFileUrl(Settings.DefaultImage);
             Assert.IsNotNull(makes);
         }
-                [Test]
+        [Test]
         public async Task Conversions()
         {
-            var file =await fileRepo.GetFile(Settings.DefaultImage);
+            var file = await fileRepo.GetFile(Settings.DefaultImage);
 
             using MemoryStream ms = new MemoryStream();
             file.CopyTo(ms);
@@ -61,7 +61,7 @@ namespace VechicleAPITests
         [Test]
         public async Task GetFileId()
         {
-            var car  =await carRepo.GetCarById("5ea5ad855969c94a542a8127");
+            var car = await carRepo.GetCarById("5ea5ad855969c94a542a8127");
 
             var res = fileRepo.GetFileId(car.Images[0]);
 

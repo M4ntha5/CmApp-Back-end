@@ -52,7 +52,7 @@ namespace TrackingTests
 
             var tracking = await trackingRepo.InsertTracking(entity);
             Assert.AreEqual(carId, tracking.Car);
-            Assert.ThrowsAsync<ArgumentNullException>(async ()=>
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await trackingRepo.InsertTracking(null));
         }
 
@@ -120,11 +120,11 @@ namespace TrackingTests
         public async Task DownloadTrackingImages()
         {
             await trackingService.DownloadTrackingImages("5ea9616f1d20e577d470a50d",
-                new List<string>{Settings.DefaultImageUrl });
+                new List<string> { Settings.DefaultImageUrl });
 
             Assert.ThrowsAsync<BusinessException>(async () =>
                  await trackingService.DownloadTrackingImages("5ea9616f1d20e577d550a50d",
-                new List<string>{Settings.DefaultImageUrl }));
+                new List<string> { Settings.DefaultImageUrl }));
         }
     }
 }

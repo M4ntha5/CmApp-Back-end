@@ -100,7 +100,7 @@ namespace CmApp.Services
 
                     var bytes = FileRepository.Base64ToByteArray(base64);
                     var res = await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-                    
+
                     count++;
                 }
             }
@@ -153,7 +153,7 @@ namespace CmApp.Services
 
             if (userVins.Contains(car.Vin))
                 throw new BusinessException("There is already a car with this VIN number");
-            
+
             if ((car.Make == "BMW" || car.Make == "Mercedes-benz") && car.Model == "")
                 return await InsertCarDetailsFromScraper(car);
             else
@@ -174,17 +174,17 @@ namespace CmApp.Services
             if (car.User != userId)
                 throw new BusinessException("Car does not exist");
 
-            var list = car.Equipment.Select(x=>x.Code).ToList().Distinct().Count();
-            if(car.Equipment.Count != list)
+            var list = car.Equipment.Select(x => x.Code).ToList().Distinct().Count();
+            if (car.Equipment.Count != list)
                 throw new BusinessException("Car cannot have multiple equipment with the same code!");
 
-            await CarRepository.UpdateCar(carId, car);       
+            await CarRepository.UpdateCar(carId, car);
 
-            if(car.Base64images.Count > 0)
+            if (car.Base64images.Count > 0)
             {
                 await CarRepository.DeleteAllCarImages(carId);
                 int counter = 1;
-                foreach(var img in car.Base64images)
+                foreach (var img in car.Base64images)
                 {
                     var image = img.Split(",")[1];
                     var bytes = FileRepository.Base64ToByteArray(image);
@@ -192,7 +192,7 @@ namespace CmApp.Services
                     await CarRepository.UploadImageToCar(carId, bytes, imageName);
                     counter++;
                 }
-            }  
+            }
             else
                 await CarRepository.DeleteAllCarImages(carId);
         }
@@ -205,15 +205,15 @@ namespace CmApp.Services
             var time = summary.SoldDate.Subtract(summary.CreatedAt);
             string message;
             if (time.Days > 0)
-                if(time.Days == 1)
+                if (time.Days == 1)
                     message = $"Sold within {time.Days} day";
                 else
                     message = $"Sold within {time.Days} days";
             else
-                if(time.Hours == 1)
-                    message = $"Sold within {time.Hours} hour";
-                else
-                    message = $"Sold within {time.Hours} hours";
+                if (time.Hours == 1)
+                message = $"Sold within {time.Hours} hour";
+            else
+                message = $"Sold within {time.Hours} hours";
 
             summary.SoldWithin = message;
             var oldSummary = await SummaryRepository.GetSummaryByCarId(carId);
@@ -235,7 +235,7 @@ namespace CmApp.Services
                     From = summary.SelectedCurrency,
                     To = summary.BaseCurrency
                 };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);           
+                var convertedPrice = await ExternalAPIService.CalculateResult(input);
                 summary.Total = Math.Round(convertedPrice, 2);
                 summary.BoughtPrice = Math.Round(convertedPrice, 2);
             }
@@ -261,7 +261,7 @@ namespace CmApp.Services
 
             shipping.Car = carId;
 
-            if(shipping.TransferFeeCurrency != shipping.BaseCurrency)
+            if (shipping.TransferFeeCurrency != shipping.BaseCurrency)
             {
                 var input = new ExchangeInput
                 {
@@ -307,7 +307,7 @@ namespace CmApp.Services
             }
 
             var newShipping = await ShippingRepository.InsertShipping(shipping);
-           
+
             double totalPrice = newShipping.Customs + newShipping.AuctionFee +
                 newShipping.TransferFee + newShipping.TransportationFee;
 

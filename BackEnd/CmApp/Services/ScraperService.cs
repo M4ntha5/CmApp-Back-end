@@ -19,7 +19,7 @@ namespace CmApp.Services
         private readonly string MBDecoderEndpoint = "https://www.mbdecoder.com/decode/";
         private readonly string AtlanticExpressEndpoint = "http://www.atlanticexpresscorp.com/services/tracking/?num=";
 
-       // private readonly IFileRepository FileRepository = new FileRepository();
+        // private readonly IFileRepository FileRepository = new FileRepository();
         private readonly ITrackingRepository TrackingRepo = new TrackingRepository();
 
         public Dictionary<string, string> GetVehicleInfo(string vin, string make)
@@ -56,7 +56,7 @@ namespace CmApp.Services
                 }
                 return vehicleInfo;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new BusinessException(ex.Message);
             }
@@ -104,7 +104,7 @@ namespace CmApp.Services
             try
             {
                 var website = MDecoderEndpoint + vin;
-               
+
                 HttpClient http = new HttpClient();
                 var response = await http.GetByteArrayAsync(website);
                 String source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
@@ -121,7 +121,7 @@ namespace CmApp.Services
 
                 return tables;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new BusinessException(ex.Message);
             }
@@ -148,7 +148,7 @@ namespace CmApp.Services
 
                 return tables;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new BusinessException(ex.Message);
             }
@@ -216,12 +216,12 @@ namespace CmApp.Services
 
                     Car = car.Id,
                 };
-                
+
                 await TrackingRepo.UpdateCarTracking(trackingId, trackingEntity);
                 var tracking = await TrackingRepo.GetTrackingByCar(car.Id);
                 return tracking;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new BusinessException(ex.Message);
             }
@@ -289,14 +289,14 @@ namespace CmApp.Services
                     counter++;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new BusinessException(ex.Message);
             }
         }
 
         private async Task<HtmlDocument> GetPrimarySiteDocument(string website)
-        {            
+        {
             HttpClient http = new HttpClient();
             var response = await http.GetByteArrayAsync(website);
             String source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
@@ -323,7 +323,7 @@ namespace CmApp.Services
 
                 if (recaptchaToken != null)
                 {
-                    website += "&g-recaptcha-response=" + recaptchaToken;               
+                    website += "&g-recaptcha-response=" + recaptchaToken;
                     var response = await http.GetByteArrayAsync(website);
                     var source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
                     source = WebUtility.HtmlDecode(source);

@@ -1,7 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace CmApp.Services
@@ -26,7 +25,7 @@ namespace CmApp.Services
             var tracking = await TrackingRepository.GetTrackingByCar(carId);
             if (tracking == null)
                 tracking = await TrackingRepository.InsertTracking(new TrackingEntity { Car = carId });
-           
+
             var updatedTracking = await ScraperService.TrackingScraper(car, tracking.Id);
             return updatedTracking;
         }
@@ -36,7 +35,7 @@ namespace CmApp.Services
             var tracking = await TrackingRepository.GetTrackingByCar(carId);
             if (tracking == null)
                 throw new BusinessException("Tracking images for this car not found. Try again later");
-            
+
             var trackingImages = await ScraperService.GetTrackingImagesUrls(car);
             return trackingImages;
         }

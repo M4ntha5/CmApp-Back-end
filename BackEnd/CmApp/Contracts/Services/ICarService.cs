@@ -1,6 +1,4 @@
-﻿using CmApp.Domains;
-using CmApp.Entities;
-using System.Collections.Generic;
+﻿using CmApp.Entities;
 using System.Threading.Tasks;
 
 namespace CmApp.Contracts
