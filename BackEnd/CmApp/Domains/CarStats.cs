@@ -11,13 +11,13 @@ namespace CmApp.Domains
         [Field("sold_within")]
         public string SoldWithin { get; set; }
         [Field("car")]
-        public string CarName { get; set; }
+        public string Car { get; set; }
         [Field("vin")]
         public string Vin { get; set; }
         [Field("user")]
         public string UserEmail { get; set; }
         [Field("spent")]
-        public double Spent { get; set; }
+        public double AdditionallySpent { get; set; }
         [Field("profit")]
         public double Profit { get; set; }
     }

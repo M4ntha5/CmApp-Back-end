@@ -273,20 +273,22 @@ namespace CmApp.Services
                 if (tracking.AuctionImages.Count == imageUrls.Count)
                     return;
                 else if (tracking.AuctionImages.Count > 0)
+                { 
                     await TrackingRepo.DeleteTrackingImages(tracking.Id);
 
-                var counter = 1;
-                //downloads all auction images and inserts into tracking collection
-                foreach (var img in imageUrls)
-                {
-                    //Image image = DownloadImageFromUrl(img.Trim());
-                    var webClient = new WebClient();
-                    var uri = new Uri(img.Trim());
-                    byte[] bytes = webClient.DownloadData(uri);
-                    string imageName = tracking.Id + "_image" + counter + ".jpeg";
-                    //insert here
-                    await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
-                    counter++;
+                    var counter = 1;
+                    //downloads all auction images and inserts into tracking collection
+                    foreach (var img in imageUrls)
+                    {
+                        //Image image = DownloadImageFromUrl(img.Trim());
+                        var webClient = new WebClient();
+                        var uri = new Uri(img.Trim());
+                        byte[] bytes = webClient.DownloadData(uri);
+                        string imageName = tracking.Id + "_image" + counter + ".jpeg";
+                        //insert here
+                        await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
+                        counter++;
+                    }
                 }
             }
             catch (Exception ex)
