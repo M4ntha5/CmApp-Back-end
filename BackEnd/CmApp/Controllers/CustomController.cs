@@ -115,10 +115,10 @@ namespace CmApp.Controllers
                 var stream = await fileRepo.GetFile(fileId);
 
                 var mem = new MemoryStream();
-                stream.CopyTo(mem);
+                await stream.CopyToAsync(mem);
 
                 var bytes = fileRepo.StreamToByteArray(mem);
-                string base64 = fileRepo.ByteArrayToBase64String(bytes);
+                var base64 = fileRepo.ByteArrayToBase64String(bytes);
 
                 base64 = "data:" + fileType + ";base64," + base64;
 

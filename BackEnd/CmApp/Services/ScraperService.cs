@@ -272,7 +272,7 @@ namespace CmApp.Services
             {
                 if (tracking.AuctionImages.Count == imageUrls.Count)
                     return;
-                
+
                 await TrackingRepo.DeleteTrackingImages(tracking.Id);
 
                 var counter = 1;
