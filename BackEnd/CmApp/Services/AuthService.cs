@@ -56,9 +56,9 @@ namespace CmApp.Services
                 );
                 if (hashedPass == user.Password)
                 {
-                    if (user.Role == "user")
+                    if (user.Role == 3)
                         return GenerateDefaultToken(user);
-                    if (user.Role == "admin")
+                    else if (user.Role == 255)
                         return GenerateAdminToken(user);
                 }
                 else
@@ -69,11 +69,8 @@ namespace CmApp.Services
 
         public JwtSecurityToken GenerateDefaultToken(UserEntity user)
         {
-            Environment.SetEnvironmentVariable("TestUser", "this_is_user_key");
-
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestUser")));
-
 
             var signingCredentials = new SigningCredentials(
                 symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -81,7 +78,7 @@ namespace CmApp.Services
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, "user"),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
@@ -101,11 +98,8 @@ namespace CmApp.Services
 
         public JwtSecurityToken GenerateAdminToken(UserEntity user)
         {
-            Environment.SetEnvironmentVariable("TestAdmin", "this_is_admin_key");
-
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestAdmin")));
-
 
             var signingCredentials = new SigningCredentials(
                 symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -113,7 +107,7 @@ namespace CmApp.Services
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, "admin"),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
