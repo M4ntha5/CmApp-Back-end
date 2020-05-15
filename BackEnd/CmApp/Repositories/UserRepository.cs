@@ -59,11 +59,8 @@ namespace CmApp.Repositories
         public async Task<UserEntity> GetUserById(string carId)
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
-
             var filter = Builders<UserEntity>.Filter.Eq("_id", BsonObjectId.Create(carId));
-
             var user = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
-
             return user;
         }
 
@@ -87,17 +84,13 @@ namespace CmApp.Repositories
         public async Task BlockUser(string userId)
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
-
             var updateDefinition = Builders<UserEntity>.Update.Set(x => x.Blocked, true);
-
             await repo.UpdateOneAsync(x => x.Id == userId, updateDefinition, new DatabaseUpdateOneOptions());
         }
         public async Task UnblockUser(string userId)
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
-
             var updateDefinition = Builders<UserEntity>.Update.Set(x => x.Blocked, false);
-
             await repo.UpdateOneAsync(x => x.Id == userId, updateDefinition, new DatabaseUpdateOneOptions());
         }
 
@@ -136,9 +129,7 @@ namespace CmApp.Repositories
         public async Task ChangeEmailConfirmationFlag(string userId)
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
-
             var update = Builders<UserEntity>.Update.Set("email_confirmed", true);
-
             await repo.UpdateOneAsync(userId, update, new DatabaseUpdateOneOptions());
         }
 
@@ -176,41 +167,33 @@ namespace CmApp.Repositories
         public async Task ChangeUserRole(string userId, string role)
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
-
             var update = Builders<UserEntity>.Update.Set("role", role);
-
             await repo.UpdateOneAsync(userId, update, new DatabaseUpdateOneOptions());
         }
 
         public async Task DeleteUser(string userId)
         {
             var repo = new CodeMashRepository<UserEntity>(Client);
-
             var update = Builders<UserEntity>.Update.Set("deleted", true);
-
             await repo.UpdateOneAsync(userId, update, new DatabaseUpdateOneOptions());
         }
 
         public async Task DeleteResetToken(string resetId)
         {
             var repo = new CodeMashRepository<PasswordResetEntity>(Client);
-
             await repo.DeleteOneAsync(resetId);
         }
 
         public async Task InsertPasswordReset(PasswordResetEntity resetEntity)
         {
             var repo = new CodeMashRepository<PasswordResetEntity>(Client);
-
             await repo.InsertOneAsync(resetEntity, new DatabaseInsertOneOptions());
         }
 
         public async Task<PasswordResetEntity> GetPasswordResetByToken(string token)
         {
             var repo = new CodeMashRepository<PasswordResetEntity>(Client);
-
             var filter = Builders<PasswordResetEntity>.Filter.Eq("token", token);
-
             var resetDetails = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
             return resetDetails;
         }

@@ -17,9 +17,7 @@ namespace CmApp.Repositories
         public async Task<ShippingEntity> InsertShipping(ShippingEntity shipping)
         {
             if (shipping == null)
-            {
                 throw new ArgumentNullException(nameof(shipping), "Cannot insert shipping in db, because shipping is empty");
-            }
 
             var repo = new CodeMashRepository<ShippingEntity>(Client);
 
@@ -30,9 +28,7 @@ namespace CmApp.Repositories
         public async Task DeleteCarShipping(string carId)
         {
             var repo = new CodeMashRepository<ShippingEntity>(Client);
-
             var filter = Builders<ShippingEntity>.Filter.Eq("car", BsonObjectId.Create(carId));
-
             await repo.DeleteOneAsync(filter);
         }
 
@@ -55,9 +51,7 @@ namespace CmApp.Repositories
         public async Task<ShippingEntity> GetShippingByCar(string carId)
         {
             var repo = new CodeMashRepository<ShippingEntity>(Client);
-
             var filter = Builders<ShippingEntity>.Filter.Eq("car", BsonObjectId.Create(carId));
-
             var response = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
             return response;
         }

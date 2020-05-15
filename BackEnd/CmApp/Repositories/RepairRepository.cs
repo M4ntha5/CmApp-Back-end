@@ -19,9 +19,7 @@ namespace CmApp.Repositories
         public async Task<RepairEntity> InsertRepair(RepairEntity repair)
         {
             if (repair == null)
-            {
                 throw new ArgumentNullException(nameof(repair), "Cannot insert repair in db, because repair is empty");
-            }
 
             var repo = new CodeMashRepository<RepairEntity>(Client);
 
@@ -31,9 +29,7 @@ namespace CmApp.Repositories
         public async Task InsertMultipleRepairs(List<RepairEntity> repairs)
         {
             if (repairs == null)
-            {
                 throw new ArgumentNullException(nameof(repairs), "Cannot insert repairs in db, because repairs is empty");
-            }
 
             var repo = new CodeMashRepository<RepairEntity>(Client);
 
@@ -77,9 +73,7 @@ namespace CmApp.Repositories
         public async Task DeleteMultipleRepairs(string carId)
         {
             var repo = new CodeMashRepository<RepairEntity>(Client);
-
             var filter = Builders<RepairEntity>.Filter.Eq("car", ObjectId.Parse(carId));
-
             await repo.DeleteManyAsync(filter);
         }
 

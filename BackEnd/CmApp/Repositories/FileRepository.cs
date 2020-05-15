@@ -29,11 +29,8 @@ namespace CmApp.Repositories
         public async Task<string> GetFileUrl(string fileId)
         {
             var filesRepo = new CodeMashFilesService(Client);
-
             var request = new GetFileRequest { FileId = fileId };
-
             var response = await filesRepo.GetFileUrlAsync(request);
-
             return response.Result;
         }
         public byte[] StreamToByteArray(MemoryStream mem)

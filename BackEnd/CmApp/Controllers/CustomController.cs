@@ -1,4 +1,5 @@
 ﻿using CmApp.Contracts;
+using CmApp.Domains;
 using CmApp.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -147,6 +148,41 @@ namespace CmApp.Controllers
             }
         }
 
+        // GET: api/Currency
+        [Route("/api/currency")]
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetAvailableCurrencies()
+        {
+            try
+            {
+                //all rates names
+                var names = await externalAPI.GetAvailableCurrencies();
+                return Ok(names);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // POST: api/Currency
+        [AllowAnonymous]
+        [Route("/api/currency")]
+        [HttpPost]
+        public async Task<IActionResult> CalculateExchangeResult([FromBody] ExchangeInput input)
+        {
+            try
+            {
+                //calculates result here
+                var result = await externalAPI.CalculateResult(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }

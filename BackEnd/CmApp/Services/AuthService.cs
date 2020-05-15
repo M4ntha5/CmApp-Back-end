@@ -56,9 +56,9 @@ namespace CmApp.Services
                 );
                 if (hashedPass == user.Password)
                 {
-                    if (user.Role == 3)
+                    if (user.Role == "user")
                         return GenerateDefaultToken(user);
-                    else if (user.Role == 255)
+                    if (user.Role == "admin")
                         return GenerateAdminToken(user);
                 }
                 else
@@ -72,13 +72,14 @@ namespace CmApp.Services
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestUser")));
 
+
             var signingCredentials = new SigningCredentials(
                 symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
 
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim(ClaimTypes.Role, "user"),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
@@ -101,13 +102,14 @@ namespace CmApp.Services
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestAdmin")));
 
+
             var signingCredentials = new SigningCredentials(
                 symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
 
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim(ClaimTypes.Role, "admin"),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)

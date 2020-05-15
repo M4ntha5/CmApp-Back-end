@@ -73,7 +73,6 @@ namespace CmApp.Services
             else if (carEntity.BodyType == "LIM")
                 carEntity.BodyType = "Limousine";
 
-
             var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make);
             var equipment = new List<Equipment>();
 
@@ -310,7 +309,6 @@ namespace CmApp.Services
 
             double totalPrice = newShipping.Customs + newShipping.AuctionFee +
                 newShipping.TransferFee + newShipping.TransportationFee;
-
 
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
             await SummaryRepository.InsertTotalByCar(summary.Id, summary.Total + totalPrice);

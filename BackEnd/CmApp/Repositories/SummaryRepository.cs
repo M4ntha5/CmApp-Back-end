@@ -17,9 +17,7 @@ namespace CmApp.Repositories
         public async Task<SummaryEntity> InsertSummary(SummaryEntity summary)
         {
             if (summary == null)
-            {
                 throw new ArgumentNullException(nameof(summary), "Cannot insert summary in db, because summary is empty");
-            }
 
             var repo = new CodeMashRepository<SummaryEntity>(Client);
 
@@ -30,25 +28,15 @@ namespace CmApp.Repositories
         public async Task<SummaryEntity> GetSummaryByCarId(string carId)
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
-
             var filter = Builders<SummaryEntity>.Filter.Eq("car", BsonObjectId.Create(carId));
-
             var summary = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
-
             return summary;
         }
 
         public async Task DeleteCarSummary(string carId)
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
-
-            FilterDefinition<SummaryEntity>[] filters =
-            {
-                Builders<SummaryEntity>.Filter.Eq("car",  BsonObjectId.Create(carId)),
-            };
-
-            var filter = Builders<SummaryEntity>.Filter.And(filters);
-
+            var filter = Builders<SummaryEntity>.Filter.Eq("car",  BsonObjectId.Create(carId));
             await repo.DeleteOneAsync(filter);
         }
 

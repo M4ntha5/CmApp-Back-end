@@ -20,9 +20,7 @@ namespace CmApp.Repositories
         public async Task<TrackingEntity> InsertTracking(TrackingEntity tracking)
         {
             if (tracking == null)
-            {
                 throw new ArgumentNullException(nameof(tracking), "Cannot insert tracking in db, because tracking is empty");
-            }
 
             var repo = new CodeMashRepository<TrackingEntity>(Client);
 
@@ -46,23 +44,14 @@ namespace CmApp.Repositories
         public async Task DeleteTrackingImages(string recordId)
         {
             var repo = new CodeMashRepository<TrackingEntity>(Client);
-
-            UpdateDefinition<TrackingEntity>[] updates =
-            {
-                Builders<TrackingEntity>.Update.Set("auction_photos", new List<object>()),
-            };
-
-            var update = Builders<TrackingEntity>.Update.Combine(updates);
-
+            var update = Builders<TrackingEntity>.Update.Set("auction_photos", new List<object>());
             await repo.UpdateOneAsync(recordId, update, new DatabaseUpdateOneOptions());
         }
 
         public async Task DeleteCarTracking(string carId)
         {
             var repo = new CodeMashRepository<TrackingEntity>(Client);
-
             var filter = Builders<TrackingEntity>.Filter.Eq("car", BsonObjectId.Create(carId));
-
             await repo.DeleteOneAsync(filter);
         }
 
@@ -106,9 +95,7 @@ namespace CmApp.Repositories
         public async Task<TrackingEntity> GetTrackingByCar(string carId)
         {
             var repo = new CodeMashRepository<TrackingEntity>(Client);
-
             var filter = Builders<TrackingEntity>.Filter.Eq("car", BsonObjectId.Create(carId));
-
             var response = await repo.FindOneAsync(filter, new DatabaseFindOneOptions());
             return response;
         }
@@ -116,11 +103,8 @@ namespace CmApp.Repositories
         public async Task UpdateImageShowStatus(string trackingId, bool status)
         {
             var repo = new CodeMashRepository<TrackingEntity>(Client);
-
             var update = Builders<TrackingEntity>.Update.Set("show_images", status);
-
-            await repo.UpdateOneAsync(trackingId, update,
-                new DatabaseUpdateOneOptions());
+            await repo.UpdateOneAsync(trackingId, update, new DatabaseUpdateOneOptions());
         }
 
 
