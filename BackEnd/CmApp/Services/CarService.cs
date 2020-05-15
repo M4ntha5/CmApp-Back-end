@@ -186,8 +186,9 @@ namespace CmApp.Services
                 foreach (var img in car.Base64images)
                 {
                     var image = img.Split(",")[1];
+                    var type = img.Split(",")[0].Split("/")[1].Split(";")[0];
                     var bytes = FileRepository.Base64ToByteArray(image);
-                    var imageName = carId + "_image" + counter + ".png";
+                    var imageName = carId + "_image" + counter + "." + type;
                     await CarRepository.UploadImageToCar(carId, bytes, imageName);
                     counter++;
                 }
