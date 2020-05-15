@@ -69,8 +69,6 @@ namespace CmApp.Services
 
         public JwtSecurityToken GenerateDefaultToken(UserEntity user)
         {
-            Environment.SetEnvironmentVariable("TestUser", "this_is_user_key");
-
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestUser")));
 
@@ -91,7 +89,7 @@ namespace CmApp.Services
             var token = new JwtSecurityToken(
                 issuer: "shrouded-ocean-70036.herokuapp.com",
                 audience: "readers",
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddHours(2),
                 signingCredentials: signingCredentials,
                 claims: claims
 
@@ -101,8 +99,6 @@ namespace CmApp.Services
 
         public JwtSecurityToken GenerateAdminToken(UserEntity user)
         {
-            Environment.SetEnvironmentVariable("TestAdmin", "this_is_admin_key");
-
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestAdmin")));
 
@@ -123,7 +119,7 @@ namespace CmApp.Services
             var token = new JwtSecurityToken(
                 issuer: "shrouded-ocean-70036.herokuapp.com",
                 audience: "readers",
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddHours(2),
                 signingCredentials: signingCredentials,
                 claims: claims
                 );

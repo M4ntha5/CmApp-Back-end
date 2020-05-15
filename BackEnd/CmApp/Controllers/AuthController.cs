@@ -13,7 +13,6 @@ namespace CmApp.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IExternalAPIService externalAPI = new ExternalAPIService();
         private readonly IAuthService authService = new AuthService()
         {
             UserRepository = new UserRepository(),
@@ -93,40 +92,5 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        // GET: api/Currency
-        [Route("/api/currency")]
-        [HttpGet]
-        public async Task<IActionResult> GetAvailableCurrencies()
-        {
-            try
-            {
-                //all rates names
-                var names = await externalAPI.GetAvailableCurrencies();
-                return Ok(names);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // POST: api/Currency
-        [Route("/api/currency")]
-        [HttpPost]
-        public async Task<IActionResult> CalculateExchangeResult([FromBody] ExchangeInput input)
-        {
-            try
-            {
-                //calculates result here
-                var result = await externalAPI.CalculateResult(input);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
     }
 }

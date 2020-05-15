@@ -137,13 +137,13 @@ namespace UsersTestsTests
             var user = new UserEntity
             {
                 Email = "mantozerix@gmail.com",
-                Role = "user",
+                Role = "3",
                 Currency = "EUR",
                 Id = "5e92d6b981569e0004f1dbbf"
             };
             var token = authService.GenerateDefaultToken(user);
             Assert.NotNull(token);
-            user.Role = "admin";
+            user.Role = "255";
             token = authService.GenerateAdminToken(user);
             Assert.NotNull(token);
         }

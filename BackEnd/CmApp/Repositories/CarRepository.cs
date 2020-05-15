@@ -21,9 +21,7 @@ namespace CmApp.Repositories
         public async Task<CarEntity> InsertCar(CarEntity car)
         {
             if (car == null)
-            {
                 throw new ArgumentNullException(nameof(car), "Cannot insert car in db, because car is empty");
-            }
 
             var repo = new CodeMashRepository<CarEntity>(Client);
 
@@ -90,9 +88,7 @@ namespace CmApp.Repositories
         public async Task<CarEntity> GetCarById(string id)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
-
             var car = await repo.FindOneAsync(x => x.Id == id, new DatabaseFindOneOptions());
-
             return car;
         }
 
@@ -115,7 +111,7 @@ namespace CmApp.Repositories
                 .Set("interior", car.Interior)
                 .Set("equipment", car.Equipment);
 
-            _ = await repo.UpdateOneAsync(
+            await repo.UpdateOneAsync(
                 carId,
                 update,
                 new DatabaseUpdateOneOptions()
@@ -125,7 +121,6 @@ namespace CmApp.Repositories
         public async Task DeleteCar(string carId)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
-
             await repo.DeleteOneAsync(x => x.Id == carId);
 
         }
@@ -146,13 +141,7 @@ namespace CmApp.Repositories
         public async Task DeleteAllCarImages(string carId)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
-
-            UpdateDefinition<CarEntity>[] updates =
-            {
-                Builders<CarEntity>.Update.Set("images", new List<object>()),
-            };
-            var update = Builders<CarEntity>.Update.Combine(updates);
-
+            var update = Builders<CarEntity>.Update.Set("images", new List<object>());
             await repo.UpdateOneAsync(carId, update, new DatabaseUpdateOneOptions());
         }
 

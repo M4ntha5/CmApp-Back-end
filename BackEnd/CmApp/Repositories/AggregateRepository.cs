@@ -16,7 +16,7 @@ namespace CmApp.Repositories
 
         public async Task<List<CarStats>> GetCarStats(DateTime dateFrom, DateTime dateTo, string userEmail)
         {
-            if(dateFrom > dateTo)
+            if (dateFrom > dateTo)
                 throw new BusinessException("Date from cannot be less than date to!");
             dateTo = dateTo.AddDays(1).AddSeconds(-1);
             var from = ((DateTimeOffset)dateFrom).ToUnixTimeMilliseconds();

@@ -77,13 +77,12 @@ namespace CmApp.Controllers
             try
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
                 await repairService.InsertCarRepairs(carId, repairs);
-                return Ok();
+                return Ok("Successfully inserted");
             }
             catch (Exception ex)
             {
