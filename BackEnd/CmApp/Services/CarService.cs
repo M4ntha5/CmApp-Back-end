@@ -312,7 +312,7 @@ namespace CmApp.Services
                 newShipping.TransferFee + newShipping.TransportationFee;
 
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
-            await SummaryRepository.InsertTotalByCar(summary.Id, summary.Total + totalPrice);
+            await SummaryRepository.InsertTotalByCar(summary.Id, Math.Round(summary.Total + totalPrice, 2));
 
             return newShipping;
         }
