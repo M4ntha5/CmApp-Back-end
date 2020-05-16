@@ -81,7 +81,8 @@ namespace CmApp.Repositories
         {
             var repo = new CodeMashRepository<RepairEntity>(Client);
             repair.Id = repairId;
-
+            repair.Total = Math.Round(repair.Total, 2);
+            repair.Price = Math.Round(repair.Price, 2);
             await repo.ReplaceOneAsync(
                 x => x.Id == repairId,
                 repair,

@@ -21,6 +21,11 @@ namespace CmApp.Repositories
 
             var repo = new CodeMashRepository<ShippingEntity>(Client);
 
+            shipping.AuctionFee = Math.Round(shipping.AuctionFee, 2);
+            shipping.Customs = Math.Round(shipping.Customs, 2);
+            shipping.TransferFee = Math.Round(shipping.TransferFee, 2);
+            shipping.TransportationFee = Math.Round(shipping.TransportationFee, 2);        
+
             var response = await repo.InsertOneAsync(shipping, new DatabaseInsertOneOptions());
             return response;
         }
@@ -37,10 +42,10 @@ namespace CmApp.Repositories
             var repo = new CodeMashRepository<ShippingEntity>(Client);
 
             var update = Builders<ShippingEntity>.Update
-                .Set("auction_fee", shipping.AuctionFee)
-                .Set("customs", shipping.Customs)
-                .Set("transfer_fee", shipping.TransferFee)
-                .Set("transportation_fee", shipping.TransportationFee);
+                .Set("auction_fee", Math.Round(shipping.AuctionFee, 2))
+                .Set("customs", Math.Round(shipping.Customs,2))
+                .Set("transfer_fee", Math.Round(shipping.TransferFee,2))
+                .Set("transportation_fee", Math.Round(shipping.TransportationFee,2));
 
             await repo.UpdateOneAsync(
                  shippingId,

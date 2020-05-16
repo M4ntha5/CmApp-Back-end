@@ -1,5 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,13 +23,14 @@ namespace CmApp.Services
         }
         public async Task InsertCarRepairs(string carId, List<RepairEntity> repairs)
         {
-            repairs.ForEach(x => x.Car = carId);
+            repairs.ForEach(x => {x.Car = carId; Math.Round(x.Price,2); Math.Round(x.Total,2);});
             var repairsTotal = repairs.Sum(x => x.Price);
 
             await RepairRepository.InsertMultipleRepairs(repairs);
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
 
-            await SummaryRepository.InsertTotalByCar(summary.Id, summary.Total + repairsTotal);
+            var total = Math.Round(summary.Total + repairsTotal, 2);
+            await SummaryRepository.InsertTotalByCar(summary.Id, total);
         }
         public async Task<RepairEntity> GetSelectedCarRepairById(string carId, string repairid)
         {
