@@ -1,4 +1,5 @@
 ﻿using CmApp;
+using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
@@ -11,8 +12,8 @@ namespace UsersTestsTests
 {
     class UserServiceTests
     {
-        AuthService authService;
-        UserRepository userRepo;
+        IAuthService authService;
+        IUserRepository userRepo;
         [SetUp]
         public void Setup()
         {

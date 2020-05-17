@@ -1,4 +1,5 @@
 ﻿using CmApp;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -10,8 +11,8 @@ namespace SummaryTests
 {
     class SummaryServiceTests
     {
-        SummaryRepository summaryRepo;
-        CarService carService;
+        ISummaryRepository summaryRepo;
+        ICarService carService;
         string carId, summaryId;
 
         [SetUp]

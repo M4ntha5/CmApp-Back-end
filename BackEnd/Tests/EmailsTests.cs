@@ -1,4 +1,5 @@
-﻿using CmApp.Repositories;
+﻿using CmApp.Contracts;
+using CmApp.Repositories;
 using NUnit.Framework;
 using System.Threading.Tasks;
 
@@ -6,38 +7,30 @@ namespace EmailsTests
 {
     class EmailsTests
     {
+        IEmailRepository emailRepo;
         [SetUp]
         public void SetUp()
         {
-
+            emailRepo = new EmailRepository();
         }
 
         [Test]
         public async Task SendConfirmationEmail()
         {
-            var repo = new EmailRepository();
-
             var email = "mantozerix@gmail.com";
-
-            await repo.SendEmailConfirmationEmail(email, "my-token");
+            await emailRepo.SendEmailConfirmationEmail(email, "my-token");
         }
         [Test]
         public async Task SendPasswordResetEmail()
         {
-            var repo = new EmailRepository();
-
             var email = "mantozerix@gmail.com";
-
-            await repo.SendPasswordResetEmail(email, "my-token");
+            await emailRepo.SendPasswordResetEmail(email, "my-token");
         }
         [Test]
         public async Task SendWelcomeEmail()
         {
-            var repo = new EmailRepository();
-
             var email = "mantozerix@gmail.com";
-
-            await repo.SendWelcomeEmail(email);
+            await emailRepo.SendWelcomeEmail(email);
         }
     }
 }
