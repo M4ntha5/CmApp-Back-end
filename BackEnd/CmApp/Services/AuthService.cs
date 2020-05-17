@@ -79,7 +79,7 @@ namespace CmApp.Services
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, "user"),
+                new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
@@ -109,7 +109,7 @@ namespace CmApp.Services
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, "admin"),
+                new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
