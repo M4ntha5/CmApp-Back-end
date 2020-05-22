@@ -19,17 +19,11 @@ namespace CmApp.Controllers
         private static readonly ISummaryRepository summaryRepository = new SummaryRepository();
         private static readonly ICarRepository carRepo = new CarRepository();
         private readonly IAggregateRepository aggRepo = new AggregateRepository();
-        private readonly ICarService carService = new CarService()
+        private readonly ISummaryService summaryService = new SummaryService()
         {
-            SummaryRepository = summaryRepository,
             ExternalAPIService = new ExternalAPIService(),
-            CarRepository = carRepo,
-            FileRepository = new FileRepository(),
-            ShippingRepository = new ShippingRepository(),
-            TrackingRepository = new TrackingRepository(),
-            WebScraper = new ScraperService()
+            SummaryRepository = summaryRepository
         };
-
 
         // GET: /api/cars/{carId}/summary
         [HttpGet]
@@ -66,7 +60,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                var newSummary = await carService.InsertCarSummary(carId, summary);
+                var newSummary = await summaryService.InsertCarSummary(carId, summary);
                 return Ok(newSummary);
             }
             catch (Exception ex)
@@ -88,7 +82,7 @@ namespace CmApp.Controllers
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
-                await carService.UpdateSoldSummary(carId, summary);
+                await summaryService.UpdateSoldSummary(carId, summary);
                 return NoContent();
             }
             catch (Exception ex)

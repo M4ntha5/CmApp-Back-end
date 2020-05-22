@@ -1,5 +1,4 @@
 ﻿using CmApp.Contracts;
-using CmApp.Domains;
 using CmApp.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,8 +14,6 @@ namespace CmApp.Services
         public ISummaryRepository SummaryRepository { get; set; }
         public IFileRepository FileRepository { get; set; }
         public ITrackingRepository TrackingRepository { get; set; }
-        public IExternalAPIService ExternalAPIService { get; set; }
-        public IShippingRepository ShippingRepository { get; set; }
 
         private async Task<CarEntity> InsertCarDetailsFromScraper(CarEntity car)
         {
@@ -195,126 +192,6 @@ namespace CmApp.Services
             }
             else
                 await CarRepository.DeleteAllCarImages(carId);
-        }
-
-        //summary
-        public async Task UpdateSoldSummary(string carId, SummaryEntity summary)
-        {
-            summary.Car = carId;
-            summary.SoldDate = DateTime.Now;
-            var time = summary.SoldDate.Subtract(summary.CreatedAt);
-            string message;
-            if (time.Days > 0)
-                if (time.Days == 1)
-                    message = $"Sold within {time.Days} day";
-                else
-                    message = $"Sold within {time.Days} days";
-            else
-                if (time.Hours == 1)
-                message = $"Sold within {time.Hours} hour";
-            else
-                message = $"Sold within {time.Hours} hours";
-
-            summary.SoldWithin = message;
-            var oldSummary = await SummaryRepository.GetSummaryByCarId(carId);
-            summary.Id = oldSummary.Id;
-            await SummaryRepository.UpdateCarSoldSummary(summary);
-        }
-        public async Task<SummaryEntity> InsertCarSummary(string carId, SummaryEntity summary)
-        {
-            if (summary.SelectedCurrency == "" || summary.BaseCurrency == "")
-                throw new BusinessException("Currency not set");
-
-            summary.Car = carId;
-            summary.Total = summary.BoughtPrice;
-            if (summary.SelectedCurrency != summary.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = summary.BoughtPrice,
-                    From = summary.SelectedCurrency,
-                    To = summary.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                summary.Total = Math.Round(convertedPrice, 2);
-                summary.BoughtPrice = Math.Round(convertedPrice, 2);
-            }
-
-            var newSummary = await SummaryRepository.InsertSummary(summary);
-            return newSummary;
-        }
-
-        //shipping
-        public async Task UpdateShipping(string carId, ShippingEntity shipping)
-        {
-            shipping.Car = carId;
-            var oldShipping = await ShippingRepository.GetShippingByCar(carId);
-            await ShippingRepository.UpdateCarShipping(oldShipping.Id, shipping);
-        }
-        public async Task<ShippingEntity> InsertShipping(string carId, ShippingEntity shipping)
-        {
-            if (string.IsNullOrEmpty(shipping.AuctionFeeCurrency) ||
-                string.IsNullOrEmpty(shipping.CustomsCurrency) ||
-                string.IsNullOrEmpty(shipping.TransportationFeeCurrency) ||
-                string.IsNullOrEmpty(shipping.TransferFeeCurrency))
-                throw new BusinessException("Shipping data currencies not set");
-
-            shipping.Car = carId;
-
-            if (shipping.TransferFeeCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.TransferFee,
-                    From = shipping.TransferFeeCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.TransferFee = Math.Round(convertedPrice, 2);
-            }
-            if (shipping.TransportationFeeCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.TransportationFee,
-                    From = shipping.TransportationFeeCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.TransportationFee = Math.Round(convertedPrice, 2);
-            }
-            if (shipping.AuctionFeeCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.AuctionFee,
-                    From = shipping.AuctionFeeCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.AuctionFee = Math.Round(convertedPrice, 2);
-            }
-            if (shipping.CustomsCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.Customs,
-                    From = shipping.CustomsCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.Customs = Math.Round(convertedPrice, 2);
-            }
-
-            var newShipping = await ShippingRepository.InsertShipping(shipping);
-
-            double totalPrice = newShipping.Customs + newShipping.AuctionFee +
-                newShipping.TransferFee + newShipping.TransportationFee;
-
-            var summary = await SummaryRepository.GetSummaryByCarId(carId);
-            await SummaryRepository.InsertTotalByCar(summary.Id, Math.Round(summary.Total + totalPrice, 2));
-
-            return newShipping;
         }
     }
 }

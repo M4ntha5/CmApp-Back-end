@@ -23,9 +23,7 @@ namespace CmApp.Controllers
             WebScraper = new ScraperService(),
             SummaryRepository = new SummaryRepository(),
             FileRepository = new FileRepository(),
-            TrackingRepository = new TrackingRepository(),
-            ShippingRepository = new ShippingRepository(),
-            ExternalAPIService = new ExternalAPIService()
+            TrackingRepository = new TrackingRepository()
         };
 
         // GET: api/Cars

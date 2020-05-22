@@ -11,18 +11,18 @@ namespace ShippingTests
 {
     class Shipping
     {
-        ICarService shippingService;
+        IShippingService shippingService;
         IShippingRepository carRepo;
         string carId;
         [SetUp]
         public void Setup()
         {
             carRepo = new ShippingRepository();
-            shippingService = new CarService()
+            shippingService = new ShippingService()
             {
                 ShippingRepository = carRepo,
                 SummaryRepository = new SummaryRepository(),
-                ExternalAPIService = new ExternalAPIService()
+                ExternalAPIService = new ExternalAPIService(), 
             };
             carId = "5ea728c744d20049748fed09";
         }
