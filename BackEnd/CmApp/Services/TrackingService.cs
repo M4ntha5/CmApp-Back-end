@@ -9,7 +9,6 @@ namespace CmApp.Services
     {
         public ITrackingRepository TrackingRepository { get; set; }
         public ICarRepository CarRepository { get; set; }
-        public IFileRepository FileRepository { get; set; }
         public IScraperService ScraperService { get; set; }
 
         public async Task UpdateTracking(string carId, TrackingEntity tracking)

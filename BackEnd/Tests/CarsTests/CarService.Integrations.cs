@@ -32,7 +32,6 @@ namespace CarsTests
                 CarRepository = carRepo,
                 WebScraper = scraperService,
                 FileRepository = fileRepo,
-                SummaryRepository = new SummaryRepository(),
                 TrackingRepository = new TrackingRepository()
             };
             carId = "5ea728c744d20049748fed09";

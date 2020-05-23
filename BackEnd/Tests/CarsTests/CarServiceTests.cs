@@ -14,14 +14,12 @@ namespace CarsTests
         ICarRepository carMock;
         IScraperService scraperMock;
         IFileRepository fileMock;
-        ISummaryRepository summaryMock;
         ITrackingRepository trackingMock;
 
         [SetUp]
         public void Setup()
         {
             trackingMock = Substitute.For<ITrackingRepository>();
-            summaryMock = Substitute.For<ISummaryRepository>();
             fileMock = Substitute.For<IFileRepository>();
             carMock = Substitute.For<ICarRepository>();
             scraperMock = Substitute.For<IScraperService>();
@@ -76,7 +74,6 @@ namespace CarsTests
                 CarRepository = carMock,
                 WebScraper = scraperMock,
                 FileRepository = fileMock,
-                SummaryRepository = summaryMock,
                 TrackingRepository = trackingMock
             };
 

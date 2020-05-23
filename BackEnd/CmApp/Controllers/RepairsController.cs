@@ -128,7 +128,7 @@ namespace CmApp.Controllers
                     throw new Exception("Car does not exist");
 
                 await repairService.DeleteMultipleRepairs(carId);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {

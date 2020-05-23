@@ -5,6 +5,7 @@ using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -21,7 +22,6 @@ namespace CmApp.Controllers
         {
             CarRepository = carRepository,
             WebScraper = new ScraperService(),
-            SummaryRepository = new SummaryRepository(),
             FileRepository = new FileRepository(),
             TrackingRepository = new TrackingRepository()
         };
@@ -131,6 +131,22 @@ namespace CmApp.Controllers
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var cars = await carRepository.GetAllCars();
                 return Ok(cars);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("/api/cars/{carId}/images")]
+        [HttpPost]
+        [Authorize(Roles = "user")]
+        public async Task<IActionResult> InsertImages(string carId, [FromBody] List<string> images)
+        {
+            try
+            {
+                await carService.InsertImages(carId, images);
+                return NoContent();
             }
             catch (Exception ex)
             {

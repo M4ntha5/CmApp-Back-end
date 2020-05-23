@@ -28,7 +28,6 @@ namespace TrackingTests
                 TrackingRepository = trackingRepo,
                 ScraperService = new ScraperService(),
                 CarRepository = new CarRepository(),
-                FileRepository = fileRepo
             };
             carId = "5ea728c744d20049748fed09";
         }

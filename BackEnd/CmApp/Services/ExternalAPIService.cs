@@ -17,7 +17,6 @@ namespace CmApp.Repositories
 
         private async Task<ExchangeRate> GetLatestForeignExchanges()
         {
-
             HttpClient client = new HttpClient
             {
                 BaseAddress = new Uri(Url)

@@ -17,8 +17,8 @@ namespace CmApp.Controllers
     public class SummaryController : ControllerBase
     {
         private static readonly ISummaryRepository summaryRepository = new SummaryRepository();
-        private static readonly ICarRepository carRepo = new CarRepository();
-        private readonly IAggregateRepository aggRepo = new AggregateRepository();
+        private static readonly ICarRepository carRepository = new CarRepository();
+        private readonly IAggregateRepository aggregateRepository = new AggregateRepository();
         private readonly ISummaryService summaryService = new SummaryService()
         {
             ExternalAPIService = new ExternalAPIService(),
@@ -34,7 +34,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -56,7 +56,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -78,7 +78,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -100,7 +100,7 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepo.GetCarById(carId);
+                var car = await carRepository.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
 
@@ -126,7 +126,7 @@ namespace CmApp.Controllers
                 if (authUserId != userId)
                     throw new Exception("You cannot access this resource");
 
-                var stats = await aggRepo.GetCarStats(inputData.DateFrom, inputData.DateTo, userEmail);
+                var stats = await aggregateRepository.GetCarStats(inputData.DateFrom, inputData.DateTo, userEmail);
                 return Ok(stats);
             }
             catch (Exception ex)
