@@ -1,4 +1,5 @@
 ﻿using CmApp;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -10,18 +11,18 @@ namespace ShippingTests
 {
     class Shipping
     {
-        CarService shippingService;
-        ShippingRepository carRepo;
+        IShippingService shippingService;
+        IShippingRepository carRepo;
         string carId;
         [SetUp]
         public void Setup()
         {
             carRepo = new ShippingRepository();
-            shippingService = new CarService()
+            shippingService = new ShippingService()
             {
                 ShippingRepository = carRepo,
                 SummaryRepository = new SummaryRepository(),
-                ExternalAPIService = new ExternalAPIService()
+                ExternalAPIService = new ExternalAPIService(), 
             };
             carId = "5ea728c744d20049748fed09";
         }

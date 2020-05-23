@@ -1,6 +1,7 @@
 ﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
+using CmApp.Utils;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -70,7 +71,7 @@ namespace CmApp.Services
         public JwtSecurityToken GenerateDefaultToken(UserEntity user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestUser")));
+                Encoding.UTF8.GetBytes(Settings.UserKey));
 
 
             var signingCredentials = new SigningCredentials(
@@ -79,7 +80,7 @@ namespace CmApp.Services
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, "user"),
+                new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
@@ -100,7 +101,7 @@ namespace CmApp.Services
         public JwtSecurityToken GenerateAdminToken(UserEntity user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestAdmin")));
+                Encoding.UTF8.GetBytes(Settings.AdminKey));
 
 
             var signingCredentials = new SigningCredentials(
@@ -109,7 +110,7 @@ namespace CmApp.Services
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, "admin"),
+                new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)

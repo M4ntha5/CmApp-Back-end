@@ -1,4 +1,5 @@
 ﻿using CmApp;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -13,10 +14,10 @@ namespace CarsTests
 {
     class CarServiceIntegrtations
     {
-        CarRepository carRepo;
-        CarService carService;
-        ScraperService scraperService;
-        FileRepository fileRepo;
+        ICarRepository carRepo;
+        ICarService carService;
+        IScraperService scraperService;
+        IFileRepository fileRepo;
         string carId, userId;
 
         [SetUp]
@@ -31,7 +32,6 @@ namespace CarsTests
                 CarRepository = carRepo,
                 WebScraper = scraperService,
                 FileRepository = fileRepo,
-                SummaryRepository = new SummaryRepository(),
                 TrackingRepository = new TrackingRepository()
             };
             carId = "5ea728c744d20049748fed09";

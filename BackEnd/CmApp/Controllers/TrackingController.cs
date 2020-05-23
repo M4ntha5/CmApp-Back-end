@@ -24,7 +24,6 @@ namespace CmApp.Controllers
             TrackingRepository = trackingRepository,
             CarRepository = carRepository,
             ScraperService = new ScraperService(),
-            FileRepository = new FileRepository()
         };
 
 

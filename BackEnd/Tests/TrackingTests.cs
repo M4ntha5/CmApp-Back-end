@@ -1,4 +1,5 @@
 ﻿using CmApp;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -13,9 +14,9 @@ namespace TrackingTests
 {
     class Tracking
     {
-        TrackingService trackingService;
-        TrackingRepository trackingRepo;
-        FileRepository fileRepo;
+        ITrackingService trackingService;
+        ITrackingRepository trackingRepo;
+        IFileRepository fileRepo;
         string carId;
         [SetUp]
         public void Setup()
@@ -27,7 +28,6 @@ namespace TrackingTests
                 TrackingRepository = trackingRepo,
                 ScraperService = new ScraperService(),
                 CarRepository = new CarRepository(),
-                FileRepository = fileRepo
             };
             carId = "5ea728c744d20049748fed09";
         }

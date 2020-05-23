@@ -37,12 +37,14 @@ namespace CmApp
             Settings.SendGridApiKey = Environment.GetEnvironmentVariable("SendGridApiKey");
             Settings.SenderEmailAddress = Environment.GetEnvironmentVariable("SenderEmailAddress");
             Settings.SenderEmailAddressName = Environment.GetEnvironmentVariable("SenderEmailAddressName");
+            Settings.UserKey = Environment.GetEnvironmentVariable("TestUser");
+            Settings.AdminKey = Environment.GetEnvironmentVariable("TestUser");
 
             var symmetricSecurityKeyDefault = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestUser")));
+                Encoding.UTF8.GetBytes(Settings.UserKey));
 
             var symmetricSecurityKeyAdmin = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TestAdmin")));
+                Encoding.UTF8.GetBytes(Settings.AdminKey));
 
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

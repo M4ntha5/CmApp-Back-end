@@ -1,5 +1,4 @@
 ﻿using CmApp.Contracts;
-using CmApp.Domains;
 using CmApp.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,11 +11,8 @@ namespace CmApp.Services
     {
         public ICarRepository CarRepository { get; set; }
         public IScraperService WebScraper { get; set; }
-        public ISummaryRepository SummaryRepository { get; set; }
         public IFileRepository FileRepository { get; set; }
         public ITrackingRepository TrackingRepository { get; set; }
-        public IExternalAPIService ExternalAPIService { get; set; }
-        public IShippingRepository ShippingRepository { get; set; }
 
         private async Task<CarEntity> InsertCarDetailsFromScraper(CarEntity car)
         {
@@ -85,24 +81,6 @@ namespace CmApp.Services
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(carEntity);
 
-            //image upload here
-            if (car.Base64images != null && car.Base64images.Count > 0)
-            {
-                int count = 1;
-                foreach (var image in car.Base64images)
-                {
-                    //spliting base64 front and getting image format and base64 string 
-                    var split = image.Split(';');
-                    var imageType = split[0].Split('/')[1];
-                    var base64 = split[1].Split(',')[1];
-                    var imgName = insertedCar.Id + "_image" + count + "." + imageType;
-
-                    var bytes = FileRepository.Base64ToByteArray(base64);
-                    var res = await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-
-                    count++;
-                }
-            }
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
@@ -118,24 +96,6 @@ namespace CmApp.Services
 
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(car);
-
-            //image upload here
-            if (car.Base64images != null && car.Base64images.Count > 0)
-            {
-                int count = 1;
-                foreach (var image in car.Base64images)
-                {
-                    //spliting base64 begining and getting image format and base64 string 
-                    var split = image.Split(';');
-                    var imageType = split[0].Split('/')[1];
-                    var base64 = split[1].Split(',')[1];
-                    var imgName = insertedCar.Id + "_image" + count + "." + imageType;
-
-                    var bytes = FileRepository.Base64ToByteArray(base64);
-                    var res = await CarRepository.UploadImageToCar(insertedCar.Id, bytes, imgName);
-                    count++;
-                }
-            }
 
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
@@ -178,143 +138,31 @@ namespace CmApp.Services
                 throw new BusinessException("Car cannot have multiple equipment with the same code!");
 
             await CarRepository.UpdateCar(carId, car);
+        }
 
-            if (car.Base64images.Count > 0)
+        public async Task InsertImages(string carId, List<string> images)
+        {
+            if (images != null && images.Count > 0)
             {
                 await CarRepository.DeleteAllCarImages(carId);
-                int counter = 1;
-                foreach (var img in car.Base64images)
+                int count = 1;
+                foreach (var image in images)
                 {
-                    var image = img.Split(",")[1];
-                    var type = img.Split(",")[0].Split("/")[1].Split(";")[0];
-                    var bytes = FileRepository.Base64ToByteArray(image);
-                    var imageName = carId + "_image" + counter + "." + type;
-                    await CarRepository.UploadImageToCar(carId, bytes, imageName);
-                    counter++;
+                    //spliting base64 begining and getting image format and base64 string 
+                    var split = image.Split(';');
+                    var imageType = split[0].Split('/')[1];
+                    var base64 = split[1].Split(',')[1];
+                    var imgName = carId + "_image" + count + "." + imageType;
+
+                    var bytes = FileRepository.Base64ToByteArray(base64);
+                    var res = await CarRepository.UploadImageToCar(carId, bytes, imgName);
+                    count++;
                 }
             }
             else
                 await CarRepository.DeleteAllCarImages(carId);
+            
         }
 
-        //summary
-        public async Task UpdateSoldSummary(string carId, SummaryEntity summary)
-        {
-            summary.Car = carId;
-            summary.SoldDate = DateTime.Now;
-            var time = summary.SoldDate.Subtract(summary.CreatedAt);
-            string message;
-            if (time.Days > 0)
-                if (time.Days == 1)
-                    message = $"Sold within {time.Days} day";
-                else
-                    message = $"Sold within {time.Days} days";
-            else
-                if (time.Hours == 1)
-                message = $"Sold within {time.Hours} hour";
-            else
-                message = $"Sold within {time.Hours} hours";
-
-            summary.SoldWithin = message;
-            var oldSummary = await SummaryRepository.GetSummaryByCarId(carId);
-            summary.Id = oldSummary.Id;
-            await SummaryRepository.UpdateCarSoldSummary(summary);
-        }
-        public async Task<SummaryEntity> InsertCarSummary(string carId, SummaryEntity summary)
-        {
-            if (summary.SelectedCurrency == "" || summary.BaseCurrency == "")
-                throw new BusinessException("Currency not set");
-
-            summary.Car = carId;
-            summary.Total = summary.BoughtPrice;
-            if (summary.SelectedCurrency != summary.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = summary.BoughtPrice,
-                    From = summary.SelectedCurrency,
-                    To = summary.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                summary.Total = Math.Round(convertedPrice, 2);
-                summary.BoughtPrice = Math.Round(convertedPrice, 2);
-            }
-
-            var newSummary = await SummaryRepository.InsertSummary(summary);
-            return newSummary;
-        }
-
-        //shipping
-        public async Task UpdateShipping(string carId, ShippingEntity shipping)
-        {
-            shipping.Car = carId;
-            var oldShipping = await ShippingRepository.GetShippingByCar(carId);
-            await ShippingRepository.UpdateCarShipping(oldShipping.Id, shipping);
-        }
-        public async Task<ShippingEntity> InsertShipping(string carId, ShippingEntity shipping)
-        {
-            if (string.IsNullOrEmpty(shipping.AuctionFeeCurrency) ||
-                string.IsNullOrEmpty(shipping.CustomsCurrency) ||
-                string.IsNullOrEmpty(shipping.TransportationFeeCurrency) ||
-                string.IsNullOrEmpty(shipping.TransferFeeCurrency))
-                throw new BusinessException("Shipping data currencies not set");
-
-            shipping.Car = carId;
-
-            if (shipping.TransferFeeCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.TransferFee,
-                    From = shipping.TransferFeeCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.TransferFee = Math.Round(convertedPrice, 2);
-            }
-            if (shipping.TransportationFeeCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.TransportationFee,
-                    From = shipping.TransportationFeeCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.TransportationFee = Math.Round(convertedPrice, 2);
-            }
-            if (shipping.AuctionFeeCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.AuctionFee,
-                    From = shipping.AuctionFeeCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.AuctionFee = Math.Round(convertedPrice, 2);
-            }
-            if (shipping.CustomsCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.Customs,
-                    From = shipping.CustomsCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.Customs = Math.Round(convertedPrice, 2);
-            }
-
-            var newShipping = await ShippingRepository.InsertShipping(shipping);
-
-            double totalPrice = newShipping.Customs + newShipping.AuctionFee +
-                newShipping.TransferFee + newShipping.TransportationFee;
-
-            var summary = await SummaryRepository.GetSummaryByCarId(carId);
-            await SummaryRepository.InsertTotalByCar(summary.Id, Math.Round(summary.Total + totalPrice, 2));
-
-            return newShipping;
-        }
     }
 }

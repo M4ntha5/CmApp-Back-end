@@ -1,4 +1,5 @@
 ﻿using CmApp;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -11,8 +12,8 @@ namespace RepairsTests
 {
     class RepairServiceTestsIntegration
     {
-        RepairRepository repairRepo;
-        RepairService repairService;
+        IRepairRepository repairRepo;
+        IRepairService repairService;
         string carId;
         string repairId;
         [SetUp]

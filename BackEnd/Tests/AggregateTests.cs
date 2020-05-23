@@ -1,4 +1,5 @@
-﻿using CmApp.Repositories;
+﻿using CmApp.Contracts;
+using CmApp.Repositories;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -7,17 +8,16 @@ namespace AggregateTests
 {
     class AggregateTests
     {
+        IAggregateRepository repo;
         [SetUp]
         public void Setup()
         {
-
+            repo = new AggregateRepository();
         }
 
         [Test]
         public async Task AggregateCarStats()
         {
-            var repo = new AggregateRepository();
-
             var from = new DateTime(2020, 04, 01, 0, 0, 0, DateTimeKind.Utc);
             var to = new DateTime(2020, 06, 01, 0, 0, 0, DateTimeKind.Utc);
             var user = "mantozerix@gmail.com";
@@ -28,7 +28,6 @@ namespace AggregateTests
         [Test]
         public async Task UserCarsListAggregate()
         {
-            var repo = new AggregateRepository();
             var user = "mantozerix@gmail.com";
 
             var cars = await repo.GetUserCars(user);

@@ -1,4 +1,5 @@
 ﻿using CmApp;
+using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -12,14 +13,15 @@ namespace ScraperTests
 {
     public class ScraperTests
     {
-        readonly string Vin = "WBA7E2C37HG740629";
-        ScraperService scraperService;
-        CarRepository carRepo;
+        string Vin;
+        IScraperService scraperService;
+        ICarRepository carRepo;
         [SetUp]
         public void Setup()
         {
             scraperService = new ScraperService();
             carRepo = new CarRepository();
+            Vin = "WBA7E2C37HG740629";
         }
 
         [Test]
