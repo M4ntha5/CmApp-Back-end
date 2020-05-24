@@ -1,5 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Domains;
+using CmApp.Entities;
 using CmApp.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -23,15 +24,15 @@ namespace CmApp.Controllers
 
         [HttpGet]
         [Route("/api/makes")]
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> GetAllMakes()
         {
             try
             {
                 var makes = await carRepository.GetAllMakes();
-                List<string> namesOnly = makes.Select(x => x.Name).ToList();
-                namesOnly.Sort();
-                return Ok(namesOnly);
+                //List<string> namesOnly = makes.Select(x => x.Name).ToList();
+                //namesOnly.Sort();
+                return Ok(makes);
             }
             catch (Exception ex)
             {
@@ -184,5 +185,52 @@ namespace CmApp.Controllers
             }
         }
 
-    }
+        [HttpPost]
+        [Route("/api/makes")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> InsertMake([FromBody] CarMakes carMakes)
+        {
+            try
+            {
+                var makes = await carRepository.InsertCarMake(carMakes);
+                return Ok(makes);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut]
+        [Route("/api/makes/{makeId}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateMake(string makeId, [FromBody] CarMakes carMakes)
+        {
+            try
+            {
+                carMakes.Id = makeId;
+                await carRepository.UpdateCarMake(carMakes);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete]
+        [Route("/api/makes/{makeId}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteMake(string makeId)
+        {
+            try
+            {
+                await carRepository.DeleteCarMake(makeId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+    } 
 }
