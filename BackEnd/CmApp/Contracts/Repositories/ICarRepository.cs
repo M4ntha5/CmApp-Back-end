@@ -17,5 +17,8 @@ namespace CmApp.Contracts
         Task<List<CarDisplay>> GetAllUserCars(string userId);
         Task DeleteAllCarImages(string recordId);
         Task<List<CarMakes>> GetAllMakes();
+        Task<CarMakes> InsertCarMake(CarMakes make);
+        Task UpdateCarMake(CarMakes make);
+        Task DeleteCarMake(string makeId);
     }
 }

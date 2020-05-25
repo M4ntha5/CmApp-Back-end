@@ -156,6 +156,31 @@ namespace CmApp.Repositories
             return makes.Items;
         }
 
+        public async Task<CarMakes> InsertCarMake(CarMakes make)
+        {           
+            if (make == null)
+                throw new ArgumentNullException(nameof(make), "Cannot insert make in db, because make is empty");
+            
+            var repo = new CodeMashRepository<CarMakes>(Client);
+
+            var makes = await repo.InsertOneAsync(make, new DatabaseInsertOneOptions());
+            return makes;
+        }
+
+        public async Task UpdateCarMake(CarMakes make)
+        {           
+            var repo = new CodeMashRepository<CarMakes>(Client);
+
+            var update = Builders<CarMakes>.Update.Set("name", make.Name);
+
+            await repo.UpdateOneAsync(make.Id, update, new DatabaseUpdateOneOptions());
+        }
+        public async Task DeleteCarMake(string makeId)
+        {           
+            var repo = new CodeMashRepository<CarMakes>(Client);
+
+            await repo.DeleteOneAsync(makeId);
+        }
 
     }
 }
