@@ -81,6 +81,8 @@ namespace CmApp.Services
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(carEntity);
 
+            await InsertImages(insertedCar.Id, car.Base64images);
+
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
             return insertedCar;
@@ -96,6 +98,8 @@ namespace CmApp.Services
 
             //inserting vehicle data
             var insertedCar = await CarRepository.InsertCar(car);
+
+            await InsertImages(insertedCar.Id, car.Base64images);
 
             //inserts empty tracking 
             await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.Id });
