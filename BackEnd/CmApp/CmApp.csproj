@@ -6,10 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="CodeMash.Core" Version="2.0.144" />
+    <PackageReference Include="image4io.DotNet" Version="1.0.1" />
     <PackageReference Include="JetBrains.dotCover.CommandLineTools" Version="2020.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.18.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4" />
