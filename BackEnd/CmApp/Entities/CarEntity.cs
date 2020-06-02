@@ -1,4 +1,5 @@
-﻿using CodeMash.Models;
+﻿using CmApp.Domains;
+using CodeMash.Models;
 using System;
 using System.Collections.Generic;
 
@@ -41,18 +42,12 @@ namespace CmApp.Entities
         public string Interior { get; set; } = "";
         [Field("equipment")]
         public List<Equipment> Equipment { get; set; } = new List<Equipment>();
+        [Field("urls")]
+        public List<Urls> Urls { get; set; } = new List<Urls>();
         [Field("images")]
         public List<object> Images { get; set; } = new List<object>();
         public List<string> Base64images { get; set; } = new List<string>();
         public string MainImageUrl { get; set; } = "";
 
-    }
-    //nested form
-    public class Equipment
-    {
-        [Field("code")]
-        public string Code { get; set; }
-        [Field("name")]
-        public string Name { get; set; }
     }
 }

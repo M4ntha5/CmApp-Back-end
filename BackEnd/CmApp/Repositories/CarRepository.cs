@@ -10,6 +10,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Repositories
@@ -74,8 +75,8 @@ namespace CmApp.Repositories
             var projection = Builders<CarEntity>.Projection
                 .Include(x => x.Make)
                 .Include(x => x.Model)
-                .Include(x => x.Vin)
-                .Include(x => x.User);
+                .Include(x => x.User)
+                .Include(x => x.Urls);
 
             var filter = Builders<CarEntity>.Filter.Eq("user", ObjectId.Parse(userId));
 
@@ -125,23 +126,24 @@ namespace CmApp.Repositories
 
         }
 
-        public async Task<UploadRecordFileResponse> UploadImageToCar(string recordId, byte[] bytes, string imgName)
+        public async Task<List<string>> UploadImageToCar(string recordId, List<string> urls)
         {
-            var filesService = new CodeMashFilesService(Client);
+            var repo = new CodeMashRepository<CarEntity>(Client);
 
-            var response = await filesService.UploadRecordFileAsync(bytes, imgName,
-                new UploadRecordFileRequest
-                {
-                    RecordId = recordId,
-                    CollectionName = "cars",
-                    UniqueFieldName = "images",
-                });
-            return response;
+            var entity = new List<Urls>();
+
+            urls.ForEach(x=> entity.Add(new Urls{ Url = x}));
+
+            var update = Builders<CarEntity>.Update.Set("urls", entity);
+
+            var response = await repo.UpdateOneAsync(recordId, update, new DatabaseUpdateOneOptions());
+            return urls;
         }
+
         public async Task DeleteAllCarImages(string carId)
         {
             var repo = new CodeMashRepository<CarEntity>(Client);
-            var update = Builders<CarEntity>.Update.Set("images", new List<object>());
+            var update = Builders<CarEntity>.Update.Set("urls", new List<Urls>());
             await repo.UpdateOneAsync(carId, update, new DatabaseUpdateOneOptions());
         }
 

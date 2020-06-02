@@ -1,4 +1,5 @@
-﻿using CmApp.Contracts;
+﻿using CmApp;
+using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Services;

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="CodeMash.Core" Version="2.0.144" />
-    <PackageReference Include="image4io.DotNet" Version="1.0.1" />
+    <PackageReference Include="image4io.DotNet" Version="1.0.2" />
     <PackageReference Include="JetBrains.dotCover.CommandLineTools" Version="2020.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

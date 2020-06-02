@@ -1,5 +1,6 @@
 ﻿using CmApp.Entities;
 using CodeMash.Models;
+using System.Collections.Generic;
 
 namespace CmApp.Domains
 {
@@ -16,10 +17,8 @@ namespace CmApp.Domains
         [Field("vin")]
         public string Vin { get; set; }
         [Field("carImg")]
-        public object CarImg { get; set; } = new object();
+        public string CarImg { get; set; } = "";
         [Field("summary")]
         public SummaryEntity Summary { get; set; } = new SummaryEntity();
-        [Field("mainImageUrl")]
-        public string MainImageUrl { get; set; }
     }
 }

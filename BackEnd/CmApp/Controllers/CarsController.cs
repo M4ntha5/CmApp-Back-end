@@ -1,4 +1,5 @@
 ﻿using CmApp.Contracts;
+using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -34,6 +35,7 @@ namespace CmApp.Controllers
             try
             {
                 var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+                var id = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var cars = await aggregateRepository.GetUserCars(userEmail);
                 return Ok(cars);
             }
@@ -141,11 +143,11 @@ namespace CmApp.Controllers
         [Route("/api/cars/{carId}/images")]
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> InsertImages(string carId, [FromBody] List<string> images)
+        public async Task<IActionResult> InsertImages(string carId, [FromBody] Images images)
         {
             try
             {
-                await carService.InsertImages(carId, images);
+                await carService.InsertImages(carId, images.Inserted);
                 return NoContent();
             }
             catch (Exception ex)
