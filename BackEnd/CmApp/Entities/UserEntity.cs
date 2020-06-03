@@ -32,5 +32,7 @@ namespace CmApp.Entities
         public string Role { get; set; } = "user";
         [Field("currency")]
         public string Currency { get; set; } = "EUR";
+        [Field("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

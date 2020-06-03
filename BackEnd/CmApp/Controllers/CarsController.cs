@@ -143,11 +143,27 @@ namespace CmApp.Controllers
         [Route("/api/cars/{carId}/images")]
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> InsertImages(string carId, [FromBody] Images images)
+        public async Task<IActionResult> InsertImages(string carId, [FromBody] List<string> images)
         {
             try
             {
-                await carService.InsertImages(carId, images.Inserted);
+                await carService.InsertImages(carId, images);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("/api/cars/{carId}/images")]
+        [HttpPut]
+        [Authorize(Roles = "user")]
+        public async Task<IActionResult> UpdateImages(string carId, [FromBody] Images images)
+        {
+            try
+            {
+                await carService.UpdateImages(carId, images);
                 return NoContent();
             }
             catch (Exception ex)

@@ -43,7 +43,7 @@ namespace Tests
             Assert.AreEqual(files.Count, insertedUrls.Count);
         }
 
-        [Test]
+       /* [Test]
         public async Task InsertTrackingImages()
         {
             var carId = "5ed4ef42fca2790004ef90e9";
@@ -67,7 +67,7 @@ namespace Tests
             var insertedUrls = await repo.InsertTrackingImages(carId, files);
 
             Assert.AreEqual(files.Count, insertedUrls.Count);
-        }
+        }*/
 
         [Test]
         public async Task DeleteImage()
@@ -130,6 +130,7 @@ namespace Tests
             var carRepo = new CarRepository();
 
             var carWithUrls = await carRepo.GetCarById(carId);
+            Assert.IsNotEmpty(carWithUrls.Urls);
         }
 
         [Test]
@@ -148,13 +149,6 @@ namespace Tests
             };
 
             await carService.InsertImages(carId, urls);
-        }
-
-
-        [Test]
-        public async Task CompressImage()
-        {
-            await repo.CompressImage();
         }
     }
 }

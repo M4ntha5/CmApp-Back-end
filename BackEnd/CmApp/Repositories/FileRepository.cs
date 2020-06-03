@@ -75,7 +75,6 @@ namespace CmApp.Repositories
             return Tuple.Create(fileId, fileType);
         }
 
-
         public async Task<List<string>> InsertCarImages(string carId, List<UploadImageRequest.File> files)
         {
             if(files == null || files.Count == 0)
@@ -85,7 +84,7 @@ namespace CmApp.Repositories
                 new UploadImageRequest()
                 {
                     Path = "/cars/" + carId,
-                    UseFilename = true,
+                    UseFilename = false,
                     Overwrite = false,
                     Files = files
                 });
@@ -94,7 +93,12 @@ namespace CmApp.Repositories
             return urls;
         }
 
-        public async Task<List<string>> InsertTrackingImages(string carId, List<UploadImageRequest.File> files)
+        /// <summary>
+        /// bring back if needed, it saves downloaded tracking images
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+     /* public async Task<List<string>> InsertTrackingImages(string carId, List<UploadImageRequest.File> files)
         {
             if(files == null || files.Count == 0)
                 throw new BusinessException("Cannot add images, because no image provided");
@@ -110,7 +114,7 @@ namespace CmApp.Repositories
 
             var urls = response.UploadedFiles.Select(x =>x.Url).ToList();
             return urls;
-        }
+        }*/
 
         public async Task<List<string>> ListFolder(string folder)
         {
@@ -142,18 +146,6 @@ namespace CmApp.Repositories
                     Path = folder,
                 });
             return response.Success;
-        }
-
-        //not working rn
-        public async Task CompressImage()
-        {
-            FileStream stream2 = System.IO.File.Open(@"C:\Users\Mantas\Desktop\New folder (3)\iCloud Photos\IMG_0503.jpeg", FileMode.Open);
-
-            var size = stream2.Length;
-            var optimizer = new ImageOptimizer();
-            var res = optimizer.Compress(stream2);
-
-            size = stream2.Length;
         }
     }
 }

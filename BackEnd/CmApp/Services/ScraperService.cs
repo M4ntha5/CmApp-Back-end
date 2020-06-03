@@ -259,7 +259,7 @@ namespace CmApp.Services
                             imgLinks.Add(newImg);
                         }
                     }
-                }
+                }               
                 return imgLinks;
             }
             catch (Exception ex)
@@ -267,7 +267,8 @@ namespace CmApp.Services
                 throw new BusinessException(ex.Message);
             }
         }
-
+        //bring back if needed
+        /*
         public async Task DownloadAllTrackingImages(TrackingEntity tracking, List<string> imageUrls)
         {
             try
@@ -303,7 +304,8 @@ namespace CmApp.Services
                 }
 
                 //inserts to cloud 
-                var insertedUrls = await repo.InsertTrackingImages(tracking.Id, imgsList);
+                //!!bring back if needed!!
+                //var insertedUrls = await repo.InsertTrackingImages(tracking.Id, imgsList);
                 //inserts to db
                 await trackingRepo.UploadImageToTracking(tracking.Id, insertedUrls);
 
@@ -312,7 +314,7 @@ namespace CmApp.Services
             {
                 throw new BusinessException(ex.Message);
             }
-        }
+        }*/
 
         private async Task<HtmlDocument> GetPrimarySiteDocument(string website)
         {
