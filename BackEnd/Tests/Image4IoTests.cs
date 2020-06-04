@@ -1,4 +1,5 @@
-﻿using CmApp.Repositories;
+﻿using CmApp.Entities;
+using CmApp.Repositories;
 using CmApp.Services;
 using image4ioDotNetSDK.Models;
 using NUnit.Framework;
@@ -150,5 +151,12 @@ namespace Tests
 
             await carService.InsertImages(carId, urls);
         }
+        
+        [Test]
+        public async Task FillData()
+        {
+
+        }
+
     }
 }

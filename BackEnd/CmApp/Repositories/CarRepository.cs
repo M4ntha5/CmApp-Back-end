@@ -147,9 +147,9 @@ namespace CmApp.Repositories
             await repo.UpdateOneAsync(carId, update, new DatabaseUpdateOneOptions());
         }
 
-        public async Task<List<CarMakes>> GetAllMakes()
+        public async Task<List<CarMakesEntity>> GetAllMakes()
         {
-            var service = new CodeMashRepository<CarMakes>(Client);
+            var service = new CodeMashRepository<CarMakesEntity>(Client);
 
             var makes = await service.FindAsync(
                 x => true,
@@ -158,28 +158,28 @@ namespace CmApp.Repositories
             return makes.Items;
         }
 
-        public async Task<CarMakes> InsertCarMake(CarMakes make)
+        public async Task<CarMakesEntity> InsertCarMake(CarMakesEntity make)
         {           
             if (make == null)
                 throw new ArgumentNullException(nameof(make), "Cannot insert make in db, because make is empty");
             
-            var repo = new CodeMashRepository<CarMakes>(Client);
+            var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
             var makes = await repo.InsertOneAsync(make, new DatabaseInsertOneOptions());
             return makes;
         }
 
-        public async Task UpdateCarMake(CarMakes make)
+        public async Task UpdateCarMake(CarMakesEntity make)
         {           
-            var repo = new CodeMashRepository<CarMakes>(Client);
+            var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
-            var update = Builders<CarMakes>.Update.Set("name", make.Name);
+            var update = Builders<CarMakesEntity>.Update.Set("name", make.Name);
 
             await repo.UpdateOneAsync(make.Id, update, new DatabaseUpdateOneOptions());
         }
         public async Task DeleteCarMake(string makeId)
         {           
-            var repo = new CodeMashRepository<CarMakes>(Client);
+            var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
             await repo.DeleteOneAsync(makeId);
         }

@@ -16,13 +16,13 @@ namespace TrackingTests
     {
         ITrackingService trackingService;
         ITrackingRepository trackingRepo;
-        IFileRepository fileRepo;
+        //IFileRepository fileRepo;
         string carId;
         [SetUp]
         public void Setup()
         {
             trackingRepo = new TrackingRepository();
-            fileRepo = new FileRepository();
+           // fileRepo = new FileRepository();
             trackingService = new TrackingService()
             {
                 TrackingRepository = trackingRepo,
@@ -80,7 +80,7 @@ namespace TrackingTests
             await trackingRepo.DeleteTrackingImages("5ea961711d20e577d470a50e");
         }
 
-        [Test]
+        /*[Test]
         public async Task TestUploadImageToTracking()
         {
             var stream = await fileRepo.GetFile(Settings.DefaultImage);
@@ -91,7 +91,7 @@ namespace TrackingTests
 
             await trackingRepo.UploadImageToTracking(
                 "5ea71c52862b9f00040c7726", bytes, "test.png");
-        }
+        }*/
         [Test]
         public async Task TestUpdateImageShowStatus()
         {
@@ -116,7 +116,7 @@ namespace TrackingTests
                  await trackingService.LookForTrackingData("5ea9616f1d20e5711470a50d"));
 
         }
-        [Test]
+      /*  [Test]
         public async Task DownloadTrackingImages()
         {
             await trackingService.DownloadTrackingImages("5ea9616f1d20e577d470a50d",
@@ -125,6 +125,6 @@ namespace TrackingTests
             Assert.ThrowsAsync<BusinessException>(async () =>
                  await trackingService.DownloadTrackingImages("5ea9616f1d20e577d550a50d",
                 new List<string> { Settings.DefaultImageUrl }));
-        }
+        }*/
     }
 }

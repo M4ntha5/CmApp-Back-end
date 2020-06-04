@@ -72,7 +72,7 @@ namespace ScraperTests
 
         }
 
-        [Test]
+    /*    [Test]
         public async Task DownloadAllTrackingImages()
         {
             var tracking = new TrackingEntity()
@@ -95,7 +95,7 @@ namespace ScraperTests
 
             await scraperService.DownloadAllTrackingImages(tracking, new List<string>());
 
-        }
+        }*/
 
     }
 }

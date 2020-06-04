@@ -16,6 +16,7 @@ namespace CarsTests
     class CarServiceIntegrtations
     {
         ICarRepository carRepo;
+        ICarMakesRepository carMakesRepo;
         ICarService carService;
         IScraperService scraperService;
         IFileRepository fileRepo;
@@ -24,6 +25,7 @@ namespace CarsTests
         [SetUp]
         public void Setup()
         {
+            carMakesRepo = new CarMakesRepository();
             carRepo = new CarRepository();
             scraperService = new ScraperService();
             fileRepo = new FileRepository();
@@ -207,7 +209,7 @@ namespace CarsTests
         [Test]
         public async Task GetAllMakes()
         {
-            var makes = await carRepo.GetAllMakes();
+            var makes = await carMakesRepo.GetAllMakes();
             Assert.IsNotEmpty(makes);
         }
 

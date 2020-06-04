@@ -21,6 +21,7 @@ namespace CmApp.Controllers
         private readonly ICarRepository carRepository = new CarRepository();
         private readonly IExternalAPIService externalAPI = new ExternalAPIService();
         private readonly IFileRepository fileRepository = new FileRepository();
+        private readonly ICarMakesRepository carMakesRepository = new CarMakesRepository();
 
         [HttpGet]
         [Route("/api/makes")]
@@ -29,7 +30,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                var makes = await carRepository.GetAllMakes();
+                var makes = await carMakesRepository.GetAllMakes();
                 //List<string> namesOnly = makes.Select(x => x.Name).ToList();
                 //namesOnly.Sort();
                 return Ok(makes);
@@ -188,11 +189,11 @@ namespace CmApp.Controllers
         [HttpPost]
         [Route("/api/makes")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> InsertMake([FromBody] CarMakes carMakes)
+        public async Task<IActionResult> InsertMake([FromBody] CarMakesEntity carMakes)
         {
             try
             {
-                var makes = await carRepository.InsertCarMake(carMakes);
+                var makes = await carMakesRepository.InsertCarMake(carMakes);
                 return Ok(makes);
             }
             catch (Exception ex)
@@ -203,12 +204,12 @@ namespace CmApp.Controllers
         [HttpPut]
         [Route("/api/makes/{makeId}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateMake(string makeId, [FromBody] CarMakes carMakes)
+        public async Task<IActionResult> UpdateMake(string makeId, [FromBody] CarMakesEntity carMakes)
         {
             try
             {
                 carMakes.Id = makeId;
-                await carRepository.UpdateCarMake(carMakes);
+                await carMakesRepository.UpdateCarMake(carMakes);
                 return NoContent();
             }
             catch (Exception ex)
@@ -223,7 +224,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                await carRepository.DeleteCarMake(makeId);
+                await carMakesRepository.DeleteCarMake(makeId);
                 return NoContent();
             }
             catch (Exception ex)
