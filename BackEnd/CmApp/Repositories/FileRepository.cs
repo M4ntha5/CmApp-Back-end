@@ -147,5 +147,12 @@ namespace CmApp.Repositories
                 });
             return response.Success;
         }
+
+        private async Task<Stream> CompressImage(Stream image)
+        {
+            ImageOptimizer optimizer = new ImageOptimizer();
+            optimizer.LosslessCompress(image);
+            return image;
+        }
     }
 }

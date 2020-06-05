@@ -173,7 +173,7 @@ namespace CmApp.Repositories
         {           
             var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
-            var update = Builders<CarMakesEntity>.Update.Set("name", make.Name);
+            var update = Builders<CarMakesEntity>.Update.Set("name", make.Make);
 
             await repo.UpdateOneAsync(make.Id, update, new DatabaseUpdateOneOptions());
         }

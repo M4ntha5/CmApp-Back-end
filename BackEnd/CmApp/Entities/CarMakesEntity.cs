@@ -7,7 +7,7 @@ namespace CmApp.Entities
     public class CarMakesEntity : Entity
     {
         [Field("name")]
-        public string Name { get; set; }
+        public string Make { get; set; }
         [Field("models")]
         public List<Model> Models { get; set; } = new List<Model>();
     }

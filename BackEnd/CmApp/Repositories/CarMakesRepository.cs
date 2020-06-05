@@ -18,8 +18,12 @@ namespace CmApp.Repositories
         {
             var service = new CodeMashRepository<CarMakesEntity>(Client);
 
-            var makes = await service.FindAsync(
+            var sort = Builders<CarMakesEntity>.Sort.Ascending("models.name");
+
+            var makes = await service.FindAsync<CarMakesEntity>(
                 x => true,
+                null,
+                sort,
                 new DatabaseFindOptions()
             );
             return makes.Items;
@@ -31,17 +35,42 @@ namespace CmApp.Repositories
                 throw new ArgumentNullException(nameof(make), "Cannot insert make in db, because make is empty");
             
             var repo = new CodeMashRepository<CarMakesEntity>(Client);
+            //setting first char upper case
+            make.Make = make.Make.First().ToString().ToUpper() + make.Make.Substring(1);
+            make.Models.ForEach(x=> x.Name = x.Name.First().ToString().ToUpper() + x.Name.Substring(1));
 
-            var makes = await repo.InsertOneAsync(make, new DatabaseInsertOneOptions());
-            return makes;
+            var allMakes = await GetAllMakes();            
+            foreach(var elem in allMakes)
+            {
+                if(elem.Make == make.Make)
+                    throw new BusinessException("Such a make already exists!");
+                if(elem.Models.Count != elem.Models.Distinct().ToList().Count)
+                    throw new BusinessException("You cannot add duplicate models!");
+            }
+
+            var newMake = await repo.InsertOneAsync(make, new DatabaseInsertOneOptions());
+            return newMake;
         }
 
         public async Task UpdateCarMake(CarMakesEntity make)
         {           
             var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
+            //setting first char upper case
+            make.Make = make.Make.First().ToString().ToUpper() + make.Make.Substring(1);
+            make.Models.ForEach(x=> x.Name = x.Name.First().ToString().ToUpper() + x.Name.Substring(1));
+                      
+            var allMakes = await GetAllMakes();            
+            foreach(var elem in allMakes)
+            {
+                if(elem.Make == make.Make && elem.Id != make.Id)
+                    throw new BusinessException("Such a make already exists!");
+                if(elem.Models.Count != elem.Models.Distinct().ToList().Count)
+                    throw new BusinessException("You cannot add duplicate models!");
+            }
+
             var update = Builders<CarMakesEntity>.Update
-                .Set("name", make.Name)
+                .Set("name", make.Make)
                 .Set("models", make.Models);
 
             await repo.UpdateOneAsync(make.Id, update, new DatabaseUpdateOneOptions());

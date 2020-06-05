@@ -189,12 +189,12 @@ namespace CmApp.Controllers
         [HttpPost]
         [Route("/api/makes")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> InsertMake([FromBody] CarMakesEntity carMakes)
+        public async Task<IActionResult> InsertMake([FromBody] CarMakesEntity carMake)
         {
             try
             {
-                var makes = await carMakesRepository.InsertCarMake(carMakes);
-                return Ok(makes);
+                var make = await carMakesRepository.InsertCarMake(carMake);
+                return Ok(make);
             }
             catch (Exception ex)
             {
