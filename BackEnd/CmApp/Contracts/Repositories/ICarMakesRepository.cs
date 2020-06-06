@@ -12,5 +12,6 @@ namespace CmApp.Contracts
         Task<CarMakesEntity> InsertCarMake(CarMakesEntity make);
         Task UpdateCarMake(CarMakesEntity make);
         Task DeleteCarMake(string makeId);
+        Task<CarMakesEntity> GetMakeModels(string make);
     }
 }

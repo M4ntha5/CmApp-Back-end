@@ -18,7 +18,7 @@ namespace CmApp.Repositories
         {
             var service = new CodeMashRepository<CarMakesEntity>(Client);
 
-            var sort = Builders<CarMakesEntity>.Sort.Ascending("models.name");
+            var sort = Builders<CarMakesEntity>.Sort.Ascending("name");
 
             var makes = await service.FindAsync<CarMakesEntity>(
                 x => true,
@@ -27,6 +27,17 @@ namespace CmApp.Repositories
                 new DatabaseFindOptions()
             );
             return makes.Items;
+        }
+
+        public async Task<CarMakesEntity> GetMakeModels(string make)
+        {
+            var service = new CodeMashRepository<CarMakesEntity>(Client);
+
+            var makeModels = await service.FindOneAsync(
+                x => x.Make == make,
+                new DatabaseFindOneOptions()
+            );
+            return makeModels;
         }
 
         public async Task<CarMakesEntity> InsertCarMake(CarMakesEntity make)

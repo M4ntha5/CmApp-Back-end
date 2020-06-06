@@ -47,11 +47,14 @@ namespace CmApp.Controllers
         {
             try
             {
-                var makes = await externalAPI.GetAllMakeModels(makeName);
-                if(makes == null)
+                var models = await carMakesRepository.GetMakeModels(makeName);
+                //var makes = await externalAPI.GetAllMakeModels(makeName);
+                if(models == null)
                     throw new BusinessException("Error retrieving models. Please try again later.");
-                makes.Sort();
-                return Ok(makes);
+                //models.Models.Sort();
+                var modelsNames = models.Models.Select(x => x.Name).ToList();
+                modelsNames.Sort();
+                return Ok(modelsNames);
             }
             catch (Exception ex)
             {
