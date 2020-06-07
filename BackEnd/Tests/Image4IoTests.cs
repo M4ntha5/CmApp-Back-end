@@ -151,12 +151,7 @@ namespace Tests
 
             await carService.InsertImages(carId, urls);
         }
-        
-        [Test]
-        public async Task FillData()
-        {
-
-        }
+       
 
     }
 }

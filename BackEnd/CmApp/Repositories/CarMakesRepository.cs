@@ -18,7 +18,7 @@ namespace CmApp.Repositories
         {
             var service = new CodeMashRepository<CarMakesEntity>(Client);
 
-            var sort = Builders<CarMakesEntity>.Sort.Ascending("name");
+            var sort = Builders<CarMakesEntity>.Sort.Ascending("make");
 
             var makes = await service.FindAsync<CarMakesEntity>(
                 x => true,
@@ -60,7 +60,7 @@ namespace CmApp.Repositories
             make = await CheckForDuplicates(make);
 
             var update = Builders<CarMakesEntity>.Update
-                .Set("name", make.Make)
+                .Set("make", make.Make)
                 .Set("models", make.Models);
 
             await repo.UpdateOneAsync(make.Id, update, new DatabaseUpdateOneOptions());

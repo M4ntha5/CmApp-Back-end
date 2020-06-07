@@ -6,7 +6,7 @@ namespace CmApp.Entities
     [Collection("makes")]
     public class CarMakesEntity : Entity
     {
-        [Field("name")]
+        [Field("make")]
         public string Make { get; set; }
         [Field("models")]
         public List<Model> Models { get; set; } = new List<Model>();
