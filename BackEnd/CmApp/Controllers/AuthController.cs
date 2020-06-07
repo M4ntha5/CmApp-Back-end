@@ -104,7 +104,7 @@ namespace CmApp.Controllers
             else
                 throw new BusinessException("Email already confirmed");
 
-            return Ok("Email has been successfully sent");
+            return Ok("Confirmation email has been successfully sent");
         }
     }
 }
