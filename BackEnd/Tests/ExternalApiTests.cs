@@ -69,12 +69,12 @@ namespace ExchangeRatesTests
             Assert.IsNotEmpty(result);
         }
 
-        [Test]
+        /*[Test]
         public async Task GetAllMakes()
         {
             var makes = await carRepo.GetAllMakes();
             Assert.IsNotEmpty(makes);
-        }
+        }*/
         [Test]
         public async Task BadUrl()
         {

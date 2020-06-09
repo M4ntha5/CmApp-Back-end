@@ -55,6 +55,8 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+                var userCurrency = HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                shipping.BaseCurrency = userCurrency;
                 var car = await carRepo.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");
@@ -77,6 +79,8 @@ namespace CmApp.Controllers
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+                var userCurrency = HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                shipping.BaseCurrency = userCurrency;
                 var car = await carRepo.GetCarById(carId);
                 if (car.User != userId)
                     throw new Exception("Car does not exist");

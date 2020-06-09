@@ -15,9 +15,72 @@ namespace CmApp.Services
 
         public async Task UpdateShipping(string carId, ShippingEntity shipping)
         {
+            if (string.IsNullOrEmpty(shipping.AuctionFeeCurrency) ||
+                string.IsNullOrEmpty(shipping.CustomsCurrency) ||
+                string.IsNullOrEmpty(shipping.TransportationFeeCurrency) ||
+                string.IsNullOrEmpty(shipping.TransferFeeCurrency))
+                throw new BusinessException("Shipping data currencies not set");
+
             shipping.Car = carId;
+
+            if (shipping.TransferFeeCurrency != shipping.BaseCurrency)
+            {
+                var input = new ExchangeInput
+                {
+                    Amount = shipping.TransferFee,
+                    From = shipping.TransferFeeCurrency,
+                    To = shipping.BaseCurrency
+                };
+                var convertedPrice = await ExternalAPIService.CalculateResult(input);
+                shipping.TransferFee = Math.Round(convertedPrice, 2);
+            }
+            if (shipping.TransportationFeeCurrency != shipping.BaseCurrency)
+            {
+                var input = new ExchangeInput
+                {
+                    Amount = shipping.TransportationFee,
+                    From = shipping.TransportationFeeCurrency,
+                    To = shipping.BaseCurrency
+                };
+                var convertedPrice = await ExternalAPIService.CalculateResult(input);
+                shipping.TransportationFee = Math.Round(convertedPrice, 2);
+            }
+            if (shipping.AuctionFeeCurrency != shipping.BaseCurrency)
+            {
+                var input = new ExchangeInput
+                {
+                    Amount = shipping.AuctionFee,
+                    From = shipping.AuctionFeeCurrency,
+                    To = shipping.BaseCurrency
+                };
+                var convertedPrice = await ExternalAPIService.CalculateResult(input);
+                shipping.AuctionFee = Math.Round(convertedPrice, 2);
+            }
+            if (shipping.CustomsCurrency != shipping.BaseCurrency)
+            {
+                var input = new ExchangeInput
+                {
+                    Amount = shipping.Customs,
+                    From = shipping.CustomsCurrency,
+                    To = shipping.BaseCurrency
+                };
+                var convertedPrice = await ExternalAPIService.CalculateResult(input);
+                shipping.Customs = Math.Round(convertedPrice, 2);
+            }
+
+            double totalPrice = shipping.Customs + shipping.AuctionFee +
+                shipping.TransferFee + shipping.TransportationFee;
+
             var oldShipping = await ShippingRepository.GetShippingByCar(carId);
             await ShippingRepository.UpdateCarShipping(oldShipping.Id, shipping);
+
+            totalPrice -= (oldShipping.Customs + oldShipping.AuctionFee +
+                oldShipping.TransferFee + oldShipping.TransportationFee);
+
+            var summary = await SummaryRepository.GetSummaryByCarId(carId);
+            await SummaryRepository.InsertTotalByCar(summary.Id, Math.Round(summary.Total + Math.Round(totalPrice,2), 2));
+
+
         }
         public async Task<ShippingEntity> InsertShipping(string carId, ShippingEntity shipping)
         {
