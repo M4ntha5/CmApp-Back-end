@@ -76,6 +76,7 @@ namespace CmApp.Repositories
                 .Include(x => x.Make)
                 .Include(x => x.Model)
                 .Include(x => x.User)
+                .Include(x => x.Vin)
                 .Include(x => x.Urls);
 
             var filter = Builders<CarEntity>.Filter.Eq("user", ObjectId.Parse(userId));
