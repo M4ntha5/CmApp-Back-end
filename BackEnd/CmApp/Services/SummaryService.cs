@@ -14,7 +14,7 @@ namespace CmApp.Services
         public async Task UpdateSoldSummary(string carId, SummaryEntity summary)
         {
             summary.Car = carId;
-            summary.SoldDate = DateTime.Now;
+            summary.SoldDate = DateTime.UtcNow;
             var time = summary.SoldDate.Subtract(summary.CreatedAt);
             string message;
             if (time.Days > 0)
