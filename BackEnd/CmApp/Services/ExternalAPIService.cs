@@ -131,38 +131,5 @@ namespace CmApp.Repositories
                 return null;
             }
         }
-
-        public async Task<List<string>> GetAllMakeModels(string make)
-        {
-            var url = "https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformakeyear/make/";
-            string Format = "/vehicletype/car?format=json";
-
-            url += make + Format;
-
-            HttpClient client = new HttpClient
-            {
-                BaseAddress = new Uri(url)
-            };
-
-            client.DefaultRequestHeaders.Accept
-                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            HttpResponseMessage response = client.GetAsync(url).Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<CarMakesObject>(responseData);
-                var models = result.Cars.Select(x => x.ModelName).ToList();
-                client.Dispose();
-                return models;
-            }
-            else
-            {
-                client.Dispose();
-                return null;
-            }
-        }
-
     }
 }

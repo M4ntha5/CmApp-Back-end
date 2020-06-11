@@ -6,7 +6,6 @@ using CmApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -95,7 +94,8 @@ namespace CmApp.Controllers
             }
         }
 
-        [Route("/api/cars/{carId}/tracking/download-images")]
+        //bring back if needed
+        /*[Route("/api/cars/{carId}/tracking/download-images")]
         [Authorize(Roles = "user")]
         [HttpPost]
         public async Task<IActionResult> DownloadImages(string carId, [FromBody] List<string> images)
@@ -109,7 +109,7 @@ namespace CmApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }*/
 
         // PUT: api/cars/{carId}/tracking/
         [HttpPut]

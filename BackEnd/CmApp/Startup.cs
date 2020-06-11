@@ -39,12 +39,11 @@ namespace CmApp
             Settings.SenderEmailAddressName = Environment.GetEnvironmentVariable("SenderEmailAddressName");
             Settings.UserKey = Environment.GetEnvironmentVariable("TestUser");
             Settings.AdminKey = Environment.GetEnvironmentVariable("TestUser");
+            Settings.Image4IoApiKey = Environment.GetEnvironmentVariable("Image4IoApiKey");
+            Settings.Image4IoSecret = Environment.GetEnvironmentVariable("Image4IoSecret");
 
-            var symmetricSecurityKeyDefault = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Settings.UserKey));
-
-            var symmetricSecurityKeyAdmin = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Settings.AdminKey));
+            var symmetricSecurityKeyDefault = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.UserKey));
+            var symmetricSecurityKeyAdmin = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.AdminKey));
 
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -1,4 +1,5 @@
-﻿using CmApp.Entities;
+﻿using CmApp.Domains;
+using CmApp.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace CmApp.Contracts
         Task<CarEntity> InsertCar(CarEntity car);
         Task DeleteCar(string userId, string carId);
         Task UpdateCar(string userId, string carId, CarEntity car);
-        Task InsertImages(string carId, List<string> images);
+        Task<List<string>> InsertImages(string carId, List<string> images);
+        Task DeleteImages(string carId, List<string> images);
+        Task UpdateImages(string carId, Images images);
     }
 }

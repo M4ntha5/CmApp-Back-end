@@ -17,6 +17,11 @@ namespace LambdaFunction
             var users = await repo.FindAsync(x => true, new DatabaseFindOptions());
             return users.Items;
         }
+        public async Task DeleteUser(string userId)
+        {
+            var repo = new CodeMashRepository<UserEntity>(Client);
+             await repo.DeleteOneAsync(x => x.Id == userId);
+        }
         
         //cars
         public async Task<List<CarEntity>> GetAllCars()

@@ -1,5 +1,6 @@
 ﻿using CmApp;
 using CmApp.Contracts;
+using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
@@ -15,6 +16,7 @@ namespace CarsTests
     class CarServiceIntegrtations
     {
         ICarRepository carRepo;
+        ICarMakesRepository carMakesRepo;
         ICarService carService;
         IScraperService scraperService;
         IFileRepository fileRepo;
@@ -23,6 +25,7 @@ namespace CarsTests
         [SetUp]
         public void Setup()
         {
+            carMakesRepo = new CarMakesRepository();
             carRepo = new CarRepository();
             scraperService = new ScraperService();
             fileRepo = new FileRepository();
@@ -163,17 +166,17 @@ namespace CarsTests
                 await carRepo.GetCarById("5ea93b953ebbca201071af71"));
         }
 
-        [Test]
-        public async Task TestFileUpload()
-        {
-            var stream = await fileRepo.GetFile(Settings.DefaultImage);
+        /* [Test]
+         public async Task TestFileUpload()
+         {
+             var stream = await fileRepo.GetFile(Settings.DefaultImage);
 
-            var mem = new MemoryStream();
-            stream.CopyTo(mem);
-            var bytes = fileRepo.StreamToByteArray(mem);
-            var result = await carRepo.UploadImageToCar(carId, bytes, "img.png");
-            Assert.AreNotEqual(null, result);
-        }
+             var mem = new MemoryStream();
+             stream.CopyTo(mem);
+             var bytes = fileRepo.StreamToByteArray(mem);
+             var result = await carRepo.UploadImageToCar("5ed4ef8cfca2790004ef90ed", bytes, "img.png");
+             Assert.AreNotEqual(null, result);
+         }*/
 
         [Test]
         public async Task TestGetFile()
@@ -206,7 +209,7 @@ namespace CarsTests
         [Test]
         public async Task GetAllMakes()
         {
-            var makes = await carRepo.GetAllMakes();
+            var makes = await carMakesRepo.GetAllMakes();
             Assert.IsNotEmpty(makes);
         }
 

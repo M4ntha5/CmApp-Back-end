@@ -265,36 +265,54 @@ namespace CmApp.Services
                 throw new BusinessException(ex.Message);
             }
         }
-
+        //bring back if needed
+        /*
         public async Task DownloadAllTrackingImages(TrackingEntity tracking, List<string> imageUrls)
         {
             try
             {
-                if (tracking.AuctionImages.Count == imageUrls.Count)
+                var repo = new FileRepository();
+                var trackingRepo = new TrackingRepository();
+
+                if (tracking.Images.Count == imageUrls.Count)
                     return;
 
-                await TrackingRepo.DeleteTrackingImages(tracking.Id);
+                //deletes form cloud
+                await repo.DeleteFolder("/tracking/" + tracking.Id);
+                //deletes from db
+                await trackingRepo.DeleteTrackingImages(tracking.Id);
+
+                var imgsList = new List<UploadImageRequest.File>();               
 
                 var counter = 1;
-                //downloads all auction images and inserts into tracking collection
+                //downloads all auction images and puts to a list
                 foreach (var img in imageUrls)
                 {
-                    //Image image = DownloadImageFromUrl(img.Trim());
                     var webClient = new WebClient();
                     var uri = new Uri(img.Trim());
                     byte[] bytes = webClient.DownloadData(uri);
-                    string imageName = tracking.Id + "_image" + counter + ".jpeg";
-                    //insert here
-                    await TrackingRepo.UploadImageToTracking(tracking.Id, bytes, imageName);
+                    var stream = new MemoryStream(bytes);
+
+                    imgsList.Add(new UploadImageRequest.File()
+                    {
+                        Data = stream,
+                        FileName = counter + ".jpeg"
+                    });
                     counter++;
                 }
+
+                //inserts to cloud 
+                //!!bring back if needed!!
+                //var insertedUrls = await repo.InsertTrackingImages(tracking.Id, imgsList);
+                //inserts to db
+                await trackingRepo.UploadImageToTracking(tracking.Id, insertedUrls);
 
             }
             catch (Exception ex)
             {
                 throw new BusinessException(ex.Message);
             }
-        }
+        }*/
 
         private async Task<HtmlDocument> GetPrimarySiteDocument(string website)
         {

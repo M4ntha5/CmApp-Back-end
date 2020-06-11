@@ -1,12 +1,9 @@
 ﻿using CmApp;
 using CmApp.Contracts;
-using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
-using CmApp.Utils;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ScraperTests
@@ -72,30 +69,30 @@ namespace ScraperTests
 
         }
 
-        [Test]
-        public async Task DownloadAllTrackingImages()
-        {
-            var tracking = new TrackingEntity()
+        /*    [Test]
+            public async Task DownloadAllTrackingImages()
             {
-                Id = "5ea728d644d20049748fed0a",
-                AuctionImages = new List<object>()
-            };
+                var tracking = new TrackingEntity()
+                {
+                    Id = "5ea728d644d20049748fed0a",
+                    AuctionImages = new List<object>()
+                };
 
-            var urls = new List<string> { Settings.DefaultImageUrl };
+                var urls = new List<string> { Settings.DefaultImageUrl };
 
-            await scraperService.DownloadAllTrackingImages(tracking, urls);
+                await scraperService.DownloadAllTrackingImages(tracking, urls);
 
-            await scraperService.DownloadAllTrackingImages(tracking, new List<string>());
+                await scraperService.DownloadAllTrackingImages(tracking, new List<string>());
 
-            tracking = new TrackingEntity()
-            {
-                Id = "5ea728d644d20049748fed0a",
-                AuctionImages = new List<object> { new { } }
-            };
+                tracking = new TrackingEntity()
+                {
+                    Id = "5ea728d644d20049748fed0a",
+                    AuctionImages = new List<object> { new { } }
+                };
 
-            await scraperService.DownloadAllTrackingImages(tracking, new List<string>());
+                await scraperService.DownloadAllTrackingImages(tracking, new List<string>());
 
-        }
+            }*/
 
     }
 }

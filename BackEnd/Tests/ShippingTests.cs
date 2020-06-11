@@ -22,7 +22,7 @@ namespace ShippingTests
             {
                 ShippingRepository = carRepo,
                 SummaryRepository = new SummaryRepository(),
-                ExternalAPIService = new ExternalAPIService(), 
+                ExternalAPIService = new ExternalAPIService(),
             };
             carId = "5ea728c744d20049748fed09";
         }

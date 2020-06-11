@@ -1,4 +1,5 @@
-﻿using CodeMash.Models;
+﻿using CmApp.Domains;
+using CodeMash.Models;
 using System;
 using System.Collections.Generic;
 
@@ -59,9 +60,7 @@ namespace CmApp.Entities
         public string Radio { get; set; } = "";
         [Field("car")]
         public string Car { get; set; } = "";
-        [Field("auction_photos")]
-        public List<object> AuctionImages { get; set; } = new List<object>();
-        public List<string> Base64images { get; set; } = new List<string>();
-
+        [Field("images")]
+        public List<Urls> Images { get; set; } = new List<Urls>();
     }
 }

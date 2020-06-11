@@ -21,6 +21,7 @@ namespace CmApp.Controllers
         private readonly ICarRepository carRepository = new CarRepository();
         private readonly IExternalAPIService externalAPI = new ExternalAPIService();
         private readonly IFileRepository fileRepository = new FileRepository();
+        private readonly ICarMakesRepository carMakesRepository = new CarMakesRepository();
 
         [HttpGet]
         [Route("/api/makes")]
@@ -29,7 +30,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                var makes = await carRepository.GetAllMakes();
+                var makes = await carMakesRepository.GetAllMakes();
                 //List<string> namesOnly = makes.Select(x => x.Name).ToList();
                 //namesOnly.Sort();
                 return Ok(makes);
@@ -46,11 +47,14 @@ namespace CmApp.Controllers
         {
             try
             {
-                var makes = await externalAPI.GetAllMakeModels(makeName);
-                if(makes == null)
+                var models = await carMakesRepository.GetMakeModels(makeName);
+                //var makes = await externalAPI.GetAllMakeModels(makeName);
+                if (models == null)
                     throw new BusinessException("Error retrieving models. Please try again later.");
-                makes.Sort();
-                return Ok(makes);
+                //models.Models.Sort();
+                var modelsNames = models.Models.Select(x => x.Name).ToList();
+                modelsNames.Sort();
+                return Ok(modelsNames);
             }
             catch (Exception ex)
             {
@@ -109,7 +113,7 @@ namespace CmApp.Controllers
         public async Task<IActionResult> GetImage2([FromBody] object image)
         {
             try
-            {           
+            {
                 var fileInfo = fileRepository.GetFileId(image);
 
                 var fileId = fileInfo.Item1;
@@ -188,12 +192,12 @@ namespace CmApp.Controllers
         [HttpPost]
         [Route("/api/makes")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> InsertMake([FromBody] CarMakes carMakes)
+        public async Task<IActionResult> InsertMake([FromBody] CarMakesEntity carMake)
         {
             try
             {
-                var makes = await carRepository.InsertCarMake(carMakes);
-                return Ok(makes);
+                var make = await carMakesRepository.InsertCarMake(carMake);
+                return Ok(make);
             }
             catch (Exception ex)
             {
@@ -203,12 +207,12 @@ namespace CmApp.Controllers
         [HttpPut]
         [Route("/api/makes/{makeId}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateMake(string makeId, [FromBody] CarMakes carMakes)
+        public async Task<IActionResult> UpdateMake(string makeId, [FromBody] CarMakesEntity carMakes)
         {
             try
             {
                 carMakes.Id = makeId;
-                await carRepository.UpdateCarMake(carMakes);
+                await carMakesRepository.UpdateCarMake(carMakes);
                 return NoContent();
             }
             catch (Exception ex)
@@ -223,7 +227,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                await carRepository.DeleteCarMake(makeId);
+                await carMakesRepository.DeleteCarMake(makeId);
                 return NoContent();
             }
             catch (Exception ex)
@@ -232,5 +236,5 @@ namespace CmApp.Controllers
             }
         }
 
-    } 
+    }
 }

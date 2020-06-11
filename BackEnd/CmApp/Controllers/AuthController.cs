@@ -92,5 +92,19 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("email/resend/{email}")]
+        public async Task<IActionResult> ResendConfirmationEmail(string email)
+        {
+            var repo = new EmailRepository();
+            var userRepo = new UserRepository();
+            var user = await userRepo.GetUserByEmail(email);
+            if (!user.EmailConfirmed)
+                await repo.SendEmailConfirmationEmail(user.Email, user.Id);
+            else
+                throw new BusinessException("Email already confirmed");
+
+            return Ok("Confirmation email has been successfully sent");
+        }
     }
 }
