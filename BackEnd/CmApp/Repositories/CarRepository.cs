@@ -3,14 +3,11 @@ using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Utils;
 using CodeMash.Client;
-using CodeMash.Project.Services;
 using CodeMash.Repository;
-using Isidos.CodeMash.ServiceContracts;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Repositories
@@ -45,7 +42,6 @@ namespace CmApp.Repositories
                 Vin = car.Vin,
                 User = car.User,
                 DateCreated = DateTime.Now,
-                Images = new List<object>(),
                 Base64images = new List<string>()
             };
             var response = await repo.InsertOneAsync(entity, new DatabaseInsertOneOptions());
@@ -133,7 +129,7 @@ namespace CmApp.Repositories
 
             var entity = new List<Urls>();
 
-            urls.ForEach(x=> entity.Add(new Urls{ Url = x}));
+            urls.ForEach(x => entity.Add(new Urls { Url = x }));
 
             var update = Builders<CarEntity>.Update.Set("urls", entity);
 
@@ -160,10 +156,10 @@ namespace CmApp.Repositories
         }
 
         public async Task<CarMakesEntity> InsertCarMake(CarMakesEntity make)
-        {           
+        {
             if (make == null)
                 throw new ArgumentNullException(nameof(make), "Cannot insert make in db, because make is empty");
-            
+
             var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
             var makes = await repo.InsertOneAsync(make, new DatabaseInsertOneOptions());
@@ -171,7 +167,7 @@ namespace CmApp.Repositories
         }
 
         public async Task UpdateCarMake(CarMakesEntity make)
-        {           
+        {
             var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
             var update = Builders<CarMakesEntity>.Update.Set("name", make.Make);
@@ -179,7 +175,7 @@ namespace CmApp.Repositories
             await repo.UpdateOneAsync(make.Id, update, new DatabaseUpdateOneOptions());
         }
         public async Task DeleteCarMake(string makeId)
-        {           
+        {
             var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
             await repo.DeleteOneAsync(makeId);

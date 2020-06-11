@@ -4,7 +4,6 @@ using CodeMash.Client;
 using CodeMash.Project.Services;
 using image4ioDotNetSDK;
 using image4ioDotNetSDK.Models;
-using ImageMagick;
 using Isidos.CodeMash.ServiceContracts;
 using Newtonsoft.Json.Linq;
 using System;
@@ -77,7 +76,7 @@ namespace CmApp.Repositories
 
         public async Task<List<string>> InsertCarImages(string carId, List<UploadImageRequest.File> files)
         {
-            if(files == null || files.Count == 0)
+            if (files == null || files.Count == 0)
                 throw new BusinessException("Cannot add images, because no image provided");
 
             var response = await ImagesClient.UploadImageAsync(
@@ -89,7 +88,7 @@ namespace CmApp.Repositories
                     Files = files
                 });
 
-            var urls = response.UploadedFiles.Select(x =>x.Url).ToList();
+            var urls = response.UploadedFiles.Select(x => x.Url).ToList();
             return urls;
         }
 
@@ -124,7 +123,7 @@ namespace CmApp.Repositories
                     Path = folder
                 });
 
-            var urls = response.Images.Select(x =>x.Url).ToList();
+            var urls = response.Images.Select(x => x.Url).ToList();
             return urls;
         }
 

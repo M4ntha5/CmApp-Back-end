@@ -1,7 +1,6 @@
 ﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
-using CmApp.Repositories;
 using image4ioDotNetSDK.Models;
 using System;
 using System.Collections.Generic;
@@ -136,7 +135,7 @@ namespace CmApp.Services
             var tracking = await TrackingRepository.GetTrackingByCar(carId);
             await CarRepository.DeleteCar(car.Id);
             await FileRepository.DeleteFolder("/cars/" + carId);
-           
+
             await FileRepository.DeleteFolder("/tracking/" + tracking.Id);
         }
 
@@ -157,7 +156,7 @@ namespace CmApp.Services
             if (images != null && images.Count > 0)
             {
                 //deletes form cloud
-                await FileRepository.DeleteFolder("/cars/"+carId);
+                await FileRepository.DeleteFolder("/cars/" + carId);
                 //deletes from db
                 await CarRepository.DeleteAllCarImages(carId);
 
@@ -165,7 +164,7 @@ namespace CmApp.Services
 
                 int count = 1;
                 images.ForEach(x => imgsList.Add(
-                    new UploadImageRequest.File() 
+                    new UploadImageRequest.File()
                     {
                         FileName = count++ + ".jpeg",
                         Data = new MemoryStream(FileRepository.Base64ToByteArray(x.Split(',')[1]))
@@ -181,46 +180,46 @@ namespace CmApp.Services
             else
             {
                 //deletes form cloud
-                await FileRepository.DeleteFolder("/cars/"+carId);
+                await FileRepository.DeleteFolder("/cars/" + carId);
                 //deletes from db
                 await CarRepository.DeleteAllCarImages(carId);
                 return null;
-            }          
+            }
         }
 
         public async Task DeleteImages(string carId, List<string> images)
         {
             if (images != null && images.Count > 0)
             {
-                foreach(var img in images)
+                foreach (var img in images)
                 {
                     var path = img.Split("cmapp")[1];
                     await FileRepository.DeleteImage(path);
                 }
-            }          
+            }
         }
 
         public async Task UpdateImages(string carId, Images images)
-        {          
+        {
             //deleting images from cloud
             await DeleteImages(carId, images.Deleted);
 
             List<string> urls = new List<string>();
             List<string> base64 = new List<string>();
-            images.All.ForEach(x => 
-            { 
-                if(x.Url.StartsWith("http")) 
+            images.All.ForEach(x =>
+            {
+                if (x.Url.StartsWith("http"))
                     urls.Add(x.Url);
-                else 
+                else
                     base64.Add(x.Url);
             });
-   
-            if(base64.Count > 0)
+
+            if (base64.Count > 0)
             {
                 var imgsList = new List<UploadImageRequest.File>();
                 int count = 1;
                 base64.ForEach(x => imgsList.Add(
-                    new UploadImageRequest.File() 
+                    new UploadImageRequest.File()
                     {
                         FileName = count++ + ".jpeg",
                         Data = new MemoryStream(FileRepository.Base64ToByteArray(x.Split(',')[1]))
@@ -229,12 +228,12 @@ namespace CmApp.Services
 
                 //inserts to cloud 
                 var insertedUrls = await FileRepository.InsertCarImages(carId, imgsList);
-                if(insertedUrls != null)
+                if (insertedUrls != null)
                 {
                     insertedUrls.ForEach(x => urls.Add(x));
                 }
             }
-            await CarRepository.UploadImageToCar(carId, urls);                  
+            await CarRepository.UploadImageToCar(carId, urls);
         }
     }
 }

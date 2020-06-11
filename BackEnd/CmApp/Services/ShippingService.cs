@@ -23,50 +23,7 @@ namespace CmApp.Services
 
             shipping.Car = carId;
 
-            if (shipping.TransferFeeCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.TransferFee,
-                    From = shipping.TransferFeeCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.TransferFee = Math.Round(convertedPrice, 2);
-            }
-            if (shipping.TransportationFeeCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.TransportationFee,
-                    From = shipping.TransportationFeeCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.TransportationFee = Math.Round(convertedPrice, 2);
-            }
-            if (shipping.AuctionFeeCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.AuctionFee,
-                    From = shipping.AuctionFeeCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.AuctionFee = Math.Round(convertedPrice, 2);
-            }
-            if (shipping.CustomsCurrency != shipping.BaseCurrency)
-            {
-                var input = new ExchangeInput
-                {
-                    Amount = shipping.Customs,
-                    From = shipping.CustomsCurrency,
-                    To = shipping.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                shipping.Customs = Math.Round(convertedPrice, 2);
-            }
+            shipping = await ConvertShippingPrices(shipping);
 
             double totalPrice = shipping.Customs + shipping.AuctionFee +
                 shipping.TransferFee + shipping.TransportationFee;
@@ -78,8 +35,7 @@ namespace CmApp.Services
                 oldShipping.TransferFee + oldShipping.TransportationFee);
 
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
-            await SummaryRepository.InsertTotalByCar(summary.Id, Math.Round(summary.Total + Math.Round(totalPrice,2), 2));
-
+            await SummaryRepository.InsertTotalByCar(summary.Id, Math.Round(summary.Total + Math.Round(totalPrice, 2), 2));
 
         }
         public async Task<ShippingEntity> InsertShipping(string carId, ShippingEntity shipping)
@@ -92,6 +48,21 @@ namespace CmApp.Services
 
             shipping.Car = carId;
 
+            shipping = await ConvertShippingPrices(shipping);
+
+            var newShipping = await ShippingRepository.InsertShipping(shipping);
+
+            double totalPrice = newShipping.Customs + newShipping.AuctionFee +
+                newShipping.TransferFee + newShipping.TransportationFee;
+
+            var summary = await SummaryRepository.GetSummaryByCarId(carId);
+            await SummaryRepository.InsertTotalByCar(summary.Id, Math.Round(summary.Total + totalPrice, 2));
+
+            return newShipping;
+        }
+
+        private async Task<ShippingEntity> ConvertShippingPrices(ShippingEntity shipping)
+        {
             if (shipping.TransferFeeCurrency != shipping.BaseCurrency)
             {
                 var input = new ExchangeInput
@@ -137,15 +108,8 @@ namespace CmApp.Services
                 shipping.Customs = Math.Round(convertedPrice, 2);
             }
 
-            var newShipping = await ShippingRepository.InsertShipping(shipping);
-
-            double totalPrice = newShipping.Customs + newShipping.AuctionFee +
-                newShipping.TransferFee + newShipping.TransportationFee;
-
-            var summary = await SummaryRepository.GetSummaryByCarId(carId);
-            await SummaryRepository.InsertTotalByCar(summary.Id, Math.Round(summary.Total + totalPrice, 2));
-
-            return newShipping;
+            return shipping;
         }
+
     }
 }

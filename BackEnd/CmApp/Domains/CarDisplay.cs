@@ -1,6 +1,5 @@
 ﻿using CmApp.Entities;
 using CodeMash.Models;
-using System.Collections.Generic;
 
 namespace CmApp.Domains
 {

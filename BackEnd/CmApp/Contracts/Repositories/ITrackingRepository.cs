@@ -1,5 +1,4 @@
 ﻿using CmApp.Entities;
-using Isidos.CodeMash.ServiceContracts;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

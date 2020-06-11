@@ -99,7 +99,7 @@ namespace CmApp.Controllers
             var repo = new EmailRepository();
             var userRepo = new UserRepository();
             var user = await userRepo.GetUserByEmail(email);
-            if(!user.EmailConfirmed)
+            if (!user.EmailConfirmed)
                 await repo.SendEmailConfirmationEmail(user.Email, user.Id);
             else
                 throw new BusinessException("Email already confirmed");

@@ -49,7 +49,7 @@ namespace CmApp.Controllers
             {
                 var models = await carMakesRepository.GetMakeModels(makeName);
                 //var makes = await externalAPI.GetAllMakeModels(makeName);
-                if(models == null)
+                if (models == null)
                     throw new BusinessException("Error retrieving models. Please try again later.");
                 //models.Models.Sort();
                 var modelsNames = models.Models.Select(x => x.Name).ToList();
@@ -113,7 +113,7 @@ namespace CmApp.Controllers
         public async Task<IActionResult> GetImage2([FromBody] object image)
         {
             try
-            {           
+            {
                 var fileInfo = fileRepository.GetFileId(image);
 
                 var fileId = fileInfo.Item1;
@@ -236,5 +236,5 @@ namespace CmApp.Controllers
             }
         }
 
-    } 
+    }
 }

@@ -3,10 +3,8 @@ using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Repositories;
 using HtmlAgilityPack;
-using image4ioDotNetSDK.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -259,7 +257,7 @@ namespace CmApp.Services
                             imgLinks.Add(newImg);
                         }
                     }
-                }               
+                }
                 return imgLinks;
             }
             catch (Exception ex)

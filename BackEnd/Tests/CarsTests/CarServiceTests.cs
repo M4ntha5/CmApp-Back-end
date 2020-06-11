@@ -1,5 +1,4 @@
-﻿using CmApp;
-using CmApp.Contracts;
+﻿using CmApp.Contracts;
 using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Services;
@@ -55,7 +54,6 @@ namespace CarsTests
             var car = new CarEntity
             {
                 Vin = "123",
-                Images = new List<object>(),
                 Equipment = new List<Equipment> { new Equipment() },
                 Id = "1",
                 Make = "BMW"

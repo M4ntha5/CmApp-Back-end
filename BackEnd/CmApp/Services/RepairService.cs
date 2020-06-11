@@ -23,7 +23,7 @@ namespace CmApp.Services
         }
         public async Task InsertCarRepairs(string carId, List<RepairEntity> repairs)
         {
-            repairs.ForEach(x => {x.Car = carId; Math.Round(x.Price,2); Math.Round(x.Total,2);});
+            repairs.ForEach(x => { x.Car = carId; Math.Round(x.Price, 2); Math.Round(x.Total, 2); });
             var repairsTotal = repairs.Sum(x => x.Price);
 
             await RepairRepository.InsertMultipleRepairs(repairs);

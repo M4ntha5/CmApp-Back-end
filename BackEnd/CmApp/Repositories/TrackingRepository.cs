@@ -3,9 +3,7 @@ using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Utils;
 using CodeMash.Client;
-using CodeMash.Project.Services;
 using CodeMash.Repository;
-using Isidos.CodeMash.ServiceContracts;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -34,7 +32,7 @@ namespace CmApp.Repositories
 
             var entity = new List<Urls>();
 
-            urls.ForEach(x=> entity.Add(new Urls{ Url = x }));
+            urls.ForEach(x => entity.Add(new Urls { Url = x }));
 
             var update = Builders<TrackingEntity>.Update.Set("images", entity);
 

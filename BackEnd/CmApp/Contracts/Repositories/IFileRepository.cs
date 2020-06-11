@@ -15,7 +15,7 @@ namespace CmApp.Contracts
         Tuple<string, string> GetFileId(object file);
         Task<string> GetFileUrl(string fileId);
 
-        Task<List<string>> InsertCarImages(string carId, List<UploadImageRequest.File> files);      
+        Task<List<string>> InsertCarImages(string carId, List<UploadImageRequest.File> files);
         Task<List<string>> ListFolder(string folder);
         Task<bool> DeleteImage(string pathToImage);
         Task<bool> DeleteFolder(string folder);

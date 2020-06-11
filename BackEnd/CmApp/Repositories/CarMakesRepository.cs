@@ -41,10 +41,10 @@ namespace CmApp.Repositories
         }
 
         public async Task<CarMakesEntity> InsertCarMake(CarMakesEntity make)
-        {           
+        {
             if (make == null)
                 throw new ArgumentNullException(nameof(make), "Cannot insert make in db, because make is empty");
-            
+
             var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
             make = await CheckForDuplicates(make);
@@ -54,8 +54,8 @@ namespace CmApp.Repositories
         }
 
         public async Task UpdateCarMake(CarMakesEntity make)
-        {           
-            var repo = new CodeMashRepository<CarMakesEntity>(Client);          
+        {
+            var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
             make = await CheckForDuplicates(make);
 
@@ -66,7 +66,7 @@ namespace CmApp.Repositories
             await repo.UpdateOneAsync(make.Id, update, new DatabaseUpdateOneOptions());
         }
         public async Task DeleteCarMake(string makeId)
-        {           
+        {
             var repo = new CodeMashRepository<CarMakesEntity>(Client);
 
             await repo.DeleteOneAsync(makeId);
@@ -75,14 +75,14 @@ namespace CmApp.Repositories
         private async Task<CarMakesEntity> CheckForDuplicates(CarMakesEntity make)
         {
             make.Make = make.Make.First().ToString().ToUpper() + make.Make.Substring(1);
-            make.Models.ForEach(x=> x.Name = x.Name.First().ToString().ToUpper() + x.Name.Substring(1));
-                      
-            var allMakes = await GetAllMakes();            
-            foreach(var elem in allMakes)
+            make.Models.ForEach(x => x.Name = x.Name.First().ToString().ToUpper() + x.Name.Substring(1));
+
+            var allMakes = await GetAllMakes();
+            foreach (var elem in allMakes)
             {
-                if(elem.Make == make.Make && elem.Id != make.Id)
+                if (elem.Make == make.Make && elem.Id != make.Id)
                     throw new BusinessException("Such a make already exists!");
-                if(elem.Models.Count != elem.Models.Distinct().ToList().Count)
+                if (elem.Models.Count != elem.Models.Distinct().ToList().Count)
                     throw new BusinessException("You cannot add duplicate models!");
             }
             return make;
