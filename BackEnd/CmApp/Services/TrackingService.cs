@@ -36,15 +36,9 @@ namespace CmApp.Services
                 throw new BusinessException("Tracking images for this car not found. Try again later");
 
             var trackingImages = await ScraperService.GetTrackingImagesUrls(car);
+            //inserts atlantic image urls
+            await TrackingRepository.UploadImageToTracking(tracking.Id, trackingImages);
             return trackingImages;
-        }
-        public async Task DownloadTrackingImages(string carId, List<string> urls)
-        {
-            var tracking = await TrackingRepository.GetTrackingByCar(carId);
-            if (tracking == null)
-                throw new BusinessException("Tracking images for this car not found. Try again later");
-
-            await ScraperService.DownloadAllTrackingImages(tracking, urls);
         }
 
         public async Task SaveLastShowImagesStatus(string carId, bool status)
@@ -55,5 +49,18 @@ namespace CmApp.Services
 
             await TrackingRepository.UpdateImageShowStatus(tracking.Id, status);
         }
+
+        //bring back if needed
+        /*     
+        public async Task DownloadTrackingImages(string carId, List<string> urls)
+        {
+            var tracking = await TrackingRepository.GetTrackingByCar(carId);
+            if (tracking == null)
+                throw new BusinessException("Tracking images for this car not found. Try again later");
+
+            await ScraperService.DownloadAllTrackingImages(tracking, urls);
+        }
+        */
+
     }
 }

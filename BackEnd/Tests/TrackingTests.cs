@@ -3,11 +3,8 @@ using CmApp.Contracts;
 using CmApp.Entities;
 using CmApp.Repositories;
 using CmApp.Services;
-using CmApp.Utils;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace TrackingTests
@@ -16,13 +13,13 @@ namespace TrackingTests
     {
         ITrackingService trackingService;
         ITrackingRepository trackingRepo;
-        IFileRepository fileRepo;
+        //IFileRepository fileRepo;
         string carId;
         [SetUp]
         public void Setup()
         {
             trackingRepo = new TrackingRepository();
-            fileRepo = new FileRepository();
+            // fileRepo = new FileRepository();
             trackingService = new TrackingService()
             {
                 TrackingRepository = trackingRepo,
@@ -43,7 +40,6 @@ namespace TrackingTests
         {
             var entity = new TrackingEntity()
             {
-                AuctionImages = new List<object>(),
                 BookingNumber = "123",
                 ContainerNumber = "321",
                 Url = "myuri",
@@ -61,7 +57,6 @@ namespace TrackingTests
         {
             var entity = new TrackingEntity()
             {
-                AuctionImages = new List<object>(),
                 BookingNumber = "naujas2",
                 ContainerNumber = "naujas2",
                 Url = "naujas2",
@@ -80,7 +75,7 @@ namespace TrackingTests
             await trackingRepo.DeleteTrackingImages("5ea961711d20e577d470a50e");
         }
 
-        [Test]
+        /*[Test]
         public async Task TestUploadImageToTracking()
         {
             var stream = await fileRepo.GetFile(Settings.DefaultImage);
@@ -91,7 +86,7 @@ namespace TrackingTests
 
             await trackingRepo.UploadImageToTracking(
                 "5ea71c52862b9f00040c7726", bytes, "test.png");
-        }
+        }*/
         [Test]
         public async Task TestUpdateImageShowStatus()
         {
@@ -116,15 +111,15 @@ namespace TrackingTests
                  await trackingService.LookForTrackingData("5ea9616f1d20e5711470a50d"));
 
         }
-        [Test]
-        public async Task DownloadTrackingImages()
-        {
-            await trackingService.DownloadTrackingImages("5ea9616f1d20e577d470a50d",
-                new List<string> { Settings.DefaultImageUrl });
+        /*  [Test]
+          public async Task DownloadTrackingImages()
+          {
+              await trackingService.DownloadTrackingImages("5ea9616f1d20e577d470a50d",
+                  new List<string> { Settings.DefaultImageUrl });
 
-            Assert.ThrowsAsync<BusinessException>(async () =>
-                 await trackingService.DownloadTrackingImages("5ea9616f1d20e577d550a50d",
-                new List<string> { Settings.DefaultImageUrl }));
-        }
+              Assert.ThrowsAsync<BusinessException>(async () =>
+                   await trackingService.DownloadTrackingImages("5ea9616f1d20e577d550a50d",
+                  new List<string> { Settings.DefaultImageUrl }));
+          }*/
     }
 }

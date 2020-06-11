@@ -1,4 +1,6 @@
-﻿using System;
+﻿using image4ioDotNetSDK.Models;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -12,5 +14,14 @@ namespace CmApp.Contracts
         string ByteArrayToBase64String(byte[] bytes);
         Tuple<string, string> GetFileId(object file);
         Task<string> GetFileUrl(string fileId);
+
+        Task<List<string>> InsertCarImages(string carId, List<UploadImageRequest.File> files);
+        Task<List<string>> ListFolder(string folder);
+        Task<bool> DeleteImage(string pathToImage);
+        Task<bool> DeleteFolder(string folder);
+
+        //bring back if needed
+        //Task<List<string>> InsertTrackingImages(string carId, List<UploadImageRequest.File> files);
+
     }
 }

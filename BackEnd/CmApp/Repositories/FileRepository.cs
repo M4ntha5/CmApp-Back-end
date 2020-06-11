@@ -2,10 +2,14 @@
 using CmApp.Utils;
 using CodeMash.Client;
 using CodeMash.Project.Services;
+using image4ioDotNetSDK;
+using image4ioDotNetSDK.Models;
 using Isidos.CodeMash.ServiceContracts;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.Repositories
@@ -13,6 +17,8 @@ namespace CmApp.Repositories
     public class FileRepository : IFileRepository
     {
         private static CodeMashClient Client => new CodeMashClient(Settings.ApiKey, Settings.ProjectId);
+        private readonly Image4ioAPI ImagesClient = new Image4ioAPI(Settings.Image4IoApiKey, Settings.Image4IoSecret);
+
 
         public async Task<Stream> GetFile(string fileId)
         {
@@ -67,5 +73,79 @@ namespace CmApp.Repositories
 
             return Tuple.Create(fileId, fileType);
         }
+
+        public async Task<List<string>> InsertCarImages(string carId, List<UploadImageRequest.File> files)
+        {
+            if (files == null || files.Count == 0)
+                throw new BusinessException("Cannot add images, because no image provided");
+
+            var response = await ImagesClient.UploadImageAsync(
+                new UploadImageRequest()
+                {
+                    Path = "/cars/" + carId,
+                    UseFilename = false,
+                    Overwrite = false,
+                    Files = files
+                });
+
+            var urls = response.UploadedFiles.Select(x => x.Url).ToList();
+            return urls;
+        }
+
+        /// <summary>
+        /// bring back if needed, it saves downloaded tracking images
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+     /* public async Task<List<string>> InsertTrackingImages(string carId, List<UploadImageRequest.File> files)
+        {
+            if(files == null || files.Count == 0)
+                throw new BusinessException("Cannot add images, because no image provided");
+
+            var response = await ImagesClient.UploadImageAsync(
+                new UploadImageRequest()
+                {
+                    Path = "/tracking/" + carId,
+                    UseFilename = true,
+                    Overwrite = false,
+                    Files = files
+                });
+
+            var urls = response.UploadedFiles.Select(x =>x.Url).ToList();
+            return urls;
+        }*/
+
+        public async Task<List<string>> ListFolder(string folder)
+        {
+            var response = await ImagesClient.ListFolderAsync(
+                new ListFolderRequest()
+                {
+                    Path = folder
+                });
+
+            var urls = response.Images.Select(x => x.Url).ToList();
+            return urls;
+        }
+
+        public async Task<bool> DeleteImage(string pathToImage)
+        {
+            var response = await ImagesClient.DeleteImageAsync(
+                new DeleteImageRequest()
+                {
+                    Name = pathToImage,
+                });
+            return response.Success;
+        }
+
+        public async Task<bool> DeleteFolder(string folder)
+        {
+            var response = await ImagesClient.DeleteFolderAsync(
+                new DeleteFolderRequest()
+                {
+                    Path = folder,
+                });
+            return response.Success;
+        }
+
     }
 }

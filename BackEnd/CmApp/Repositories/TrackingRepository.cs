@@ -1,10 +1,9 @@
 ﻿using CmApp.Contracts;
+using CmApp.Domains;
 using CmApp.Entities;
 using CmApp.Utils;
 using CodeMash.Client;
-using CodeMash.Project.Services;
 using CodeMash.Repository;
-using Isidos.CodeMash.ServiceContracts;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -27,24 +26,24 @@ namespace CmApp.Repositories
             var response = await repo.InsertOneAsync(tracking, new DatabaseInsertOneOptions());
             return response;
         }
-        public async Task<UploadRecordFileResponse> UploadImageToTracking(string recordId, byte[] bytes, string imgName)
+        public async Task<List<string>> UploadImageToTracking(string recordId, List<string> urls)
         {
-            var filesService = new CodeMashFilesService(Client);
+            var repo = new CodeMashRepository<TrackingEntity>(Client);
 
-            var response = await filesService.UploadRecordFileAsync(bytes, imgName,
-                new UploadRecordFileRequest
-                {
-                    RecordId = recordId,
-                    CollectionName = "tracking",
-                    UniqueFieldName = "auction_photos"
+            var entity = new List<Urls>();
 
-                });
-            return response;
+            urls.ForEach(x => entity.Add(new Urls { Url = x }));
+
+            var update = Builders<TrackingEntity>.Update.Set("images", entity);
+
+            var response = await repo.UpdateOneAsync(recordId, update, new DatabaseUpdateOneOptions());
+            return urls;
         }
+
         public async Task DeleteTrackingImages(string recordId)
         {
             var repo = new CodeMashRepository<TrackingEntity>(Client);
-            var update = Builders<TrackingEntity>.Update.Set("auction_photos", new List<object>());
+            var update = Builders<TrackingEntity>.Update.Set("images", new List<Urls>());
             await repo.UpdateOneAsync(recordId, update, new DatabaseUpdateOneOptions());
         }
 
@@ -106,7 +105,6 @@ namespace CmApp.Repositories
             var update = Builders<TrackingEntity>.Update.Set("show_images", status);
             await repo.UpdateOneAsync(trackingId, update, new DatabaseUpdateOneOptions());
         }
-
 
     }
 }

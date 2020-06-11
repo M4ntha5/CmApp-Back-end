@@ -36,7 +36,7 @@ namespace CmApp.Repositories
         public async Task DeleteCarSummary(string carId)
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
-            var filter = Builders<SummaryEntity>.Filter.Eq("car",  BsonObjectId.Create(carId));
+            var filter = Builders<SummaryEntity>.Filter.Eq("car", BsonObjectId.Create(carId));
             await repo.DeleteOneAsync(filter);
         }
 
@@ -59,8 +59,7 @@ namespace CmApp.Repositories
         public async Task InsertTotalByCar(string summaryId, double total)
         {
             var repo = new CodeMashRepository<SummaryEntity>(Client);
-
-            var update = Builders<SummaryEntity>.Update.Set("total", Math.Round(total, 2));
+            var update = Builders<SummaryEntity>.Update.Set("total", total);
 
             await repo.UpdateOneAsync(
                 x => x.Id == summaryId,

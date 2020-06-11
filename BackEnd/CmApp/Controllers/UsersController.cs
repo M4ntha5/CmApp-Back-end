@@ -178,7 +178,7 @@ namespace CmApp.Controllers
         }
         [Route("/api/users/{userId}/password/reset")]
         [HttpPost]
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> ChangePassword(string userId, [FromBody] User data)
         {
             try

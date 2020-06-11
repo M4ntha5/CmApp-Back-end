@@ -49,40 +49,33 @@ namespace LambdaFunction
             var passresets = await repo.GetAllPasswordResets();
 
             foreach(var car in cars)
-            {
                 if(!userIds.Contains(car.User))
                     await repo.DeleteCar(car.Id);          
-            }
             
             foreach(var repair in repairs)
-            {
                 if(!carsIds.Contains(repair.Car))
                     await repo.DeleteRepair(repair.Car);          
-            }
 
             foreach(var shipping in shippings)
-            {
                 if(!carsIds.Contains(shipping.Car))
                     await repo.DeleteCarShipping(shipping.Car);          
-            }
 
             foreach(var summary in summaries)
-            {
                 if(!carsIds.Contains(summary.Car))
                     await repo.DeleteCarSummary(summary.Car);          
-            }
 
             foreach(var tracking in trackings)
-            {
                 if(!carsIds.Contains(tracking.Car))
                     await repo.DeleteCarTracking(tracking.Car);          
-            }
 
             foreach(var passReset in passresets)
-            {
                 if(passReset.ValidUntil <= DateTime.Now)
                     await repo.DeletePassReset(passReset.Id);          
-            }
+
+            foreach(var user in users)
+                if(!user.EmailConfirmed && user.CreatedAt <= DateTime.Now.AddDays(-14))
+                    await repo.DeleteUser(user.Id);
+                
         }
     }
 }

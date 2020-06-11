@@ -10,6 +10,5 @@ namespace CmApp.Contracts
         Task<List<string>> GetAvailableCurrencies();
         Task<List<string>> GetAllCountries();
         Task<ExchangeRate> GetSelectedExchangeRate(string name);
-        Task<List<string>> GetAllMakeModels(string make);
     }
 }
