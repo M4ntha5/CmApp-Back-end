@@ -179,29 +179,6 @@ namespace CarsTests
          }*/
 
         [Test]
-        public async Task TestGetFile()
-        {
-            var response = await fileRepo.GetFile(Settings.DefaultImage);
-
-            var mem = new MemoryStream();
-            response.CopyTo(mem);
-
-            if (mem.Length != 0)
-            {
-                mem.Seek(0, SeekOrigin.Begin);
-                int count = 0;
-                byte[] byteArray = new byte[mem.Length];
-                while (count < mem.Length)
-                {
-                    byteArray[count++] = Convert.ToByte(mem.ReadByte());
-                }
-                var base64 = Convert.ToBase64String(byteArray);
-                Assert.IsNotEmpty(base64);
-            }
-            Assert.IsNotNull(response);
-        }
-
-        [Test]
         public async Task DeleteAllCarImages()
         {
             await carRepo.DeleteAllCarImages(carId);

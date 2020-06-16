@@ -17,7 +17,7 @@ namespace CmApp.Services
     {
         private readonly string MDecoderEndpoint = "https://www.mdecoder.com/decode/";
         private readonly string MBDecoderEndpoint = "https://www.mbdecoder.com/decode/";
-        private readonly string AtlanticExpressEndpoint = "http://www.atlanticexpresscorp.com/services/tracking/?num=";
+        private readonly string AtlanticExpressEndpoint = "https://www.atlanticexpresscorp.com/services/tracking/?num=";
 
         // private readonly IFileRepository FileRepository = new FileRepository();
         private readonly ITrackingRepository TrackingRepo = new TrackingRepository();
@@ -316,7 +316,13 @@ namespace CmApp.Services
 
         private async Task<HtmlDocument> GetPrimarySiteDocument(string website)
         {
-            HttpClient http = new HttpClient();
+            HttpClientHandler clientHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            };
+
+            // Pass the handler to httpclient(from you are calling api)
+            HttpClient http = new HttpClient(clientHandler);
             var response = await http.GetByteArrayAsync(website);
             String source = Encoding.GetEncoding("utf-8").GetString(response, 0, response.Length - 1);
             source = WebUtility.HtmlDecode(source);

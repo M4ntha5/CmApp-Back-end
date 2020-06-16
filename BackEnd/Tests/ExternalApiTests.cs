@@ -59,24 +59,5 @@ namespace ExchangeRatesTests
             Assert.ThrowsAsync<BusinessException>(async () => await APIservice.CalculateResult(null));
         }
 
-        [Test]
-        public async Task GetFileUrl()
-        {
-            var makes = await fileRepo.GetFileUrl(Settings.DefaultImage);
-            Assert.IsNotNull(makes);
-        }
-        [Test]
-        public async Task Conversions()
-        {
-            var file = await fileRepo.GetFile(Settings.DefaultImage);
-
-            using MemoryStream ms = new MemoryStream();
-            file.CopyTo(ms);
-            var bytes = ms.ToArray();
-            var base64 = fileRepo.ByteArrayToBase64String(bytes);
-            Assert.IsNotNull(base64);
-            var byts = fileRepo.Base64ToByteArray(base64);
-            Assert.IsNotEmpty(base64);
-        }
     }
 }
