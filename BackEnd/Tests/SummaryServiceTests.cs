@@ -1,8 +1,5 @@
 ﻿using CmApp;
 using CmApp.Contracts;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -11,7 +8,7 @@ namespace SummaryTests
 {
     class SummaryServiceTests
     {
-        ISummaryRepository summaryRepo;
+      /*  ISummaryRepository summaryRepo;
         ISummaryService summaryService;
         string carId, summaryId;
 
@@ -94,5 +91,6 @@ namespace SummaryTests
         {
             await summaryRepo.DeleteCarSummary(carId);
         }
+      */
     }
 }

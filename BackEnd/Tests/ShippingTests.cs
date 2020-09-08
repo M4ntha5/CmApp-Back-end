@@ -1,8 +1,5 @@
 ﻿using CmApp;
 using CmApp.Contracts;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -11,7 +8,7 @@ namespace ShippingTests
 {
     class Shipping
     {
-        IShippingService shippingService;
+     /*   IShippingService shippingService;
         IShippingRepository carRepo;
         string carId;
         [SetUp]
@@ -89,5 +86,6 @@ namespace ShippingTests
 
             await shippingService.UpdateShipping(carId, entity);
         }
+     */
     }
 }

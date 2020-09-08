@@ -1,8 +1,5 @@
 ﻿using CmApp;
 using CmApp.Contracts;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -12,7 +9,7 @@ namespace RepairsTests
 {
     class RepairServiceTestsIntegration
     {
-        IRepairRepository repairRepo;
+     /*   IRepairRepository repairRepo;
         IRepairService repairService;
         string carId;
         string repairId;
@@ -75,6 +72,6 @@ namespace RepairsTests
                 await repairRepo.InsertMultipleRepairs(null));
 
         }
-
+     */
     }
 }

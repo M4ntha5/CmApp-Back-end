@@ -1,6 +1,4 @@
-﻿using CmApp.Repositories;
-using CmApp.Services;
-using image4ioDotNetSDK.Models;
+﻿using image4ioDotNetSDK.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +8,7 @@ namespace Tests
 {
     class Image4IoTests
     {
-        FileRepository repo;
+      /*  FileRepository repo;
         [SetUp]
         public void Setup()
         {
@@ -41,7 +39,7 @@ namespace Tests
             var insertedUrls = await repo.InsertCarImages(carId, files);
 
             Assert.AreEqual(files.Count, insertedUrls.Count);
-        }
+        }*/
 
         /* [Test]
          public async Task InsertTrackingImages()
@@ -69,7 +67,7 @@ namespace Tests
              Assert.AreEqual(files.Count, insertedUrls.Count);
          }*/
 
-        [Test]
+      /*  [Test]
         public async Task DeleteImage()
         {
             var carId = "5ed4ef42fca2790004ef90e9";
@@ -150,7 +148,7 @@ namespace Tests
 
             await carService.InsertImages(carId, urls);
         }
-
+      */
 
     }
 }

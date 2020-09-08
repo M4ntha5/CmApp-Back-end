@@ -1,7 +1,5 @@
 ﻿using CmApp;
 using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Repositories;
 using CmApp.Utils;
 using NUnit.Framework;
 using System.IO;
@@ -11,7 +9,7 @@ namespace ExchangeRatesTests
 {
     class ExternalApiTests
     {
-        IExternalAPIService APIservice;
+      /*  IExternalAPIService APIservice;
         IFileRepository fileRepo;
         [SetUp]
         public void Setup()
@@ -58,6 +56,6 @@ namespace ExchangeRatesTests
             Assert.NotZero(curr);
             Assert.ThrowsAsync<BusinessException>(async () => await APIservice.CalculateResult(null));
         }
-
+      */
     }
 }

@@ -14,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CmApp\CmApp.csproj" />
+    <ProjectReference Include="..\CmApp.BusinessLogic\CmApp.BusinessLogic.csproj" />
+    <ProjectReference Include="..\CmApp.Contracts\CmApp.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

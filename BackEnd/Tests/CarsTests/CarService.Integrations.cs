@@ -1,9 +1,10 @@
 ﻿using CmApp;
+using CmApp.BusinessLogic.Repositories;
+using CmApp.BusinessLogic.Services;
 using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
+using CmApp.Contracts.Entities;
+using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Interfaces.Services;
 using CmApp.Utils;
 using NUnit.Framework;
 using System;
@@ -15,7 +16,7 @@ namespace CarsTests
 {
     class CarServiceIntegrtations
     {
-        ICarRepository carRepo;
+      /*  ICarRepository carRepo;
         ICarMakesRepository carMakesRepo;
         ICarService carService;
         IScraperService scraperService;
@@ -178,7 +179,7 @@ namespace CarsTests
              Assert.AreNotEqual(null, result);
          }*/
 
-        [Test]
+      /*  [Test]
         public async Task DeleteAllCarImages()
         {
             await carRepo.DeleteAllCarImages(carId);
@@ -189,6 +190,6 @@ namespace CarsTests
             var makes = await carMakesRepo.GetAllMakes();
             Assert.IsNotEmpty(makes);
         }
-
+      */
     }
 }

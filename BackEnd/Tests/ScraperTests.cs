@@ -1,7 +1,5 @@
 ﻿using CmApp;
 using CmApp.Contracts;
-using CmApp.Repositories;
-using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -10,7 +8,7 @@ namespace ScraperTests
 {
     public class ScraperTests
     {
-        string Vin;
+      /*  string Vin;
         IScraperService scraperService;
         ICarRepository carRepo;
         [SetUp]

@@ -1,9 +1,5 @@
 ﻿using CmApp;
 using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -12,7 +8,7 @@ namespace UsersTestsTests
 {
     class UserServiceTests
     {
-        IAuthService authService;
+      /*  IAuthService authService;
         IUserRepository userRepo;
         [SetUp]
         public void Setup()
@@ -222,6 +218,6 @@ namespace UsersTestsTests
 
             await authService.ConfirmUserEmail("5ea9770d925c568c0407584b");
 
-        }
+        }*/
     }
 }

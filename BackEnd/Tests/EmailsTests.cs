@@ -1,5 +1,4 @@
 ﻿using CmApp.Contracts;
-using CmApp.Repositories;
 using NUnit.Framework;
 using System.Threading.Tasks;
 
@@ -7,7 +6,7 @@ namespace EmailsTests
 {
     class EmailsTests
     {
-        IEmailRepository emailRepo;
+     /*   IEmailRepository emailRepo;
         [SetUp]
         public void SetUp()
         {
@@ -31,6 +30,6 @@ namespace EmailsTests
         {
             var email = "mantozerix@gmail.com";
             await emailRepo.SendWelcomeEmail(email);
-        }
+        }*/
     }
 }

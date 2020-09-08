@@ -1,8 +1,5 @@
 ﻿using CmApp;
 using CmApp.Contracts;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -11,7 +8,7 @@ namespace TrackingTests
 {
     class Tracking
     {
-        ITrackingService trackingService;
+       /* ITrackingService trackingService;
         ITrackingRepository trackingRepo;
         //IFileRepository fileRepo;
         string carId;
@@ -87,7 +84,7 @@ namespace TrackingTests
             await trackingRepo.UploadImageToTracking(
                 "5ea71c52862b9f00040c7726", bytes, "test.png");
         }*/
-        [Test]
+       /* [Test]
         public async Task TestUpdateImageShowStatus()
         {
             await trackingService.SaveLastShowImagesStatus(

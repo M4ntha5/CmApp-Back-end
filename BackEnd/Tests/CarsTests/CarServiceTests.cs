@@ -1,8 +1,4 @@
 ﻿using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Entities;
-using CmApp.Services;
-using NSubstitute;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,7 +7,7 @@ namespace CarsTests
 {
     class CarServiceTests
     {
-        ICarRepository carMock;
+      /*  ICarRepository carMock;
         IScraperService scraperMock;
         IFileRepository fileMock;
         ITrackingRepository trackingMock;
@@ -80,6 +76,6 @@ namespace CarsTests
 
             Assert.AreEqual(eq.Count, carDetails.Equipment.Count);
             await carMock.Received().InsertCar(Arg.Any<CarEntity>());
-        }
+        }*/
     }
 }
