@@ -1,11 +1,13 @@
 ﻿using CmApp.Contracts.Domains;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CmApp.Contracts.Entities
 {
     public class TrackingEntity
     {
+        [ForeignKey("Car")]
         public int ID { get; set; }
         public string Vin { get; set; } = "";
         public int Year { get; set; } = 0;
@@ -32,7 +34,10 @@ namespace CmApp.Contracts.Entities
         public string Wheels { get; set; } = "";
         public string AirBag { get; set; } = "";
         public string Radio { get; set; } = "";
-        public int Car { get; set; }
-        public List<Urls> Images { get; set; } = new List<Urls>();
+        
+
+        public ICollection<UrlEntity> Images { get; set; }
+        public virtual CarEntity Car { get; set; }
+
     }
 }

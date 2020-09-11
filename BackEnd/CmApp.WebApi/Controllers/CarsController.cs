@@ -1,8 +1,8 @@
 ﻿using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
+using CmApp.Contracts.Domains;
+using CmApp.Contracts.Entities;
+using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,15 +17,18 @@ namespace CmApp.Controllers
     [ApiController]
     public class CarsController : ControllerBase
     {
-        private static readonly ICarRepository carRepository = new CarRepository();
-        private static readonly IAggregateRepository aggregateRepository = new AggregateRepository();
-        private readonly ICarService carService = new CarService()
+        private readonly ICarRepository carRepository;
+        private readonly IAggregateRepository aggregateRepository;
+        private readonly ICarService carService;
+
+        public CarsController(ICarRepository carRepository, IAggregateRepository aggregateRepository, 
+            ICarService carService)
         {
-            CarRepository = carRepository,
-            WebScraper = new ScraperService(),
-            FileRepository = new FileRepository(),
-            TrackingRepository = new TrackingRepository()
-        };
+            this.carRepository = carRepository;
+            this.aggregateRepository = aggregateRepository;
+            this.carService = carService;
+        }
+
 
         // GET: api/Cars
         [HttpGet]
@@ -35,7 +38,6 @@ namespace CmApp.Controllers
             try
             {
                 var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
-                var id = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var cars = await aggregateRepository.GetUserCars(userEmail);
                 return Ok(cars);
             }
@@ -48,17 +50,17 @@ namespace CmApp.Controllers
         // GET: api/Cars/5
         [HttpGet("{carId}")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Get(string carId)
+        public async Task<IActionResult> Get(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
 
                 var car = await carRepository.GetCarById(carId);
 
-                if (car.User != userId)
-                    throw new BusinessException("Car does not exist");
+               /* if (car.User != userId)
+                    throw new BusinessException("Car does not exist");*/
 
                 return Ok(car);
             }
@@ -76,8 +78,8 @@ namespace CmApp.Controllers
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                car.User = userId;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+               // car.User = userId;
                 var newCar = await carService.InsertCar(car);
 
                 return Ok(newCar);
@@ -91,11 +93,11 @@ namespace CmApp.Controllers
         // PUT: api/Cars/5
         [HttpPut("{carId}")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Put(string carId, [FromBody] CarEntity car)
+        public async Task<IActionResult> Put(int carId, [FromBody] CarEntity car)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 await carService.UpdateCar(userId, carId, car);
                 return NoContent();
             }
@@ -109,11 +111,11 @@ namespace CmApp.Controllers
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{carId}")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Delete(string carId)
+        public async Task<IActionResult> Delete(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 await carService.DeleteCar(userId, carId);
                 return NoContent();
             }
@@ -130,7 +132,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var cars = await carRepository.GetAllCars();
                 return Ok(cars);
             }
@@ -143,7 +145,7 @@ namespace CmApp.Controllers
         [Route("/api/cars/{carId}/images")]
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> InsertImages(string carId, [FromBody] List<string> images)
+        public async Task<IActionResult> InsertImages(int carId, [FromBody] List<string> images)
         {
             try
             {
@@ -159,7 +161,7 @@ namespace CmApp.Controllers
         [Route("/api/cars/{carId}/images")]
         [HttpPut]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> UpdateImages(string carId, [FromBody] Images images)
+        public async Task<IActionResult> UpdateImages(int carId, [FromBody] Images images)
         {
             try
             {

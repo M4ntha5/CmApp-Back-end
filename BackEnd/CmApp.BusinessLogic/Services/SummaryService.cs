@@ -20,7 +20,7 @@ namespace CmApp.BusinessLogic.Services
 
         public async Task UpdateSoldSummary(int carId, SummaryEntity summary)
         {
-            summary.Car = carId;
+           // summary.Car = carId;
             summary.SoldDate = DateTime.UtcNow;
             var time = summary.SoldDate.Subtract(summary.CreatedAt);
             string message;
@@ -45,7 +45,7 @@ namespace CmApp.BusinessLogic.Services
             if (summary.SelectedCurrency == "" || summary.BaseCurrency == "")
                 throw new BusinessException("Currency not set");
 
-            summary.Car = carId;
+           // summary.Car = carId;
             summary.Total = summary.BoughtPrice;
             if (summary.SelectedCurrency != summary.BaseCurrency)
             {

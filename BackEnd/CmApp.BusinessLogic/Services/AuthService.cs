@@ -35,7 +35,7 @@ namespace CmApp.BusinessLogic.Services
                 throw new BusinessException("User with this email already exists!");
 
             var insertedUser = await UserRepository.InsertUser(user);
-            await EmailRepository.SendEmailConfirmationEmail(insertedUser.Email, insertedUser.ID.ToString());
+            //await EmailRepository.SendEmailConfirmationEmail(insertedUser.Email, insertedUser.ID.ToString());
 
             return insertedUser == null ? false : true;
         }
@@ -170,7 +170,7 @@ namespace CmApp.BusinessLogic.Services
             };
 
             await UserRepository.InsertPasswordReset(entity);
-            await EmailRepository.SendPasswordResetEmail(email, token);
+            //await EmailRepository.SendPasswordResetEmail(email, token);
         }
 
         public async Task ResetPassword(User user)

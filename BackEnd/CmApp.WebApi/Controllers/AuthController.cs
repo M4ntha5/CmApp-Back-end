@@ -1,7 +1,9 @@
-﻿using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Repositories;
-using CmApp.Services;
+﻿using CmApp.BusinessLogic.Repositories;
+using CmApp.BusinessLogic.Services;
+using CmApp.Contracts;
+using CmApp.Contracts.Domains;
+using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,11 +15,18 @@ namespace CmApp.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService authService = new AuthService()
+        private readonly IAuthService authService;
+        private readonly IEmailRepository emailRepository;
+        private readonly IUserRepository userRepository;
+
+        public AuthController(IAuthService authService, IEmailRepository emailRepository, 
+            IUserRepository userRepository)
         {
-            UserRepository = new UserRepository(),
-            EmailRepository = new EmailRepository()
-        };
+            this.authService = authService;
+            this.emailRepository = emailRepository;
+            this.userRepository = userRepository;
+        }
+
 
         // GET: api/Auth
         [HttpPost("login")]
@@ -52,7 +61,7 @@ namespace CmApp.Controllers
         }
 
         [HttpGet("email/confirm/{token}")]
-        public async Task<IActionResult> ConfirmEmail(string token)
+        public async Task<IActionResult> ConfirmEmail(int token)
         {
             try
             {
@@ -96,11 +105,9 @@ namespace CmApp.Controllers
         [HttpGet("email/resend/{email}")]
         public async Task<IActionResult> ResendConfirmationEmail(string email)
         {
-            var repo = new EmailRepository();
-            var userRepo = new UserRepository();
-            var user = await userRepo.GetUserByEmail(email);
+            var user = await userRepository.GetUserByEmail(email);
             if (!user.EmailConfirmed)
-                await repo.SendEmailConfirmationEmail(user.Email, user.Id);
+                await emailRepository.SendEmailConfirmationEmail(user.Email, user.ID);
             else
                 throw new BusinessException("Email already confirmed");
 

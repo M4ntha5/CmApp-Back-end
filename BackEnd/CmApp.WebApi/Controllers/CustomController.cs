@@ -1,7 +1,8 @@
 ﻿using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Entities;
-using CmApp.Repositories;
+using CmApp.Contracts.Domains;
+using CmApp.Contracts.Entities;
+using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,19 @@ namespace CmApp.Controllers
     [ApiController]
     public class CustomController : ControllerBase
     {
-        private readonly ICarRepository carRepository = new CarRepository();
-        private readonly IExternalAPIService externalAPI = new ExternalAPIService();
-        private readonly IFileRepository fileRepository = new FileRepository();
-        private readonly ICarMakesRepository carMakesRepository = new CarMakesRepository();
+        private readonly ICarRepository carRepository;
+        private readonly IExternalAPIService externalAPI;
+        private readonly IFileRepository fileRepository;
+        private readonly ICarMakesRepository carMakesRepository;
+
+        public CustomController(ICarRepository carRepository, IExternalAPIService externalAPI, 
+            IFileRepository fileRepository, ICarMakesRepository carMakesRepository)
+        {
+            this.carRepository = carRepository;
+            this.externalAPI = externalAPI;
+            this.fileRepository = fileRepository;
+            this.carMakesRepository = carMakesRepository;
+        }
 
         [HttpGet]
         [Route("/api/makes")]
@@ -70,7 +80,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var cars = await carRepository.GetAllUserCars(userId);
                 var result = new List<object>();
                 foreach (var car in cars)
@@ -207,11 +217,11 @@ namespace CmApp.Controllers
         [HttpPut]
         [Route("/api/makes/{makeId}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateMake(string makeId, [FromBody] CarMakesEntity carMakes)
+        public async Task<IActionResult> UpdateMake(int makeId, [FromBody] CarMakesEntity carMakes)
         {
             try
             {
-                carMakes.Id = makeId;
+                carMakes.ID = makeId;
                 await carMakesRepository.UpdateCarMake(carMakes);
                 return NoContent();
             }
@@ -223,7 +233,7 @@ namespace CmApp.Controllers
         [HttpDelete]
         [Route("/api/makes/{makeId}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteMake(string makeId)
+        public async Task<IActionResult> DeleteMake(int makeId)
         {
             try
             {

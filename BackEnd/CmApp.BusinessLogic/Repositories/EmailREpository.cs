@@ -20,7 +20,7 @@ namespace CmApp.BusinessLogic.Repositories
 
             await Client.SendEmailAsync(message);
         }
-        public async Task SendEmailConfirmationEmail(string email, string token)
+        public async Task SendEmailConfirmationEmail(string email, int token)
         {
             var message = new SendGridMessage();
             message.SetFrom(Settings.SenderEmailAddress, Settings.SenderEmailAddressName);
@@ -31,7 +31,7 @@ namespace CmApp.BusinessLogic.Repositories
             await Client.SendEmailAsync(message);
         }
 
-        public async Task SendPasswordResetEmail(string email, string token)
+        public async Task SendPasswordResetEmail(string email, int token)
         {
             var message = new SendGridMessage();
             message.SetFrom(Settings.SenderEmailAddress, Settings.SenderEmailAddressName);

@@ -23,7 +23,7 @@ namespace CmApp.BusinessLogic.Services
 
         public async Task UpdateTracking(int carId, TrackingEntity tracking)
         {
-            tracking.Car = carId;
+           // tracking.Car = carId;
             var oldTracking = await TrackingRepository.GetTrackingByCar(carId);
             await TrackingRepository.UpdateCarTracking(oldTracking.ID, tracking);
         }
@@ -33,7 +33,7 @@ namespace CmApp.BusinessLogic.Services
             var car = await CarRepository.GetCarById(carId);
             var tracking = await TrackingRepository.GetTrackingByCar(carId);
             if (tracking == null)
-                tracking = await TrackingRepository.InsertTracking(new TrackingEntity { Car = carId });
+                tracking = await TrackingRepository.InsertTracking(new TrackingEntity { }); //Car = carId });
 
             var updatedTracking = await ScraperService.TrackingScraper(car, tracking.ID);
             return updatedTracking;

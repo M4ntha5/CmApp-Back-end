@@ -7,9 +7,6 @@ namespace CmApp.Contracts.Entities
     public class CarEntity
     {
         public int ID { get; set; }
-        public int User { get; set; }
-        public string Make { get; set; }
-        public string Model { get; set; }
         public string Vin { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime ManufactureDate { get; set; } = DateTime.MinValue;
@@ -23,8 +20,19 @@ namespace CmApp.Contracts.Entities
         public string Transmission { get; set; } = "";
         public string Color { get; set; } = "";
         public string Interior { get; set; } = "";
-        public List<Equipment> Equipment { get; set; } = new List<Equipment>();
-        public List<Urls> Urls { get; set; } = new List<Urls>();
+
+        public ICollection<EquipmentEntity> Equipment { get; set; }
+        public ICollection<RepairEntity> Repairs { get; set; }
+        public ICollection<UrlEntity> Urls { get; set; }
+
+
+        public virtual TrackingEntity Tracking { get; set; }
+        public virtual SummaryEntity Summary { get; set; }
+        public virtual ShippingEntity Shipping { get; set; }
+        public virtual CarMakesEntity Make { get; set; }
+        public virtual CarModelEntity Model { get; set; }
+
+
         public List<string> Base64images = new List<string>();
     }
 }

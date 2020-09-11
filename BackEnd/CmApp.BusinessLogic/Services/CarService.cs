@@ -31,16 +31,15 @@ namespace CmApp.BusinessLogic.Services
         {
             if (car == null || car.Vin == "" || car.Vin == null)
                 throw new BusinessException("Vin number cannot be null or empty!");
-            if (car.Make!= "BMW" && car.Make != "Mercedes-benz")
+            if (car.Make.Name != "BMW" && car.Make.Name != "Mercedes-benz")
                 throw new BusinessException("Bad vin for this make!");
 
             //matching parameters to entity
-            var parResults = WebScraper.GetVehicleInfo(car.Vin, car.Make);
+            var parResults = WebScraper.GetVehicleInfo(car.Vin, car.Make.Name);
 
             CarEntity carEntity = new CarEntity
             {
                 Make = car.Make,                //default for this scraper
-                User = car.User
             };
 
             foreach (var param in parResults)
@@ -48,7 +47,7 @@ namespace CmApp.BusinessLogic.Services
                 if (param.Key == "Prod. Date" || param.Key == "Production Date")
                     carEntity.ManufactureDate = Convert.ToDateTime(param.Value);
                 else if (param.Key == "Type" || param.Key == "Model")
-                    carEntity.Model = param.Value;
+                    carEntity.Model.Name = param.Value;
                 else if (param.Key == "Series")
                     carEntity.Series = param.Value;
                 else if (param.Key == "Body Type")
@@ -82,11 +81,11 @@ namespace CmApp.BusinessLogic.Services
             else if (carEntity.BodyType == "LIM")
                 carEntity.BodyType = "Limousine";
 
-            var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make);
-            var equipment = new List<Equipment>();
+            var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make.Name);
+            var equipment = new List<EquipmentEntity>();
 
             foreach (var eq in eqResults)
-                equipment.Add(new Equipment() { Code = eq.Key, Name = eq.Value });
+                equipment.Add(new EquipmentEntity() { Code = eq.Key, Name = eq.Value });
 
             carEntity.Equipment = equipment;
             carEntity.Vin = car.Vin.ToUpper();
@@ -97,7 +96,7 @@ namespace CmApp.BusinessLogic.Services
             await InsertImages(insertedCar.ID, car.Base64images);
 
             //inserts empty tracking 
-            await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.ID });
+            await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar });
             return insertedCar;
 
         }
@@ -115,22 +114,22 @@ namespace CmApp.BusinessLogic.Services
             await InsertImages(insertedCar.ID, car.Base64images);
 
             //inserts empty tracking 
-            await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar.ID });
+            await TrackingRepository.InsertTracking(new TrackingEntity { Car = insertedCar });
             return insertedCar;
         }
 
         public async Task<CarEntity> InsertCar(CarEntity car)
         {
-            var userCars = await CarRepository.GetAllUserCars(car.User);
+            var userCars = await CarRepository.GetAllUserCars(1);//car.User);
             var userVins = userCars.Select(x => x.Vin).ToList();
 
-            if (car.Make == null || car.Make == "")
+            if (car.Make == null || car.Make.Name == "")
                 throw new BusinessException("Make not defined");
 
             if (userVins.Contains(car.Vin))
                 throw new BusinessException("There is already a car with this VIN number");
 
-            if ((car.Make == "BMW" || car.Make == "Mercedes-benz") && car.Model == "")
+            if ((car.Make.Name == "BMW" || car.Make.Name == "Mercedes-benz") && car.Model.Name == "")
                 return await InsertCarDetailsFromScraper(car);
             else
                 return await InsertOtherCar(car);
@@ -139,8 +138,8 @@ namespace CmApp.BusinessLogic.Services
         public async Task DeleteCar(int userId, int carId)
         {
             var car = await CarRepository.GetCarById(carId);
-            if (car.User != userId)
-                throw new BusinessException("Car does not exist");
+           /* if (car.User != userId)
+                throw new BusinessException("Car does not exist");*/
 
             var tracking = await TrackingRepository.GetTrackingByCar(carId);
             await CarRepository.DeleteCar(car.ID);
@@ -151,8 +150,8 @@ namespace CmApp.BusinessLogic.Services
 
         public async Task UpdateCar(int userId, int carId, CarEntity car)
         {
-            if (car.User != userId)
-                throw new BusinessException("Car does not exist");
+           /* if (car.User != userId)
+                throw new BusinessException("Car does not exist");*/
 
             var list = car.Equipment.Select(x => x.Code).ToList().Distinct().Count();
             if (car.Equipment.Count != list)
@@ -216,13 +215,13 @@ namespace CmApp.BusinessLogic.Services
 
             List<string> urls = new List<string>();
             List<string> base64 = new List<string>();
-            images.All.ForEach(x =>
+           /* images.All.ForEach(x =>
             {
                 if (x.Url.StartsWith("http"))
                     urls.Add(x.Url);
                 else
                     base64.Add(x.Url);
-            });
+            });*/
 
             if (base64.Count > 0)
             {

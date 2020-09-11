@@ -1,8 +1,7 @@
-﻿using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
+﻿using CmApp.Contracts.Domains;
+using CmApp.Contracts.Entities;
+using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,28 +15,31 @@ namespace CmApp.Controllers
     [ApiController]
     public class TrackingController : ControllerBase
     {
-        private static readonly ITrackingRepository trackingRepository = new TrackingRepository();
-        private static readonly ICarRepository carRepository = new CarRepository();
-        private readonly ITrackingService trackingService = new TrackingService()
+        private readonly ITrackingRepository trackingRepository;
+        private readonly ICarRepository carRepository;
+        private readonly ITrackingService trackingService;
+
+        public TrackingController(ITrackingRepository trackingRepository, ICarRepository carRepository, 
+            ITrackingService trackingService)
         {
-            TrackingRepository = trackingRepository,
-            CarRepository = carRepository,
-            ScraperService = new ScraperService(),
-        };
+            this.trackingRepository = trackingRepository;
+            this.carRepository = carRepository;
+            this.trackingService = trackingService;
+        }
 
 
         // GET: api/cars/{carId}/tracking
         [HttpGet]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Get(string carId)
+        public async Task<IActionResult> Get(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 var tracking = await trackingRepository.GetTrackingByCar(carId);
                 if (tracking == null)
@@ -53,15 +55,15 @@ namespace CmApp.Controllers
         // POST: api/cars/{carId}/tracking
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Post(string carId)
+        public async Task<IActionResult> Post(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 var newTracking = await trackingService.LookForTrackingData(carId);
                 return Ok(newTracking);
@@ -75,15 +77,15 @@ namespace CmApp.Controllers
         [HttpGet]
         [Route("/api/cars/{carId}/tracking-images")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> GetTrackingImages(string carId)
+        public async Task<IActionResult> GetTrackingImages(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 var newTracking = await trackingService.LookForTrackingImages(carId);
                 return Ok(newTracking);
@@ -114,15 +116,15 @@ namespace CmApp.Controllers
         // PUT: api/cars/{carId}/tracking/
         [HttpPut]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Put(string carId, [FromBody] TrackingEntity tracking)
+        public async Task<IActionResult> Put(int carId, [FromBody] TrackingEntity tracking)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 await trackingService.UpdateTracking(carId, tracking);
                 return NoContent();
@@ -136,15 +138,15 @@ namespace CmApp.Controllers
         // DELETE: api/cars/{carId}/tracking/
         [HttpDelete]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Delete(string carId)
+        public async Task<IActionResult> Delete(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 await trackingRepository.DeleteCarTracking(carId);
                 return NoContent();
@@ -157,15 +159,15 @@ namespace CmApp.Controllers
 
         [HttpPut("images/status")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> SaveLastShowImagesStatus(string carId, [FromBody] User data)
+        public async Task<IActionResult> SaveLastShowImagesStatus(int carId, [FromBody] User data)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 await trackingService.SaveLastShowImagesStatus(carId, data.Status);
                 return NoContent();

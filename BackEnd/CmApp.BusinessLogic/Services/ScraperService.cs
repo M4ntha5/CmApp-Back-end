@@ -220,7 +220,7 @@ namespace CmApp.BusinessLogic.Services
                     AirBag = trs[22].ChildNodes[3].InnerText,
                     Radio = trs[23].ChildNodes[3].InnerText,
 
-                    Car = car.ID,
+                    Car = car,
                 };
 
                 await TrackingRepo.UpdateCarTracking(trackingId, trackingEntity);

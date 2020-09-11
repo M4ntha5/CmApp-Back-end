@@ -1,8 +1,7 @@
-﻿using CmApp.Contracts;
-using CmApp.Domains;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
+﻿using CmApp.Contracts.Domains;
+using CmApp.Contracts.Entities;
+using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,27 +15,34 @@ namespace CmApp.Controllers
     [ApiController]
     public class SummaryController : ControllerBase
     {
-        private static readonly ISummaryRepository summaryRepository = new SummaryRepository();
-        private static readonly ICarRepository carRepository = new CarRepository();
-        private readonly IAggregateRepository aggregateRepository = new AggregateRepository();
-        private readonly ISummaryService summaryService = new SummaryService()
+        private readonly ISummaryRepository summaryRepository;
+        private readonly ICarRepository carRepository;
+        private readonly IAggregateRepository aggregateRepository;
+        private readonly ISummaryService summaryService;
+
+        public SummaryController(ISummaryRepository summaryRepository, ICarRepository carRepository, 
+            IAggregateRepository aggregateRepository, ISummaryService summaryService)
         {
-            ExternalAPIService = new ExternalAPIService(),
-            SummaryRepository = summaryRepository
-        };
+            this.summaryRepository = summaryRepository;
+            this.carRepository = carRepository;
+            this.aggregateRepository = aggregateRepository;
+            this.summaryService = summaryService;
+        }
+
+
 
         // GET: /api/cars/{carId}/summary
         [HttpGet]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Get(string carId)
+        public async Task<IActionResult> Get(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 var summary = await summaryRepository.GetSummaryByCarId(carId);
                 return Ok(summary);
@@ -50,15 +56,15 @@ namespace CmApp.Controllers
         // POST: /api/cars/{carId}/summary
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Post(string carId, [FromBody] SummaryEntity summary)
+        public async Task<IActionResult> Post(int carId, [FromBody] SummaryEntity summary)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 var newSummary = await summaryService.InsertCarSummary(carId, summary);
                 return Ok(newSummary);
@@ -72,15 +78,15 @@ namespace CmApp.Controllers
         // PUT: /api/cars/{carId}/summary/{id}
         [HttpPut]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Put(string carId, [FromBody] SummaryEntity summary)
+        public async Task<IActionResult> Put(int carId, [FromBody] SummaryEntity summary)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 await summaryService.UpdateSoldSummary(carId, summary);
                 return NoContent();
@@ -94,15 +100,15 @@ namespace CmApp.Controllers
         // DELETE: /api/cars/{carId}/summary/{id}
         [HttpDelete]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Delete(string carId)
+        public async Task<IActionResult> Delete(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 await summaryRepository.DeleteCarSummary(carId);
                 return NoContent();
@@ -115,11 +121,11 @@ namespace CmApp.Controllers
         [Route("/api/users/{userId}/stats")]
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> GetUserSaleStats(string userId, [FromBody] StatsHelper inputData)
+        public async Task<IActionResult> GetUserSaleStats(int userId, [FromBody] StatsHelper inputData)
         {
             try
             {
-                var authUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var authUserId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
 

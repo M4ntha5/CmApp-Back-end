@@ -1,7 +1,6 @@
-﻿using CmApp.Contracts;
-using CmApp.Entities;
-using CmApp.Repositories;
-using CmApp.Services;
+﻿using CmApp.Contracts.Entities;
+using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,27 +15,31 @@ namespace CmApp.Controllers
     [ApiController]
     public class RepairsController : ControllerBase
     {
-        private static readonly IRepairRepository repairRepository = new RepairRepository();
-        private readonly ICarRepository carRepository = new CarRepository();
-        private readonly IRepairService repairService = new RepairService
+        private readonly IRepairRepository repairRepository;
+        private readonly ICarRepository carRepository;
+        private readonly IRepairService repairService;
+
+        public RepairsController(IRepairRepository repairRepository, ICarRepository carRepository, 
+            IRepairService repairService)
         {
-            RepairRepository = repairRepository,
-            SummaryRepository = new SummaryRepository()
-        };
+            this.repairRepository = repairRepository;
+            this.carRepository = carRepository;
+            this.repairService = repairService;
+        }
 
 
         // GET: api/cars/{carId}/Repairs
         [HttpGet]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Get(string carId)
+        public async Task<IActionResult> Get(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 var repairs = await repairService.GetAllSelectedCarRepairs(carId);
                 return Ok(repairs);
@@ -50,15 +53,15 @@ namespace CmApp.Controllers
         // GET: api/cars/{carId}/Repairs/5
         [HttpGet("{repairId}")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Get(string carId, string repairId)
+        public async Task<IActionResult> Get(int carId, int repairId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+               /* if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 var repair = await repairService.GetSelectedCarRepairById(carId, repairId);
                 return Ok(repair);
@@ -72,14 +75,14 @@ namespace CmApp.Controllers
         // POST: api/cars/{carId}/Repairs
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Post(string carId, [FromBody] List<RepairEntity> repairs)
+        public async Task<IActionResult> Post(int carId, [FromBody] List<RepairEntity> repairs)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+                /*if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 await repairService.InsertCarRepairs(carId, repairs);
                 return Ok("Successfully inserted");
@@ -93,15 +96,15 @@ namespace CmApp.Controllers
         // PUT: api/cars/{carId}/Repairs/5
         [HttpPut("{repairId}")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Put(string carId, string repairId, [FromBody] RepairEntity repair)
+        public async Task<IActionResult> Put(int carId, int repairId, [FromBody] RepairEntity repair)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+                /*if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 repair.Car = carId;
                 await repairRepository.UpdateRepair(repairId, repair);
@@ -117,15 +120,15 @@ namespace CmApp.Controllers
         //[Route("api/cars/{carId}/repairs")]
         [HttpDelete]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Delete(string carId)
+        public async Task<IActionResult> Delete(int carId)
         {
             try
             {
-                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-                if (car.User != userId)
-                    throw new Exception("Car does not exist");
+              /*  if (car.User != userId)
+                    throw new Exception("Car does not exist");*/
 
                 await repairService.DeleteMultipleRepairs(carId);
                 return NoContent();

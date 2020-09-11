@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace CmApp.Contracts.Entities
 {
@@ -19,5 +21,9 @@ namespace CmApp.Contracts.Entities
         public string Role { get; set; } = "user";
         public string Currency { get; set; } = "EUR";
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public ICollection<CarEntity> Cars { get; set; }
+        public ICollection<PasswordResetEntity> PasswordResets { get; set; }
+
     }
 }

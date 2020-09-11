@@ -30,7 +30,7 @@ namespace CmApp.BusinessLogic.Services
                 string.IsNullOrEmpty(shipping.TransferFeeCurrency))
                 throw new BusinessException("Shipping data currencies not set");
 
-            shipping.Car = carId;
+           // shipping.Car = carId;
 
             shipping = await ConvertShippingPrices(shipping);
 
@@ -55,7 +55,7 @@ namespace CmApp.BusinessLogic.Services
                 string.IsNullOrEmpty(shipping.TransferFeeCurrency))
                 throw new BusinessException("Shipping data currencies not set");
 
-            shipping.Car = carId;
+           // shipping.Car = carId;
 
             shipping = await ConvertShippingPrices(shipping);
 
