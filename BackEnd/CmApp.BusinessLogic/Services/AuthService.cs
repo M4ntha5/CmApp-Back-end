@@ -27,7 +27,7 @@ namespace CmApp.BusinessLogic.Services
             EmailRepository = emailRepository;
         }
 
-        public async Task<bool> Register(User user)
+        public async Task<bool> Register(Contracts.Domains.User user)
         {
             user.Email = user.Email.ToLower();
             var response = await UserRepository.GetUserByEmail(user.Email);
@@ -40,7 +40,7 @@ namespace CmApp.BusinessLogic.Services
             return insertedUser == null ? false : true;
         }
 
-        public async Task<JwtSecurityToken> Login(User userData)
+        public async Task<JwtSecurityToken> Login(Contracts.Domains.User userData)
         {
             userData.Email = userData.Email.ToLower();
             var user = await UserRepository.GetUserByEmail(userData.Email);
@@ -76,7 +76,7 @@ namespace CmApp.BusinessLogic.Services
             return null;
         }
 
-        public JwtSecurityToken GenerateDefaultToken(UserEntity user)
+        public JwtSecurityToken GenerateDefaultToken(Contracts.Entities.User user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Settings.UserKey));
@@ -89,7 +89,7 @@ namespace CmApp.BusinessLogic.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Role, user.Role),
-                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
             };
@@ -106,7 +106,7 @@ namespace CmApp.BusinessLogic.Services
             return token;
         }
 
-        public JwtSecurityToken GenerateAdminToken(UserEntity user)
+        public JwtSecurityToken GenerateAdminToken(Contracts.Entities.User user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Settings.AdminKey));
@@ -119,7 +119,7 @@ namespace CmApp.BusinessLogic.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Role, user.Role),
-                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
             };
@@ -143,7 +143,7 @@ namespace CmApp.BusinessLogic.Services
             if (user.EmailConfirmed)
                 throw new BusinessException("Email already confirmed!");
 
-            await UserRepository.ChangeEmailConfirmationFlag(user.ID);
+            await UserRepository.ChangeEmailConfirmationFlag(user.Id);
             await EmailRepository.SendWelcomeEmail(user.Email);
         }
         public async Task CreatePasswordResetToken(string email)
@@ -162,7 +162,7 @@ namespace CmApp.BusinessLogic.Services
               .Select(s => s[random.Next(s.Length)]).ToArray());
 
             //reset token will be valid for 2 hours
-            var entity = new PasswordResetEntity
+            var entity = new PasswordReset
             {
                 Token = token,
                 ValidUntil = DateTime.UtcNow.AddHours(2),
@@ -173,7 +173,7 @@ namespace CmApp.BusinessLogic.Services
             //await EmailRepository.SendPasswordResetEmail(email, token);
         }
 
-        public async Task ResetPassword(User user)
+        public async Task ResetPassword(Contracts.Domains.User user)
         {
             if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match");
@@ -192,11 +192,11 @@ namespace CmApp.BusinessLogic.Services
             if (resetDetails.Token != user.Token)
                 throw new BusinessException("Error changing your password. Please try again");
 
-            await UserRepository.ChangePassword(resetDetails.User.ID, user.Password);
-            await UserRepository.DeleteResetToken(resetDetails.ID);
+            await UserRepository.ChangePassword(resetDetails.User.Id, user.Password);
+            await UserRepository.DeleteResetToken(resetDetails.Id);
         }
 
-        public async Task ResetPassword(int userId, User user)
+        public async Task ResetPassword(int userId, Contracts.Domains.User user)
         {
             if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match");
@@ -211,7 +211,7 @@ namespace CmApp.BusinessLogic.Services
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
-                BornDate = user.BornDate,
+                BornDate = user.BornDate.Value,
                 Country = user.Country,
                 Currency = user.Currency,
                 LastName = user.LastName,
@@ -222,14 +222,14 @@ namespace CmApp.BusinessLogic.Services
 
         public async Task UpdateUserDetails(int userId, UserDetails user)
         {
-            var entity = new UserEntity
+            var entity = new Contracts.Entities.User
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 BornDate = user.BornDate,
                 Country = user.Country,
                 Sex = user.Sex,
-                ID = userId
+                Id = userId
             };
             await UserRepository.UpdateUser(entity);
 

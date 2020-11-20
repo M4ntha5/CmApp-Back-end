@@ -1,5 +1,5 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Interfaces.Repositories;
+﻿using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using image4ioDotNetSDK;
 using image4ioDotNetSDK.Models;
@@ -90,11 +90,11 @@ namespace CmApp.BusinessLogic.Repositories
              return urls;
          }*/
 
-        private readonly DatabaseContext _databaseContext;
+        private readonly Context _context;
 
-        public FileRepository(DatabaseContext databaseContext)
+        public FileRepository(Context context)
         {
-            _databaseContext = databaseContext;
+            _context = context;
         }
 
         /// <summary>

@@ -21,7 +21,10 @@
       "launchBrowser": true,
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConnectionStrings__CmApp_Dev": "Data Source=(local);Initial Catalog=CmApp_Dev;Integrated Security=True",
+        "ConnectionStrings_CmApp": "Data Source=(local);Initial Catalog=CmApp;Integrated Security=True"
+        //"ConnectionStrings_CmApp": "Server=(local);Database=CmApp;Trusted_Connection=True;MultipleActiveResultSets=True;"
       }
     }
   }

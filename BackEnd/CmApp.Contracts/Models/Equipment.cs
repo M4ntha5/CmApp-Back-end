@@ -4,10 +4,12 @@ using System.Text;
 
 namespace CmApp.Contracts.Entities
 {
-    public class EquipmentEntity
+    public class Equipment
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Code { get; set; }
-        public string Name { get; set; }       
+        public string Name { get; set; }
+
+        public virtual Car Car { get; set; }
     }
 }

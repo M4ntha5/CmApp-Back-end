@@ -1,7 +1,7 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Domains;
+﻿using CmApp.Contracts.Domains;
 using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using System;
 using System.Collections.Generic;
@@ -54,11 +54,11 @@ namespace CmApp.BusinessLogic.Repositories
              return cars;
          }*/
 
-        private readonly DatabaseContext _databaseContext;
+        private readonly Context _context;
 
-        public AggregateRepository(DatabaseContext databaseContext)
+        public AggregateRepository(Context context)
         {
-            _databaseContext = databaseContext;
+            _context = context;
         }
 
         public Task<List<CarStats>> GetCarStats(DateTime dateFrom, DateTime dateTo, string userEmail)

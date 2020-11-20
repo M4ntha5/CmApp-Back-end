@@ -5,7 +5,7 @@ namespace CmApp.Contracts.Interfaces.Services
 {
     public interface IShippingService
     {
-        Task UpdateShipping(int carId, ShippingEntity shipping);
-        Task<ShippingEntity> InsertShipping(int carId, ShippingEntity shipping);
+        Task UpdateShipping(int carId, Shipping shipping);
+        Task<Shipping> InsertShipping(int carId, Shipping shipping);
     }
 }

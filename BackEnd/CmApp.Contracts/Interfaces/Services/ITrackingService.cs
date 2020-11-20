@@ -6,8 +6,8 @@ namespace CmApp.Contracts.Interfaces.Services
 {
     public interface ITrackingService
     {
-        Task UpdateTracking(int carId, TrackingEntity tracking);
-        Task<TrackingEntity> LookForTrackingData(int carId);
+        Task UpdateTracking(int carId, Tracking tracking);
+        Task<Tracking> LookForTrackingData(int carId);
         Task<List<string>> LookForTrackingImages(int carId);
         Task SaveLastShowImagesStatus(int carId, bool status);
         //bring back if needed

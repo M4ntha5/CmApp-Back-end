@@ -10,6 +10,6 @@ namespace CmApp.Contracts.Domains
         public string Model { get; set; }
         public string Vin { get; set; }
         public string CarImg { get; set; } = "";
-        public SummaryEntity Summary { get; set; } = new SummaryEntity();
+        public Summary Summary { get; set; } = new Summary();
     }
 }

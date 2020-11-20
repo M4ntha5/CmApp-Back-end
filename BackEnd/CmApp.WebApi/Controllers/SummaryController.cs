@@ -56,7 +56,7 @@ namespace CmApp.Controllers
         // POST: /api/cars/{carId}/summary
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Post(int carId, [FromBody] SummaryEntity summary)
+        public async Task<IActionResult> Post(int carId, [FromBody] Summary summary)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace CmApp.Controllers
         // PUT: /api/cars/{carId}/summary/{id}
         [HttpPut]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Put(int carId, [FromBody] SummaryEntity summary)
+        public async Task<IActionResult> Put(int carId, [FromBody] Summary summary)
         {
             try
             {

@@ -75,7 +75,7 @@ namespace CmApp.Controllers
         // POST: api/cars/{carId}/Repairs
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Post(int carId, [FromBody] List<RepairEntity> repairs)
+        public async Task<IActionResult> Post(int carId, [FromBody] List<Repair> repairs)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace CmApp.Controllers
         // PUT: api/cars/{carId}/Repairs/5
         [HttpPut("{repairId}")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Put(int carId, int repairId, [FromBody] RepairEntity repair)
+        public async Task<IActionResult> Put(int carId, int repairId, [FromBody] Repair repair)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace CmApp.Controllers
                 /*if (car.User != userId)
                     throw new Exception("Car does not exist");*/
 
-                repair.Car = carId;
+                //repair.Car = carId;
                 await repairRepository.UpdateRepair(repairId, repair);
                 return NoContent();
             }

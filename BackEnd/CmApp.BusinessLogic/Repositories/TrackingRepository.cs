@@ -1,6 +1,6 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Entities;
+﻿using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using System;
 using System.Collections.Generic;
@@ -102,11 +102,11 @@ namespace CmApp.BusinessLogic.Repositories
              await repo.UpdateOneAsync(trackingId, update, new DatabaseUpdateOneOptions());
          }*/
 
-        private readonly DatabaseContext _databaseContext;
+        private readonly Context _context;
 
-        public TrackingRepository(DatabaseContext databaseContext)
+        public TrackingRepository(Context context)
         {
-            _databaseContext = databaseContext;
+            _context = context;
         }
 
         public Task DeleteCarTracking(int carId)
@@ -119,17 +119,17 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<TrackingEntity> GetTrackingByCar(int carId)
+        public Task<Tracking> GetTrackingByCar(int carId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<TrackingEntity> InsertTracking(TrackingEntity tracking)
+        public Task<Tracking> InsertTracking(Tracking tracking)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateCarTracking(int trackingId, TrackingEntity tracking)
+        public Task UpdateCarTracking(int trackingId, Tracking tracking)
         {
             throw new NotImplementedException();
         }

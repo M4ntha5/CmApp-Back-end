@@ -1,9 +1,9 @@
 using System.Text;
 using CmApp.BusinessLogic.Repositories;
 using CmApp.BusinessLogic.Services;
-using CmApp.Contracts;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -49,11 +49,11 @@ namespace CmApp.WebApi
                     .AddScoped<ISummaryService, SummaryService>()
                     .AddScoped<ITrackingService, TrackingService>()
 
-                    .AddScoped<DatabaseContext>()
+                    .AddScoped<Context>()
 
                     ;
 
-            services.AddDbContext<DatabaseContext>(options =>
+            services.AddDbContext<Context>(options =>
                     options.UseSqlServer("Data Source=(local);Initial Catalog=CmApp;Integrated Security=True"));
 
             //Settings.ProjectId = Guid.Parse(Environment.GetEnvironmentVariable("ProjectId"));

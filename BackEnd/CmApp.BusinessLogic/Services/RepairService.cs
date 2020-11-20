@@ -20,7 +20,27 @@ namespace CmApp.BusinessLogic.Services
             SummaryRepository = summaryRepository;
         }
 
-        public async Task<List<RepairEntity>> GetAllSelectedCarRepairs(int carId)
+        public Task DeleteMultipleRepairs(int carId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Repair>> GetAllSelectedCarRepairs(int carId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Repair> GetSelectedCarRepairById(int carId, int repairid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task InsertCarRepairs(int carId, List<Repair> repairs)
+        {
+            throw new NotImplementedException();
+        }
+
+        /*public async Task<List<Repair>> GetAllSelectedCarRepairs(int carId)
         {
             var repairs = await RepairRepository.GetAllRepairsByCarId(carId);
 
@@ -29,7 +49,7 @@ namespace CmApp.BusinessLogic.Services
 
             return repairs;
         }
-        public async Task InsertCarRepairs(int carId, List<RepairEntity> repairs)
+        public async Task InsertCarRepairs(int carId, List<Repair> repairs)
         {
             repairs.ForEach(x => { x.Car = carId; Math.Round(x.Price, 2); Math.Round(x.Total, 2); });
             var repairsTotal = repairs.Sum(x => x.Price);
@@ -40,7 +60,7 @@ namespace CmApp.BusinessLogic.Services
             var total = Math.Round(summary.Total + repairsTotal, 2);
             await SummaryRepository.InsertTotalByCar(summary.ID, total);
         }
-        public async Task<RepairEntity> GetSelectedCarRepairById(int carId, int repairid)
+        public async Task<Repair> GetSelectedCarRepairById(int carId, int repairid)
         {
             var response = await RepairRepository.GetCarRepairById(carId, repairid);
             if (response == null)
@@ -55,6 +75,6 @@ namespace CmApp.BusinessLogic.Services
             var repairsTotal = repairs.Sum(x => x.Price);
             await SummaryRepository.InsertTotalByCar(summary.ID, summary.Total - repairsTotal);
             await RepairRepository.DeleteMultipleRepairs(carId);
-        }
+        }*/
     }
 }

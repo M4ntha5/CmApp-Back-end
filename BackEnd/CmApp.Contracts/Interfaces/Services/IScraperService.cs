@@ -8,8 +8,8 @@ namespace CmApp.Contracts.Interfaces.Services
     {
         Dictionary<string, string> GetVehicleInfo(string vin, string make);
         Dictionary<string, string> GetVehicleEquipment(string vin, string make);
-        Task<TrackingEntity> TrackingScraper(CarEntity car, int trackingId);
-        Task<List<string>> GetTrackingImagesUrls(CarEntity car);
+        Task<Tracking> TrackingScraper(Car car, int trackingId);
+        Task<List<string>> GetTrackingImagesUrls(Car car);
         //bring back if needed
         //Task DownloadAllTrackingImages(TrackingEntity tracking, List<string> imageUrls);
     }

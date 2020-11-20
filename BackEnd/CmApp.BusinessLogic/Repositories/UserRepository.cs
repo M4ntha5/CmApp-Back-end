@@ -1,7 +1,7 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Domains;
+﻿using CmApp.Contracts.Domains;
 using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -192,11 +192,11 @@ namespace CmApp.BusinessLogic.Repositories
              return resetDetails;
          }*/
 
-        private readonly DatabaseContext _databaseContext;
+        private readonly Context _context;
 
-        public UserRepository(DatabaseContext databaseContext)
+        public UserRepository(Context context)
         {
-            _databaseContext = databaseContext;
+            _context = context;
         }
 
         public Task BlockUser(int userId)
@@ -229,32 +229,32 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<UserEntity>> GetAllUsers()
+        public Task<List<Contracts.Entities.User>> GetAllUsers()
         {
             throw new NotImplementedException();
         }
 
-        public Task<PasswordResetEntity> GetPasswordResetByToken(string token)
+        public Task<PasswordReset> GetPasswordResetByToken(string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UserEntity> GetUserByEmail(string email)
+        public Task<Contracts.Entities.User> GetUserByEmail(string email)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UserEntity> GetUserById(int carId)
+        public Task<Contracts.Entities.User> GetUserById(int carId)
         {
             throw new NotImplementedException();
         }
 
-        public Task InsertPasswordReset(PasswordResetEntity resetEntity)
+        public Task InsertPasswordReset(PasswordReset resetEntity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UserEntity> InsertUser(User user)
+        public Task<Contracts.Entities.User> InsertUser(Contracts.Domains.User user)
         {
             throw new NotImplementedException();
         }
@@ -264,7 +264,7 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task UpdateUser(UserEntity user)
+        public Task UpdateUser(Contracts.Entities.User user)
         {
             throw new NotImplementedException();
         }

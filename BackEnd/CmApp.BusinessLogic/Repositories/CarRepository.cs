@@ -1,7 +1,7 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Domains;
+﻿using CmApp.Contracts.Domains;
 using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using System;
 using System.Collections.Generic;
@@ -177,11 +177,11 @@ namespace CmApp.BusinessLogic.Repositories
               await repo.DeleteOneAsync(makeId);
           }*/
 
-        private readonly DatabaseContext _databaseContext;
+        private readonly Context _context;
 
-        public CarRepository(DatabaseContext databaseContext)
+        public CarRepository(Context context)
         {
-            _databaseContext = databaseContext;
+            _context = context;
         }
 
         public Task DeleteAllCarImages(int recordId)
@@ -194,7 +194,7 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<CarEntity>> GetAllCars()
+        public Task<List<Car>> GetAllCars()
         {
             throw new NotImplementedException();
         }
@@ -204,17 +204,17 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<CarEntity> GetCarById(int carId)
+        public Task<Car> GetCarById(int carId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CarEntity> InsertCar(CarEntity car)
+        public Task<Car> InsertCar(Car car)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateCar(int carId, CarEntity car)
+        public Task UpdateCar(int carId, Car car)
         {
             throw new NotImplementedException();
         }

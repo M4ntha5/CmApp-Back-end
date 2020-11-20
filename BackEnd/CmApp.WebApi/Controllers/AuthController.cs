@@ -34,8 +34,9 @@ namespace CmApp.Controllers
         {
             try
             {
-                var jwt = await authService.Login(user);
-                return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
+                // var jwt = await authService.Login(user);
+                // return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -107,7 +108,7 @@ namespace CmApp.Controllers
         {
             var user = await userRepository.GetUserByEmail(email);
             if (!user.EmailConfirmed)
-                await emailRepository.SendEmailConfirmationEmail(user.Email, user.ID);
+                await emailRepository.SendEmailConfirmationEmail(user.Email, user.Id);
             else
                 throw new BusinessException("Email already confirmed");
 

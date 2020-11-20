@@ -116,7 +116,7 @@ namespace CmApp.Controllers
         // PUT: api/cars/{carId}/tracking/
         [HttpPut]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Put(int carId, [FromBody] TrackingEntity tracking)
+        public async Task<IActionResult> Put(int carId, [FromBody] Tracking tracking)
         {
             try
             {
@@ -159,7 +159,7 @@ namespace CmApp.Controllers
 
         [HttpPut("images/status")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> SaveLastShowImagesStatus(int carId, [FromBody] User data)
+        public async Task<IActionResult> SaveLastShowImagesStatus(int carId, [FromBody] Contracts.Domains.User data)
         {
             try
             {

@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace CmApp.Contracts.Entities
 {
-    public class UserEntity
+    public class User
     {
-        public int ID { get; set; }
-        public string FirstName { get; set; } = "";
-        public string LastName { get; set; } = "";
-        public string Sex { get; set; } = "";
-        public string Country { get; set; } = "";
-        public DateTime BornDate { get; set; } = new DateTime(1900, 01, 01, 0, 0, 0, DateTimeKind.Utc);
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Sex { get; set; }
+        public string Country { get; set; }
+        public DateTime? BornDate { get; set; }
         public string Email { get; set; }
         public bool EmailConfirmed { get; set; } = false;
         public string Password { get; set; }
@@ -22,8 +22,8 @@ namespace CmApp.Contracts.Entities
         public string Currency { get; set; } = "EUR";
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public ICollection<CarEntity> Cars { get; set; }
-        public ICollection<PasswordResetEntity> PasswordResets { get; set; }
+        public ICollection<Car> Cars { get; set; }
+        public ICollection<PasswordReset> PasswordResets { get; set; }
 
     }
 }

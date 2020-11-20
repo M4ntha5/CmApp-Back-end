@@ -6,11 +6,11 @@ namespace CmApp.Contracts.Interfaces.Repositories
 {
     public interface IRepairRepository
     {
-        Task UpdateRepair(int repairId, RepairEntity repair);
-        Task<RepairEntity> GetCarRepairById(int carId, int repairId);
-        Task<RepairEntity> InsertRepair(RepairEntity repair);
-        Task<List<RepairEntity>> GetAllRepairsByCarId(int carId);
+        Task UpdateRepair(int repairId, Repair repair);
+        Task<Repair> GetCarRepairById(int carId, int repairId);
+        Task<Repair> InsertRepair(Repair repair);
+        Task<List<Repair>> GetAllRepairsByCarId(int carId);
         Task DeleteMultipleRepairs(int carId);
-        Task InsertMultipleRepairs(List<RepairEntity> repairs);
+        Task InsertMultipleRepairs(List<Repair> repairs);
     }
 }

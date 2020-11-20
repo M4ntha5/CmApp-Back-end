@@ -2,11 +2,12 @@
 
 namespace CmApp.Contracts.Entities
 {
-    public class PasswordResetEntity
+    public class PasswordReset
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Token { get; set; }
         public DateTime ValidUntil { get; set; }
-        public UserEntity User { get; set; }
+
+        public virtual User User { get; set; }
     }
 }

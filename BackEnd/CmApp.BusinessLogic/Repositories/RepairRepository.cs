@@ -1,6 +1,6 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Entities;
+﻿using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using System;
 using System.Collections.Generic;
@@ -87,11 +87,11 @@ namespace CmApp.BusinessLogic.Repositories
               );
           }*/
 
-        private readonly DatabaseContext _databaseContext;
+        private readonly Context _context;
 
-        public RepairRepository(DatabaseContext databaseContext)
+        public RepairRepository(Context context)
         {
-            _databaseContext = databaseContext;
+            _context = context;
         }
 
         public Task DeleteMultipleRepairs(int carId)
@@ -99,27 +99,27 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<RepairEntity>> GetAllRepairsByCarId(int carId)
+        public Task<List<Repair>> GetAllRepairsByCarId(int carId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RepairEntity> GetCarRepairById(int carId, int repairId)
+        public Task<Repair> GetCarRepairById(int carId, int repairId)
         {
             throw new NotImplementedException();
         }
 
-        public Task InsertMultipleRepairs(List<RepairEntity> repairs)
+        public Task InsertMultipleRepairs(List<Repair> repairs)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RepairEntity> InsertRepair(RepairEntity repair)
+        public Task<Repair> InsertRepair(Repair repair)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateRepair(int repairId, RepairEntity repair)
+        public Task UpdateRepair(int repairId, Repair repair)
         {
             throw new NotImplementedException();
         }

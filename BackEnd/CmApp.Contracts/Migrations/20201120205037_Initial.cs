@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CmApp.Contracts.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,26 +11,26 @@ namespace CmApp.Contracts.Migrations
                 name: "Makes",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Makes", x => x.ID);
+                    table.PrimaryKey("PK_Makes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     Sex = table.Column<string>(nullable: true),
                     Country = table.Column<string>(nullable: true),
-                    BornDate = table.Column<DateTime>(nullable: false),
+                    BornDate = table.Column<DateTime>(nullable: true),
                     Email = table.Column<string>(nullable: true),
                     EmailConfirmed = table.Column<bool>(nullable: false),
                     Password = table.Column<string>(nullable: true),
@@ -43,47 +43,26 @@ namespace CmApp.Contracts.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.ID);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Models",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    CarMakesEntityID = table.Column<int>(nullable: true)
+                    MakeId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Models", x => x.ID);
+                    table.PrimaryKey("PK_Models", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Models_Makes_CarMakesEntityID",
-                        column: x => x.CarMakesEntityID,
+                        name: "FK_Models_Makes_MakeId",
+                        column: x => x.MakeId,
                         principalTable: "Makes",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PasswordResets",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Token = table.Column<string>(nullable: true),
-                    ValidUntil = table.Column<DateTime>(nullable: false),
-                    UserID = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PasswordResets", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_PasswordResets_Users_UserID",
-                        column: x => x.UserID,
-                        principalTable: "Users",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -91,45 +70,60 @@ namespace CmApp.Contracts.Migrations
                 name: "Cars",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Vin = table.Column<string>(nullable: true),
-                    DateCreated = table.Column<DateTime>(nullable: false),
-                    ManufactureDate = table.Column<DateTime>(nullable: false),
+                    Vin = table.Column<string>(nullable: false),
+                    ManufactureDate = table.Column<DateTime>(nullable: true),
                     Series = table.Column<string>(nullable: true),
                     BodyType = table.Column<string>(nullable: true),
                     Steering = table.Column<string>(nullable: true),
+                    FuelType = table.Column<string>(nullable: true),
                     Engine = table.Column<string>(nullable: true),
-                    Displacement = table.Column<double>(nullable: false),
+                    Displacement = table.Column<decimal>(nullable: true),
                     Power = table.Column<string>(nullable: true),
                     Drive = table.Column<string>(nullable: true),
                     Transmission = table.Column<string>(nullable: true),
                     Color = table.Column<string>(nullable: true),
                     Interior = table.Column<string>(nullable: true),
-                    MakeID = table.Column<int>(nullable: true),
-                    ModelID = table.Column<int>(nullable: true),
-                    UserEntityID = table.Column<int>(nullable: true)
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    MakeId = table.Column<int>(nullable: true),
+                    UserId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cars", x => x.ID);
+                    table.PrimaryKey("PK_Cars", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cars_Makes_MakeID",
-                        column: x => x.MakeID,
+                        name: "FK_Cars_Makes_MakeId",
+                        column: x => x.MakeId,
                         principalTable: "Makes",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Cars_Models_ModelID",
-                        column: x => x.ModelID,
-                        principalTable: "Models",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Cars_Users_UserEntityID",
-                        column: x => x.UserEntityID,
+                        name: "FK_Cars_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PasswordResets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(nullable: true),
+                    ValidUntil = table.Column<DateTime>(nullable: false),
+                    UserId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordResets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PasswordResets_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -137,20 +131,20 @@ namespace CmApp.Contracts.Migrations
                 name: "Equipment",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Code = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    CarEntityID = table.Column<int>(nullable: true)
+                    CarId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Equipment", x => x.ID);
+                    table.PrimaryKey("PK_Equipment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Equipment_Cars_CarEntityID",
-                        column: x => x.CarEntityID,
+                        name: "FK_Equipment_Cars_CarId",
+                        column: x => x.CarId,
                         principalTable: "Cars",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -158,22 +152,20 @@ namespace CmApp.Contracts.Migrations
                 name: "Repairs",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    Price = table.Column<double>(nullable: false),
-                    Car = table.Column<int>(nullable: false),
-                    Total = table.Column<double>(nullable: false),
-                    CarEntityID = table.Column<int>(nullable: true)
+                    Price = table.Column<decimal>(nullable: false),
+                    CarId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Repairs", x => x.ID);
+                    table.PrimaryKey("PK_Repairs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Repairs_Cars_CarEntityID",
-                        column: x => x.CarEntityID,
+                        name: "FK_Repairs_Cars_CarId",
+                        column: x => x.CarId,
                         principalTable: "Cars",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -181,11 +173,11 @@ namespace CmApp.Contracts.Migrations
                 name: "Shippings",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false),
-                    Customs = table.Column<double>(nullable: false),
-                    AuctionFee = table.Column<double>(nullable: false),
-                    TransferFee = table.Column<double>(nullable: false),
-                    TransportationFee = table.Column<double>(nullable: false),
+                    Id = table.Column<int>(nullable: false),
+                    Customs = table.Column<decimal>(nullable: true),
+                    AuctionFee = table.Column<decimal>(nullable: true),
+                    TransferFee = table.Column<decimal>(nullable: true),
+                    TransportationFee = table.Column<decimal>(nullable: true),
                     BaseCurrency = table.Column<string>(nullable: true),
                     CustomsCurrency = table.Column<string>(nullable: true),
                     AuctionFeeCurrency = table.Column<string>(nullable: true),
@@ -194,12 +186,12 @@ namespace CmApp.Contracts.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Shippings", x => x.ID);
+                    table.PrimaryKey("PK_Shippings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Shippings_Cars_ID",
-                        column: x => x.ID,
+                        name: "FK_Shippings_Cars_Id",
+                        column: x => x.Id,
                         principalTable: "Cars",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -207,26 +199,21 @@ namespace CmApp.Contracts.Migrations
                 name: "Summaries",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false),
-                    BoughtPrice = table.Column<double>(nullable: false),
-                    SoldPrice = table.Column<double>(nullable: false),
-                    SoldDate = table.Column<DateTime>(nullable: false),
+                    Id = table.Column<int>(nullable: false),
+                    BoughtPrice = table.Column<decimal>(nullable: false),
+                    SoldPrice = table.Column<decimal>(nullable: true),
+                    SoldDate = table.Column<DateTime>(nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    SoldWithin = table.Column<string>(nullable: true),
-                    Sold = table.Column<bool>(nullable: false),
-                    Total = table.Column<double>(nullable: false),
-                    BaseCurrency = table.Column<string>(nullable: true),
-                    SelectedCurrency = table.Column<string>(nullable: true),
-                    Profit = table.Column<double>(nullable: false)
+                    IsSold = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Summaries", x => x.ID);
+                    table.PrimaryKey("PK_Summaries", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Summaries_Cars_ID",
-                        column: x => x.ID,
+                        name: "FK_Summaries_Cars_Id",
+                        column: x => x.Id,
                         principalTable: "Cars",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -234,24 +221,22 @@ namespace CmApp.Contracts.Migrations
                 name: "Trackings",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false),
                     Vin = table.Column<string>(nullable: true),
-                    Year = table.Column<int>(nullable: false),
+                    Year = table.Column<int>(nullable: true),
                     Make = table.Column<string>(nullable: true),
                     Model = table.Column<string>(nullable: true),
-                    ShowImages = table.Column<bool>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     State = table.Column<string>(nullable: true),
                     Status = table.Column<string>(nullable: true),
-                    DateReceived = table.Column<DateTime>(nullable: false),
-                    DateOrdered = table.Column<DateTime>(nullable: false),
+                    DateReceived = table.Column<DateTime>(nullable: true),
+                    DateOrdered = table.Column<DateTime>(nullable: true),
                     Branch = table.Column<string>(nullable: true),
                     ShippingLine = table.Column<string>(nullable: true),
                     ContainerNumber = table.Column<string>(nullable: true),
                     BookingNumber = table.Column<string>(nullable: true),
-                    Url = table.Column<string>(nullable: true),
                     FinalPort = table.Column<string>(nullable: true),
-                    DatePickedUp = table.Column<DateTime>(nullable: false),
+                    DatePickedUp = table.Column<DateTime>(nullable: true),
                     Color = table.Column<string>(nullable: true),
                     Damage = table.Column<string>(nullable: true),
                     Condition = table.Column<string>(nullable: true),
@@ -263,12 +248,12 @@ namespace CmApp.Contracts.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Trackings", x => x.ID);
+                    table.PrimaryKey("PK_Trackings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Trackings_Cars_ID",
-                        column: x => x.ID,
+                        name: "FK_Trackings_Cars_Id",
+                        column: x => x.Id,
                         principalTable: "Cars",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -276,79 +261,77 @@ namespace CmApp.Contracts.Migrations
                 name: "Urls",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Url = table.Column<string>(nullable: true),
-                    CarEntityID = table.Column<int>(nullable: true),
-                    TrackingEntityID = table.Column<int>(nullable: true)
+                    CarId = table.Column<int>(nullable: true),
+                    TrackingId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Urls", x => x.ID);
+                    table.PrimaryKey("PK_Urls", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Urls_Cars_CarEntityID",
-                        column: x => x.CarEntityID,
+                        name: "FK_Urls_Cars_CarId",
+                        column: x => x.CarId,
                         principalTable: "Cars",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Urls_Trackings_TrackingEntityID",
-                        column: x => x.TrackingEntityID,
+                        name: "FK_Urls_Trackings_TrackingId",
+                        column: x => x.TrackingId,
                         principalTable: "Trackings",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cars_MakeID",
+                name: "IX_Cars_MakeId",
                 table: "Cars",
-                column: "MakeID");
+                column: "MakeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cars_ModelID",
+                name: "IX_Cars_UserId",
                 table: "Cars",
-                column: "ModelID");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cars_UserEntityID",
-                table: "Cars",
-                column: "UserEntityID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Equipment_CarEntityID",
+                name: "IX_Equipment_CarId",
                 table: "Equipment",
-                column: "CarEntityID");
+                column: "CarId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Models_CarMakesEntityID",
+                name: "IX_Models_MakeId",
                 table: "Models",
-                column: "CarMakesEntityID");
+                column: "MakeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PasswordResets_UserID",
+                name: "IX_PasswordResets_UserId",
                 table: "PasswordResets",
-                column: "UserID");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Repairs_CarEntityID",
+                name: "IX_Repairs_CarId",
                 table: "Repairs",
-                column: "CarEntityID");
+                column: "CarId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Urls_CarEntityID",
+                name: "IX_Urls_CarId",
                 table: "Urls",
-                column: "CarEntityID");
+                column: "CarId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Urls_TrackingEntityID",
+                name: "IX_Urls_TrackingId",
                 table: "Urls",
-                column: "TrackingEntityID");
+                column: "TrackingId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "Equipment");
+
+            migrationBuilder.DropTable(
+                name: "Models");
 
             migrationBuilder.DropTable(
                 name: "PasswordResets");
@@ -372,13 +355,10 @@ namespace CmApp.Contracts.Migrations
                 name: "Cars");
 
             migrationBuilder.DropTable(
-                name: "Models");
+                name: "Makes");
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Makes");
         }
     }
 }

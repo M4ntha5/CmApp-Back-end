@@ -6,10 +6,10 @@ namespace CmApp.Contracts.Interfaces.Repositories
 {
     public interface ICarMakesRepository
     {
-        Task<List<CarMakesEntity>> GetAllMakes();
-        Task<CarMakesEntity> InsertCarMake(CarMakesEntity make);
-        Task UpdateCarMake(CarMakesEntity make);
+        Task<List<Make>> GetAllMakes();
+        Task<Make> InsertCarMake(Make make);
+        Task UpdateCarMake(Make make);
         Task DeleteCarMake(int makeId);
-        Task<CarMakesEntity> GetMakeModels(string make);
+        Task<Make> GetMakeModels(string make);
     }
 }

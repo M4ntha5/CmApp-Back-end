@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CmApp.Contracts.Entities
 {
-    public class UrlEntity
+    public class ImageUrl
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Url { get; set; }
     }
 }

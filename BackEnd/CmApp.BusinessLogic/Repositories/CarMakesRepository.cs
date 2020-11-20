@@ -1,6 +1,6 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Entities;
+﻿using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using System;
 using System.Collections.Generic;
@@ -86,11 +86,11 @@ namespace CmApp.BusinessLogic.Repositories
              return make;
          }*/
 
-        private readonly DatabaseContext _databaseContext;
+        private readonly Context _context;
 
-        public CarMakesRepository(DatabaseContext databaseContext)
+        public CarMakesRepository(Context context)
         {
-            _databaseContext = databaseContext;
+            _context = context;
         }
 
         public Task DeleteCarMake(int makeId)
@@ -98,22 +98,22 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<CarMakesEntity>> GetAllMakes()
+        public Task<List<Make>> GetAllMakes()
         {
             throw new NotImplementedException();
         }
 
-        public Task<CarMakesEntity> GetMakeModels(string make)
+        public Task<Make> GetMakeModels(string make)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CarMakesEntity> InsertCarMake(CarMakesEntity make)
+        public Task<Make> InsertCarMake(Make make)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateCarMake(CarMakesEntity make)
+        public Task UpdateCarMake(Make make)
         {
             throw new NotImplementedException();
         }

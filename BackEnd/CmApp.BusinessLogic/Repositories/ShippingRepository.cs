@@ -1,6 +1,6 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Entities;
+﻿using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using System;
 using System.Threading.Tasks;
@@ -58,11 +58,11 @@ namespace CmApp.BusinessLogic.Repositories
               return response;
           }*/
 
-        private readonly DatabaseContext _databaseContext;
+        private readonly Context _context;
 
-        public ShippingRepository(DatabaseContext databaseContext)
+        public ShippingRepository(Context context)
         {
-            _databaseContext = databaseContext;
+            _context = context;
         }
 
         public Task DeleteCarShipping(int carId)
@@ -70,17 +70,17 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<ShippingEntity> GetShippingByCar(int carId)
+        public Task<Shipping> GetShippingByCar(int carId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ShippingEntity> InsertShipping(ShippingEntity shipping)
+        public Task<Shipping> InsertShipping(Shipping shipping)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateCarShipping(int shippingId, ShippingEntity shipping)
+        public Task UpdateCarShipping(int shippingId, Shipping shipping)
         {
             throw new NotImplementedException();
         }

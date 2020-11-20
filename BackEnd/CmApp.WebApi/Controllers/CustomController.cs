@@ -202,7 +202,7 @@ namespace CmApp.Controllers
         [HttpPost]
         [Route("/api/makes")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> InsertMake([FromBody] CarMakesEntity carMake)
+        public async Task<IActionResult> InsertMake([FromBody] Make carMake)
         {
             try
             {
@@ -217,11 +217,11 @@ namespace CmApp.Controllers
         [HttpPut]
         [Route("/api/makes/{makeId}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateMake(int makeId, [FromBody] CarMakesEntity carMakes)
+        public async Task<IActionResult> UpdateMake(int makeId, [FromBody] Make carMakes)
         {
             try
             {
-                carMakes.ID = makeId;
+                carMakes.Id = makeId;
                 await carMakesRepository.UpdateCarMake(carMakes);
                 return NoContent();
             }

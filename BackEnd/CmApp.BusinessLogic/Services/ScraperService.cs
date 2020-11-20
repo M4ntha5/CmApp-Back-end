@@ -160,7 +160,7 @@ namespace CmApp.BusinessLogic.Services
             }
         }
 
-        public async Task<TrackingEntity> TrackingScraper(CarEntity car, int trackingId)
+        public async Task<Tracking> TrackingScraper(Car car, int trackingId)
         {
             try
             {
@@ -191,7 +191,7 @@ namespace CmApp.BusinessLogic.Services
                 var url = trackingUrl.Split("\"")[1];
 
                 //insert tracking info here          
-                var trackingEntity = new TrackingEntity()
+                var trackingEntity = new Tracking()
                 {
                     Vin = trs[0].ChildNodes[3].InnerText,
                     Year = int.Parse(trs[1].ChildNodes[3].InnerText),
@@ -207,7 +207,7 @@ namespace CmApp.BusinessLogic.Services
 
                     BookingNumber = trs[11].ChildNodes[3].InnerText,
                     ContainerNumber = trs[12].ChildNodes[3].InnerText,
-                    Url = url,
+                    //Url = url,
 
                     FinalPort = trs[14].ChildNodes[3].InnerText,
                     DatePickedUp = DateTime.Parse(trs[15].ChildNodes[3].InnerText),
@@ -224,7 +224,7 @@ namespace CmApp.BusinessLogic.Services
                 };
 
                 await TrackingRepo.UpdateCarTracking(trackingId, trackingEntity);
-                var tracking = await TrackingRepo.GetTrackingByCar(car.ID);
+                var tracking = await TrackingRepo.GetTrackingByCar(car.Id);
                 return tracking;
             }
             catch (Exception ex)
@@ -233,7 +233,7 @@ namespace CmApp.BusinessLogic.Services
             }
         }
 
-        public async Task<List<string>> GetTrackingImagesUrls(CarEntity car)
+        public async Task<List<string>> GetTrackingImagesUrls(Car car)
         {
             try
             {
@@ -271,6 +271,7 @@ namespace CmApp.BusinessLogic.Services
                 throw new BusinessException(ex.Message);
             }
         }
+        
         //bring back if needed
         /*
         public async Task DownloadAllTrackingImages(TrackingEntity tracking, List<string> imageUrls)

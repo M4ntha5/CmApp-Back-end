@@ -1,6 +1,6 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Entities;
+﻿using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using System;
 using System.Threading.Tasks;
@@ -65,11 +65,11 @@ namespace CmApp.BusinessLogic.Repositories
               );
           }*/
 
-        private readonly DatabaseContext _databaseContext;
+        private readonly Context _context;
 
-        public SummaryRepository(DatabaseContext databaseContext)
+        public SummaryRepository(Context context)
         {
-            _databaseContext = databaseContext;
+            _context = context;
         }
 
         public Task DeleteCarSummary(int carId)
@@ -77,12 +77,12 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<SummaryEntity> GetSummaryByCarId(int carId)
+        public Task<Summary> GetSummaryByCarId(int carId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<SummaryEntity> InsertSummary(SummaryEntity summary)
+        public Task<Summary> InsertSummary(Summary summary)
         {
             throw new NotImplementedException();
         }
@@ -92,7 +92,7 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task UpdateCarSoldSummary(SummaryEntity summary)
+        public Task UpdateCarSoldSummary(Summary summary)
         {
             throw new NotImplementedException();
         }

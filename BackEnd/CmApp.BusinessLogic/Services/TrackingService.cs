@@ -21,21 +21,21 @@ namespace CmApp.BusinessLogic.Services
             ScraperService = scraperService;
         }
 
-        public async Task UpdateTracking(int carId, TrackingEntity tracking)
+        public async Task UpdateTracking(int carId, Tracking tracking)
         {
            // tracking.Car = carId;
             var oldTracking = await TrackingRepository.GetTrackingByCar(carId);
-            await TrackingRepository.UpdateCarTracking(oldTracking.ID, tracking);
+            await TrackingRepository.UpdateCarTracking(oldTracking.Id, tracking);
         }
 
-        public async Task<TrackingEntity> LookForTrackingData(int carId)
+        public async Task<Tracking> LookForTrackingData(int carId)
         {
             var car = await CarRepository.GetCarById(carId);
             var tracking = await TrackingRepository.GetTrackingByCar(carId);
             if (tracking == null)
-                tracking = await TrackingRepository.InsertTracking(new TrackingEntity { }); //Car = carId });
+                tracking = await TrackingRepository.InsertTracking(new Tracking { }); //Car = carId });
 
-            var updatedTracking = await ScraperService.TrackingScraper(car, tracking.ID);
+            var updatedTracking = await ScraperService.TrackingScraper(car, tracking.Id);
             return updatedTracking;
         }
         public async Task<List<string>> LookForTrackingImages(int carId)
@@ -47,7 +47,7 @@ namespace CmApp.BusinessLogic.Services
 
             var trackingImages = await ScraperService.GetTrackingImagesUrls(car);
             //inserts atlantic image urls
-            await TrackingRepository.UploadImageToTracking(tracking.ID, trackingImages);
+            await TrackingRepository.UploadImageToTracking(tracking.Id, trackingImages);
             return trackingImages;
         }
 
@@ -57,7 +57,7 @@ namespace CmApp.BusinessLogic.Services
             if (tracking == null)
                 throw new BusinessException("Tracking images for this car not found. Try again later");
 
-            await TrackingRepository.UpdateImageShowStatus(tracking.ID, status);
+            await TrackingRepository.UpdateImageShowStatus(tracking.Id, status);
         }
 
         //bring back if needed
