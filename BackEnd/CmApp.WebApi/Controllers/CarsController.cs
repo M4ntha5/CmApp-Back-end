@@ -59,8 +59,8 @@ namespace CmApp.Controllers
 
                 var car = await carRepository.GetCarById(carId);
 
-               /* if (car.User != userId)
-                    throw new BusinessException("Car does not exist");*/
+                //if (car.User != userId)
+                //    throw new BusinessException("Car does not exist");
 
                 return Ok(car);
             }
@@ -173,5 +173,7 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        
     }
 }

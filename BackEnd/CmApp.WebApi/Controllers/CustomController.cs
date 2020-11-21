@@ -22,10 +22,10 @@ namespace CmApp.Controllers
         private readonly ICarRepository carRepository;
         private readonly IExternalAPIService externalAPI;
         private readonly IFileRepository fileRepository;
-        private readonly ICarMakesRepository carMakesRepository;
+        private readonly IMakeRepository carMakesRepository;
 
         public CustomController(ICarRepository carRepository, IExternalAPIService externalAPI, 
-            IFileRepository fileRepository, ICarMakesRepository carMakesRepository)
+            IFileRepository fileRepository, IMakeRepository carMakesRepository)
         {
             this.carRepository = carRepository;
             this.externalAPI = externalAPI;
@@ -33,7 +33,7 @@ namespace CmApp.Controllers
             this.carMakesRepository = carMakesRepository;
         }
 
-        [HttpGet]
+      /*  [HttpGet]
         [Route("/api/makes")]
         [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> GetAllMakes()
@@ -70,7 +70,7 @@ namespace CmApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }*/
 
         // GET: api/Custom
         [Route("api/user-car-names")]
@@ -199,7 +199,7 @@ namespace CmApp.Controllers
             }
         }
 
-        [HttpPost]
+      /*  [HttpPost]
         [Route("/api/makes")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> InsertMake([FromBody] Make carMake)
@@ -244,7 +244,7 @@ namespace CmApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }*/
 
     }
 }

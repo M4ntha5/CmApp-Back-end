@@ -8,7 +8,6 @@ namespace CmApp.Contracts.Entities
     public class Car
     {
         public int Id { get; set; }
-        [Required]
         public string Vin { get; set; }     
         public DateTime? ManufactureDate { get; set; }
         public string Series { get; set; }

@@ -31,6 +31,9 @@ namespace CmApp.WebApi
         {
             services.AddCors();
 
+            services.AddScoped<IMakeRepository, MakeRepository>();
+
+
             services.AddScoped<ICarRepository, CarRepository>()
                     .AddScoped<IEmailRepository, EmailRepository>()
                     .AddScoped<IFileRepository, FileRepository>()
@@ -53,8 +56,11 @@ namespace CmApp.WebApi
 
                     ;
 
+            /*services.AddDbContext<Context>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("CmApp_Dev")));*/
             services.AddDbContext<Context>(options =>
-                    options.UseSqlServer("Data Source=(local);Initial Catalog=CmApp;Integrated Security=True"));
+                    options.UseSqlServer("Data Source=(local);Initial Catalog=CmApp_Dev;Integrated Security=True"));
+            
 
             //Settings.ProjectId = Guid.Parse(Environment.GetEnvironmentVariable("ProjectId"));
             //Settings.ApiKey = Environment.GetEnvironmentVariable("ApiKey");

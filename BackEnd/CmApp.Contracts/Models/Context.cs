@@ -6,11 +6,9 @@ namespace CmApp.Contracts.Models
 {
     public class Context : DbContext
     {
-        public Context()
-        {
-        }
-
+        public Context(){ }
         public Context(DbContextOptions<Context> options) : base(options) { }
+
 
         public DbSet<Car> Cars { get; set; }
         public DbSet<Make> Makes { get; set; }
@@ -30,11 +28,5 @@ namespace CmApp.Contracts.Models
             modelBuilder.Entity<Car>().HasOne(c => c.Summary).WithOne(s => s.Car).HasForeignKey<Summary>(x => x.Id);
             modelBuilder.Entity<Car>().HasOne(c => c.Tracking).WithOne(s => s.Car).HasForeignKey<Tracking>(x => x.Id);
         }
-
-
-        /*  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-          {
-              optionsBuilder.UseSqlServer("Data Source=(local);Initial Catalog=CmApp;Integrated Security=True");
-          }*/
     }
 }

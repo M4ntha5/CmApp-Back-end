@@ -1,7 +1,9 @@
-﻿using CmApp.Contracts.Entities;
+﻿using CmApp.Contracts.DTO.v2;
+using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Models;
 using CmApp.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CmApp.BusinessLogic.Repositories
 {
-    public class CarMakesRepository : ICarMakesRepository
+    public class MakeRepository : IMakeRepository
     {
         /* private static CodeMashClient Client => new CodeMashClient(Settings.ApiKey, Settings.ProjectId);
          public async Task<List<CarMakesEntity>> GetAllMakes()
@@ -88,11 +90,58 @@ namespace CmApp.BusinessLogic.Repositories
 
         private readonly Context _context;
 
-        public CarMakesRepository(Context context)
+        public MakeRepository(Context context)
         {
             _context = context;
         }
 
+        //v2
+        public Task<List<Make>> GetMakes()
+        {
+            return _context.Makes.ToListAsync();
+        }
+        public Task<Make> GetMake(int makeId)
+        {
+            return _context.Makes.FirstOrDefaultAsync(x => x.Id == makeId);
+        }
+        public Task InsertMake(MakeDTO make)
+        {
+            if (make == null || string.IsNullOrEmpty(make.Name))
+                throw new BusinessException("Make not defined");
+
+            var model = new Make
+            {
+                Name = make.Name
+            };
+
+            _context.Makes.AddAsync(model);
+            return _context.SaveChangesAsync();
+        }
+        public async Task DeleteMake(int makeId)
+        {
+            var make = await _context.Makes.FirstOrDefaultAsync(x => x.Id == makeId);
+            if (make != null)
+            {
+                _context.Remove(make);
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task UpdateMake(int makeId, MakeDTO newMake)
+        {
+            if (newMake == null || string.IsNullOrEmpty(newMake.Name))
+                throw new BusinessException("Make not defined");
+
+            var make = await _context.Makes.FirstOrDefaultAsync(x => x.Id == makeId);
+            if(make != null)
+            {
+                make.Name = newMake.Name;
+            }
+            await _context.SaveChangesAsync();
+        }
+
+
+
+        //v1
         public Task DeleteCarMake(int makeId)
         {
             throw new NotImplementedException();
