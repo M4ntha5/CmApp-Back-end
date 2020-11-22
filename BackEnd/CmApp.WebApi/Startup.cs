@@ -31,7 +31,10 @@ namespace CmApp.WebApi
         {
             services.AddCors();
 
-            services.AddScoped<IMakeRepository, MakeRepository>();
+            services.AddScoped<IMakeRepository, MakeRepository>()
+                .AddScoped<IModelRepository, ModelRepository>()
+                
+                ;
 
 
             services.AddScoped<ICarRepository, CarRepository>()

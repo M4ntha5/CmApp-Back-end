@@ -17,8 +17,8 @@ namespace CmApp.Contracts.Interfaces.Repositories
         //v2
         Task<List<Make>> GetMakes();
         Task<Make> GetMake(int makeId);
-        Task InsertMake(MakeDTO make);
+        Task InsertMake(NameDTO make);
         Task DeleteMake(int makeId);
-        Task UpdateMake(int makeId, MakeDTO newMake);
+        Task UpdateMake(int makeId, NameDTO newMake);
     }
 }

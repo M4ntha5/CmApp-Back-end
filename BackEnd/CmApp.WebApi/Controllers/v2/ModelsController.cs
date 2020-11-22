@@ -3,30 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CmApp.Contracts.DTO.v2;
-using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CmApp.WebApi.Controllers.v2
 {
-    [Route("api/[controller]")]
+    [Route("api/makes/{makeId}/[controller]")]
     [ApiController]
-    public class MakesController : ControllerBase
+    public class ModelsController : ControllerBase
     {
-        private readonly IMakeRepository _makeRepo;
+        private readonly IModelRepository _modelRepo;
 
-        public MakesController(IMakeRepository makeRepo)
+        public ModelsController(IModelRepository modelRepo)
         {
-            _makeRepo = makeRepo;
+            _modelRepo = modelRepo;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int makeId)
         {
             try
             {
-                var makes = await _makeRepo.GetMakes();
+                var makes = await _modelRepo.GetModels(makeId);
                 return Ok(makes);
             }
             catch (Exception ex)
@@ -35,12 +34,12 @@ namespace CmApp.WebApi.Controllers.v2
             }
         }
 
-        [HttpGet("{makeId}")]
-        public async Task<IActionResult> Get(int makeId)
+        [HttpGet("{modelId}")]
+        public async Task<IActionResult> Get(int makeId, int modelId)
         {
             try
             {
-                var make = await _makeRepo.GetMake(makeId);
+                var make = await _modelRepo.GetModel(makeId, modelId);
                 return Ok(make);
             }
             catch (Exception ex)
@@ -49,24 +48,24 @@ namespace CmApp.WebApi.Controllers.v2
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm] NameDTO make)
+        public async Task<IActionResult> Post(int makeId, [FromForm] NameDTO model)
         {
             try
             {
-                await _makeRepo.InsertMake(make);
-                return CreatedAtAction(nameof(Post), make);
+                await _modelRepo.InsertModel(makeId, model);
+                return CreatedAtAction(nameof(Post), model);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("{makeId}")]
-        public async Task<IActionResult> Put(int makeId, [FromForm] NameDTO make)
+        [HttpPut("{modelId}")]
+        public async Task<IActionResult> Put(int modelId, [FromForm] NameDTO make)
         {
             try
             {
-                await _makeRepo.UpdateMake(makeId, make);
+                await _modelRepo.UpdateModel(modelId, make);
                 return NoContent();
             }
             catch (Exception ex)
@@ -74,12 +73,12 @@ namespace CmApp.WebApi.Controllers.v2
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{makeId}")]
-        public async Task<IActionResult> Delete(int makeId)
+        [HttpDelete("{modelId}")]
+        public async Task<IActionResult> Delete(int modelId)
         {
             try
             {
-                await _makeRepo.DeleteMake(makeId);
+                await _modelRepo.DeleteModel(modelId);
                 return NoContent();
             }
             catch (Exception ex)

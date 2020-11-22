@@ -98,16 +98,20 @@ namespace CmApp.BusinessLogic.Repositories
         //v2
         public Task<List<Make>> GetMakes()
         {
-            return _context.Makes.ToListAsync();
+            return _context.Makes.Include(x=>x.Models).ToListAsync();
         }
         public Task<Make> GetMake(int makeId)
         {
-            return _context.Makes.FirstOrDefaultAsync(x => x.Id == makeId);
+            return _context.Makes.Include(x => x.Models).FirstOrDefaultAsync(x => x.Id == makeId);
         }
-        public Task InsertMake(MakeDTO make)
+        public Task InsertMake(NameDTO make)
         {
             if (make == null || string.IsNullOrEmpty(make.Name))
                 throw new BusinessException("Make not defined");
+
+            var isInDb = _context.Makes.Any(x => x.Name == make.Name);
+            if (isInDb)
+                throw new BusinessException("Such make already exists");
 
             var model = new Make
             {
@@ -126,7 +130,7 @@ namespace CmApp.BusinessLogic.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task UpdateMake(int makeId, MakeDTO newMake)
+        public async Task UpdateMake(int makeId, NameDTO newMake)
         {
             if (newMake == null || string.IsNullOrEmpty(newMake.Name))
                 throw new BusinessException("Make not defined");

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CmApp.Contracts.DTO.v2
 {
-    public class MakeDTO
+    public class NameDTO
     {
         public string Name { get; set; }
     }
