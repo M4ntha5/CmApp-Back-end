@@ -1,9 +1,11 @@
-﻿using CmApp.Contracts.Domains;
-using CmApp.Contracts.Entities;
-using CmApp.Contracts.Interfaces.Repositories;
+﻿using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Models;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace CmApp.BusinessLogic.Repositories
@@ -199,74 +201,170 @@ namespace CmApp.BusinessLogic.Repositories
             _context = context;
         }
 
-        public Task BlockUser(int userId)
+        public async Task BlockUser(int userId)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if(user != null)
+            {
+                user.Blocked = true;
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task ChangeEmailConfirmationFlag(int userId)
+        public async Task ChangeEmailConfirmationFlag(int userId)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if(user != null)
+            {
+                user.EmailConfirmed = true;
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task ChangePassword(int userId, string password)
+        public async Task ChangePassword(int userId, string password)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (user == null)
+                throw new BusinessException("Such user does not exist");
+
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            string hashedPass = Convert.ToBase64String(
+                KeyDerivation.Pbkdf2(
+                    password: password,
+                    salt: salt,
+                    prf: KeyDerivationPrf.HMACSHA1,
+                    iterationCount: 10000,
+                    numBytesRequested: 256 / 8
+                )
+            );
+
+            user.Password = hashedPass;
+            user.Salt = Convert.ToBase64String(salt);
+            await _context.SaveChangesAsync();
         }
 
-        public Task ChangeUserRole(int userId, string role)
+        public async Task ChangeUserRole(int userId, string role)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if(user != null)
+            {
+                user.Role = role;
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task DeleteResetToken(int resetId)
+        public async Task DeleteResetToken(int resetId)
         {
-            throw new NotImplementedException();
+            var resetToken = await _context.PasswordResets.FirstOrDefaultAsync(x => x.Id == resetId);
+            if(resetToken != null)
+            {
+                _context.Remove(resetToken);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task DeleteUser(int userId)
+        public async Task DeleteUser(int userId)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if(user != null)
+            {
+                user.Deleted = true;
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task<List<Contracts.Entities.User>> GetAllUsers()
+        public Task<List<User>> GetAllUsers()
         {
-            throw new NotImplementedException();
+            return _context.Users.Where(x => !x.Deleted).ToListAsync();
         }
 
         public Task<PasswordReset> GetPasswordResetByToken(string token)
         {
-            throw new NotImplementedException();
+            return _context.PasswordResets.FirstOrDefaultAsync(x => x.Token == token);
         }
 
-        public Task<Contracts.Entities.User> GetUserByEmail(string email)
+        public Task<User> GetUserByEmail(string email)
         {
-            throw new NotImplementedException();
+            return _context.Users.FirstOrDefaultAsync(x => x.EmailConfirmed && x.Email == email);
         }
 
-        public Task<Contracts.Entities.User> GetUserById(int carId)
+        public Task<User> GetUserById(int userId)
         {
-            throw new NotImplementedException();
+            return _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
         }
 
-        public Task InsertPasswordReset(PasswordReset resetEntity)
+        public async Task InsertPasswordReset(PasswordReset resetEntity)
         {
-            throw new NotImplementedException();
+            if(resetEntity != null)
+            {
+                await _context.AddAsync(resetEntity);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task<Contracts.Entities.User> InsertUser(Contracts.Domains.User user)
+        public async Task InsertUser(Contracts.Domains.User user)
         {
-            throw new NotImplementedException();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user), "Cannot insert user in db, because user is empty");
+            if (user.Password != user.Password2)
+                throw new BusinessException("Passwords do not match!!");
+
+            //password hashing
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            string hashedPass = Convert.ToBase64String(
+                KeyDerivation.Pbkdf2(
+                    password: user.Password,
+                    salt: salt,
+                    prf: KeyDerivationPrf.HMACSHA1,
+                    iterationCount: 10000,
+                    numBytesRequested: 256 / 8
+                )
+            );
+
+            var entity = new User
+            {
+                Email = user.Email,
+                Password = hashedPass,
+                Salt = Convert.ToBase64String(salt),
+                Currency = user.Currency
+            };
+
+           await _context.Users.AddAsync(entity);
         }
 
-        public Task UnblockUser(int userId)
+        public async Task UnblockUser(int userId)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if (user != null)
+            {
+                user.Blocked = false;
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task UpdateUser(Contracts.Entities.User user)
+        public async Task UpdateUser(int userId, Contracts.Domains.UserDetails userData)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if(user != null)
+            {
+                user.Sex = userData.Sex;
+                user.FirstName = userData.FirstName;
+                user.LastName = userData.LastName;
+                user.Country = userData.Country;
+                user.BornDate = userData.BornDate;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

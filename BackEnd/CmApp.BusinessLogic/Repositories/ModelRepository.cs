@@ -1,5 +1,4 @@
 ﻿using CmApp.Contracts.DTO.v2;
-using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Models;
 using Microsoft.EntityFrameworkCore;

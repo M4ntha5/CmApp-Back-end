@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CmApp.Contracts.Entities
+namespace CmApp.Contracts.Models
 {
     public class ImageUrl
     {

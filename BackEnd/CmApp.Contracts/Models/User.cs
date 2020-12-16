@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace CmApp.Contracts.Entities
+namespace CmApp.Contracts.Models
 {
     public class User
     {

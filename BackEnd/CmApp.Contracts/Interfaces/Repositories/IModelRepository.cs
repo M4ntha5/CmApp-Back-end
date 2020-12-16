@@ -1,5 +1,5 @@
 ﻿using CmApp.Contracts.DTO.v2;
-using CmApp.Contracts.Entities;
+using CmApp.Contracts.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

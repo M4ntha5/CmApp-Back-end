@@ -1,6 +1,7 @@
-﻿using System;
+﻿using CmApp.Contracts.Models;
+using System;
 
-namespace CmApp.Contracts.Entities
+namespace CmApp.Contracts.Models
 {
     public class PasswordReset
     {

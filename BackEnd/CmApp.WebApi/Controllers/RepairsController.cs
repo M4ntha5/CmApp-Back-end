@@ -1,4 +1,4 @@
-﻿using CmApp.Contracts.Entities;
+﻿using CmApp.Contracts.Models;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;

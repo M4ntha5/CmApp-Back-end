@@ -1,6 +1,6 @@
-﻿using CmApp.Contracts.Entities;
-using CmApp.Contracts.Interfaces.Repositories;
+﻿using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
+using CmApp.Contracts.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

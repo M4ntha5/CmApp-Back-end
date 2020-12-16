@@ -1,5 +1,4 @@
 ﻿using CmApp.Contracts.Domains;
-using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Models;
 using CmApp.Utils;

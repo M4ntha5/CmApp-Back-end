@@ -14,4 +14,9 @@
     <ProjectReference Include="..\CmApp.Contracts\CmApp.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\v2\" />
+    <Folder Include="Services\v2\" />
+  </ItemGroup>
+
 </Project>

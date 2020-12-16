@@ -1,4 +1,4 @@
-﻿namespace CmApp.Contracts.Entities
+﻿namespace CmApp.Contracts.Models
 {
     public class Repair
     {

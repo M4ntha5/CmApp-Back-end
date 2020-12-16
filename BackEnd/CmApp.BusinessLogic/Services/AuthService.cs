@@ -1,8 +1,8 @@
 ﻿using CmApp.Contracts;
 using CmApp.Contracts.Domains;
-using CmApp.Contracts.Entities;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
+using CmApp.Contracts.Models;
 using CmApp.Utils;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
@@ -34,10 +34,10 @@ namespace CmApp.BusinessLogic.Services
             if (response != null)
                 throw new BusinessException("User with this email already exists!");
 
-            var insertedUser = await UserRepository.InsertUser(user);
+            await UserRepository.InsertUser(user);
             //await EmailRepository.SendEmailConfirmationEmail(insertedUser.Email, insertedUser.ID.ToString());
 
-            return insertedUser == null ? false : true;
+            return true; //insertedUser == null ? false : true;
         }
 
         public async Task<JwtSecurityToken> Login(Contracts.Domains.User userData)
@@ -76,7 +76,7 @@ namespace CmApp.BusinessLogic.Services
             return null;
         }
 
-        public JwtSecurityToken GenerateDefaultToken(Contracts.Entities.User user)
+        public JwtSecurityToken GenerateDefaultToken(Contracts.Models.User user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Settings.UserKey));
@@ -106,7 +106,7 @@ namespace CmApp.BusinessLogic.Services
             return token;
         }
 
-        public JwtSecurityToken GenerateAdminToken(Contracts.Entities.User user)
+        public JwtSecurityToken GenerateAdminToken(Contracts.Models.User user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Settings.AdminKey));
@@ -222,17 +222,7 @@ namespace CmApp.BusinessLogic.Services
 
         public async Task UpdateUserDetails(int userId, UserDetails user)
         {
-            var entity = new Contracts.Entities.User
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                BornDate = user.BornDate,
-                Country = user.Country,
-                Sex = user.Sex,
-                Id = userId
-            };
-            await UserRepository.UpdateUser(entity);
-
+            await UserRepository.UpdateUser(userId, user);
         }
 
     }

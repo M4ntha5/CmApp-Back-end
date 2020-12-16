@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CmApp.Contracts.Entities
+namespace CmApp.Contracts.Models
 {
     public class Tracking
     {
@@ -26,12 +26,13 @@ namespace CmApp.Contracts.Entities
         public string Color { get; set; }
         public string Damage { get; set; }
         public string Condition { get; set; }
-        public string Keys { get; set; } 
+        public string Keys { get; set; }
         public string Running { get; set; }
         public string Wheels { get; set; }
         public string AirBag { get; set; }
         public string Radio { get; set; }
-        
+        public int CarId { get; set; }
+
         public virtual ICollection<ImageUrl> Images { get; set; }
         public virtual Car Car { get; set; }
     }

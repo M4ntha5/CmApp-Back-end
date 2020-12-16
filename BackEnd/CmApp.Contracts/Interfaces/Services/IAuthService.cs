@@ -1,5 +1,4 @@
 ﻿using CmApp.Contracts.Domains;
-using CmApp.Contracts.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 
@@ -9,8 +8,8 @@ namespace CmApp.Contracts.Interfaces.Services
     {
         Task<bool> Register(Domains.User user);
         Task<JwtSecurityToken> Login(Domains.User userData);
-        JwtSecurityToken GenerateDefaultToken(Entities.User user);
-        JwtSecurityToken GenerateAdminToken(Entities.User user);
+        JwtSecurityToken GenerateDefaultToken(Models.User user);
+        JwtSecurityToken GenerateAdminToken(Models.User user);
         Task ConfirmUserEmail(int token);
         Task CreatePasswordResetToken(string email);
         Task ResetPassword(Domains.User user);

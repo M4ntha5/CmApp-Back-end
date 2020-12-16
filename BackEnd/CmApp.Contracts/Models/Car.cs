@@ -1,9 +1,10 @@
 ﻿using CmApp.Contracts.Domains;
+using CmApp.Contracts.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CmApp.Contracts.Entities
+namespace CmApp.Contracts.Models
 {
     public class Car
     {

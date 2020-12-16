@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CmApp.Contracts.Entities
+namespace CmApp.Contracts.Models
 {
     public class Make
     {

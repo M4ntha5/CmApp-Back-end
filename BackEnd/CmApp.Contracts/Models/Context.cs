@@ -1,5 +1,4 @@
-﻿using CmApp.Contracts.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 
 namespace CmApp.Contracts.Models

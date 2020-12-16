@@ -1,4 +1,4 @@
-﻿using CmApp.Contracts.Entities;
+﻿using CmApp.Contracts.Models;
 
 namespace CmApp.Contracts.Domains
 {

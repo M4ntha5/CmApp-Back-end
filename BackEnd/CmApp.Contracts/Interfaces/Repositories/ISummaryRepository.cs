@@ -1,4 +1,4 @@
-﻿using CmApp.Contracts.Entities;
+﻿using CmApp.Contracts.Models;
 using System.Threading.Tasks;
 
 namespace CmApp.Contracts.Interfaces.Repositories

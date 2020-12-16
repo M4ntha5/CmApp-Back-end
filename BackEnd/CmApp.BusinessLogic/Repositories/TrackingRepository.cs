@@ -1,9 +1,10 @@
-﻿using CmApp.Contracts.Entities;
-using CmApp.Contracts.Interfaces.Repositories;
+﻿using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Models;
 using CmApp.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.BusinessLogic.Repositories
@@ -109,29 +110,73 @@ namespace CmApp.BusinessLogic.Repositories
             _context = context;
         }
 
-        public Task DeleteCarTracking(int carId)
+        public async Task DeleteCarTracking(int carId)
         {
-            throw new NotImplementedException();
+            var tracking = await _context.Trackings.FirstOrDefaultAsync(x => x.CarId == carId);
+            if(tracking != null)
+            {
+                _context.Trackings.Remove(tracking);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task DeleteTrackingImages(int recordId)
+        public async Task DeleteTrackingImages(int trackingId)
         {
-            throw new NotImplementedException();
+            var tracking = await _context.Trackings
+                .Include(x => x.Images)
+                .FirstOrDefaultAsync(x => x.Id == trackingId);
+            if(tracking != null)
+            {
+                tracking.Images = null;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task<Tracking> GetTrackingByCar(int carId)
         {
-            throw new NotImplementedException();
+            return _context.Trackings.FirstOrDefaultAsync(x => x.CarId == carId);
         }
 
-        public Task<Tracking> InsertTracking(Tracking tracking)
+        public async Task<Tracking> InsertTracking(Tracking tracking)
         {
-            throw new NotImplementedException();
+            if (tracking == null)
+                throw new ArgumentNullException(nameof(tracking), "Cannot insert tracking in db, because tracking is empty");
+
+            await _context.Trackings.AddAsync(tracking);
+            await _context.SaveChangesAsync();
+            return tracking;
         }
 
-        public Task UpdateCarTracking(int trackingId, Tracking tracking)
+        public async Task UpdateCarTracking(int trackingId, Tracking newTracking)
         {
-            throw new NotImplementedException();
+            var tracking = await _context.Trackings.FirstOrDefaultAsync(x => x.Id == trackingId);
+            if(tracking != null)
+            {
+                tracking.ContainerNumber = newTracking.ContainerNumber;
+                tracking.BookingNumber = newTracking.BookingNumber;
+                tracking.Vin = newTracking.Vin;
+                tracking.Year = newTracking.Year;
+                tracking.Make = newTracking.Make;
+                tracking.Model = newTracking.Model;
+                tracking.Title = newTracking.Title;
+                tracking.State = newTracking.State;
+                tracking.Status = newTracking.Status;
+                tracking.DateReceived = newTracking.DateReceived;
+                tracking.DateOrdered = newTracking.DateOrdered;
+                tracking.Branch = newTracking.Branch;
+                tracking.ShippingLine = newTracking.ShippingLine;
+                tracking.FinalPort = newTracking.FinalPort;
+                tracking.DatePickedUp = newTracking.DatePickedUp;
+                tracking.Color = newTracking.Color;
+                tracking.Damage = newTracking.Damage;
+                tracking.Condition = newTracking.Condition;
+                tracking.Keys = newTracking.Keys;
+                tracking.Running = newTracking.Running;
+                tracking.Wheels = newTracking.Wheels;
+                tracking.AirBag = newTracking.AirBag;
+                tracking.Radio = newTracking.Radio;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task UpdateImageShowStatus(int trackingId, bool status)
@@ -139,9 +184,20 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<string>> UploadImageToTracking(int recordId, List<string> urls)
+        public async Task<List<string>> UploadImageToTracking(int trackingId, List<string> urls)
         {
             throw new NotImplementedException();
+            /*var tracking = await _context.Trackings.FirstOrDefaultAsync(x => x.Id == trackingId);
+            if(tracking != null)
+            {
+                var entity = new List<ImageUrl>();
+
+                urls.ForEach(x => entity.Add(new ImageUrl { Url = x }));
+                tracking.Images = urls;
+
+                await _context.SaveChangesAsync();
+            }*/
+            
         }
     }
 }

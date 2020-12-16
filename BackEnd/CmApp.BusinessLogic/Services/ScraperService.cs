@@ -1,8 +1,9 @@
 ﻿using CmApp.BusinessLogic.Repositories;
 using CmApp.Contracts;
-using CmApp.Contracts.Entities;
+using CmApp.Contracts.Models;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
+using CmApp.Contracts.Models;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
