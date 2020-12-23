@@ -12,8 +12,10 @@ namespace CmApp.Contracts.Interfaces.Repositories
         Task UpdateCar(int carId, Car car);
         Task DeleteCar(int carId);
         Task<Car> GetCarById(int carId);
+        Task<List<Car>> GetAllUserCars(int userId);
+
+
         Task<List<string>> UploadImageToCar(int recordId, List<string> urls);
-        Task<List<CarDisplay>> GetAllUserCars(int userId);
         Task DeleteAllCarImages(int recordId);
     }
 }

@@ -2,8 +2,10 @@
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Models;
 using CmApp.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.BusinessLogic.Repositories
@@ -183,42 +185,71 @@ namespace CmApp.BusinessLogic.Repositories
             _context = context;
         }
 
-        public Task DeleteAllCarImages(int recordId)
+        public async Task DeleteCar(int carId)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteCar(int carId)
-        {
-            throw new NotImplementedException();
+            var car = await _context.Cars.FirstOrDefaultAsync(x => x.Id == carId);
+            if (car != null)
+            {
+                _context.Cars.Remove(car);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task<List<Car>> GetAllCars()
         {
-            throw new NotImplementedException();
+            return _context.Cars.ToListAsync();
         }
 
-        public Task<List<CarDisplay>> GetAllUserCars(int userId)
+        public Task<List<Car>> GetAllUserCars(int userId)
         {
-            throw new NotImplementedException();
+            return _context.Cars.Where(x => x.UserId == userId).ToListAsync();
         }
 
         public Task<Car> GetCarById(int carId)
         {
-            throw new NotImplementedException();
+            return _context.Cars.FirstOrDefaultAsync(x => x.Id == carId);
         }
 
-        public Task<Car> InsertCar(Car car)
+        public async Task<Car> InsertCar(Car car)
         {
-            throw new NotImplementedException();
+            if (car == null)
+                throw new ArgumentNullException(nameof(car), "Cannot insert car in db, because car is empty");
+
+            await _context.Cars.AddAsync(car);
+            await _context.SaveChangesAsync();
+            return car;
         }
 
-        public Task UpdateCar(int carId, Car car)
+        public async Task UpdateCar(int carId, Car newCar)
         {
-            throw new NotImplementedException();
+            var car = await _context.Cars.FirstOrDefaultAsync(x => x.Id == carId);
+            if (car != null)
+            {
+                car.Vin = newCar.Vin;
+                car.ManufactureDate = newCar.ManufactureDate;
+                car.Series = newCar.Series;
+                car.BodyType = newCar.BodyType;
+                car.Steering = newCar.Steering;
+                car.FuelType = newCar.FuelType;
+                car.Engine = newCar.Engine;
+                car.Displacement = newCar.Displacement;
+                car.Power = newCar.Power;
+                car.Drive = newCar.Drive;
+                car.Transmission = newCar.Transmission;
+                car.Color = newCar.Color;
+                car.Interior = newCar.Interior;
+                car.MakeId = newCar.MakeId;
+                car.UserId = newCar.UserId;
+                car.CreatedAt = DateTime.Now;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task<List<string>> UploadImageToCar(int recordId, List<string> urls)
+        {
+            throw new NotImplementedException();
+        }
+        public Task DeleteAllCarImages(int recordId)
         {
             throw new NotImplementedException();
         }
