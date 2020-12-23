@@ -184,20 +184,20 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<List<string>> UploadImageToTracking(int trackingId, List<string> urls)
+        public async Task<ICollection<TrackingImage>> UploadImageToTracking(int trackingId, List<string> urls)
         {
-            throw new NotImplementedException();
-            /*var tracking = await _context.Trackings.FirstOrDefaultAsync(x => x.Id == trackingId);
+            //throw new NotImplementedException();
+            var tracking = await _context.Trackings.FirstOrDefaultAsync(x => x.Id == trackingId);
             if(tracking != null)
             {
-                var entity = new List<ImageUrl>();
+                var entity = new List<TrackingImage>();
 
-                urls.ForEach(x => entity.Add(new ImageUrl { Url = x }));
-                tracking.Images = urls;
+                urls.ForEach(x => entity.Add(new TrackingImage { Url = x, TrackingId = trackingId }));
+                _context.TrackingImages.AddRange(entity);
 
                 await _context.SaveChangesAsync();
-            }*/
-            
+            }
+            return tracking.Images;
         }
     }
 }

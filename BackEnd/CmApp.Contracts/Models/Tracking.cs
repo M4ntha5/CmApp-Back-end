@@ -33,7 +33,7 @@ namespace CmApp.Contracts.Models
         public string Radio { get; set; }
         public int CarId { get; set; }
 
-        public virtual ICollection<ImageUrl> Images { get; set; }
+        public virtual ICollection<TrackingImage> Images { get; set; }
         public virtual Car Car { get; set; }
     }
 }

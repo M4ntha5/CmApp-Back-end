@@ -4,13 +4,11 @@ using System.Text;
 
 namespace CmApp.Contracts.Models
 {
-    public class Equipment
+    public class CarImage
     {
         public int Id { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
+        public string Url { get; set; }
         public int CarId { get; set; }
-
 
         public virtual Car Car { get; set; }
     }

@@ -8,7 +8,6 @@ namespace CmApp.Contracts.Interfaces.Repositories
         Task<Summary> InsertSummary(Summary summary);
         Task<Summary> GetSummaryByCarId(int carId);
         Task DeleteCarSummary(int carId);
-        Task UpdateCarSoldSummary(Summary summary);
-        Task InsertTotalByCar(int summaryId, double total);
+        Task UpdateCarSoldSummary(int summaryId, Summary summary);
     }
 }

@@ -23,12 +23,18 @@ namespace CmApp.Contracts.Models
         public string Color { get; set; }
         public string Interior { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public int MakeId { get; set; }
+        public int UserId { get; set; }
+        public int TrackingId { get; set; }
+        public int ShippingId { get; set; }
+        public int SummaryId { get; set; }
+
 
         public virtual Make Make { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<Equipment> Equipment { get; set; }
         public virtual ICollection<Repair> Repairs { get; set; }
-        public virtual ICollection<ImageUrl> Urls { get; set; }
+        public virtual ICollection<CarImage> Images { get; set; }
         public virtual Tracking Tracking { get; set; }
         public virtual Shipping Shipping { get; set; }
         public virtual Summary Summary { get; set; }

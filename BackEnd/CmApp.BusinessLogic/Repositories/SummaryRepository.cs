@@ -2,6 +2,9 @@
 using CmApp.Contracts.Models;
 using CmApp.Utils;
 using System;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmApp.BusinessLogic.Repositories
@@ -71,29 +74,41 @@ namespace CmApp.BusinessLogic.Repositories
             _context = context;
         }
 
-        public Task DeleteCarSummary(int carId)
+        public async Task DeleteCarSummary(int carId)
         {
-            throw new NotImplementedException();
+            var summary = await _context.Summaries.FirstOrDefaultAsync(x => x.CarId == carId);
+            if (summary != null)
+            {
+                _context.Summaries.Remove(summary);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task<Summary> GetSummaryByCarId(int carId)
         {
-            throw new NotImplementedException();
+            return _context.Summaries.FirstOrDefaultAsync(x => x.CarId == carId);
         }
 
-        public Task<Summary> InsertSummary(Summary summary)
+        public async Task<Summary> InsertSummary(Summary summary)
         {
-            throw new NotImplementedException();
+            if (summary == null)
+                throw new ArgumentNullException(nameof(summary), "Cannot insert summary in db, because summary is empty");
+
+            await _context.Summaries.AddAsync(summary);
+            await _context.SaveChangesAsync();
+            return summary;
         }
 
-        public Task InsertTotalByCar(int summaryId, double total)
+        public async Task UpdateCarSoldSummary(int summaryId, Summary summaryDetails)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateCarSoldSummary(Summary summary)
-        {
-            throw new NotImplementedException();
+            var summary = await _context.Summaries.FirstOrDefaultAsync(x => x.Id == summaryId);
+            if(summary != null)
+            {
+                summary.IsSold = true;
+                summary.SoldPrice = summaryDetails.SoldPrice;
+                summary.SoldDate = DateTime.Today;
+                await _context.SaveChangesAsync();
+            }    
         }
     }
 }

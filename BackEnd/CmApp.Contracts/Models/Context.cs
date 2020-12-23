@@ -18,7 +18,8 @@ namespace CmApp.Contracts.Models
         public DbSet<Shipping> Shippings { get; set; }
         public DbSet<Summary> Summaries { get; set; }
         public DbSet<Tracking> Trackings { get; set; }
-        public DbSet<ImageUrl> Urls { get; set; }
+        public DbSet<TrackingImage> TrackingImages { get; set; }
+        public DbSet<CarImage> CarImages { get; set; }
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

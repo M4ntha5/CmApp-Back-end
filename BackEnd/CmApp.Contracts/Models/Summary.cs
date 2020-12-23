@@ -11,6 +11,8 @@ namespace CmApp.Contracts.Models
         public DateTime? SoldDate { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public bool IsSold { get; set; } = false;
+        public int CarId { get; set; }
+
 
         public virtual Car Car { get; set; }
     }

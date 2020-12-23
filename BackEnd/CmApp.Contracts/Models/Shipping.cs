@@ -13,6 +13,8 @@ namespace CmApp.Contracts.Models
         public string AuctionFeeCurrency { get; set; }
         public string TransferFeeCurrency { get; set; }
         public string TransportationFeeCurrency { get; set; }
+        public int CarId { get; set; }
+
 
         public virtual Car Car { get; set; }
     }
