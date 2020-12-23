@@ -1,6 +1,7 @@
 ﻿using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Models;
 using CmApp.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,34 +94,54 @@ namespace CmApp.BusinessLogic.Repositories
             _context = context;
         }
 
-        public Task DeleteMultipleRepairs(int carId)
+        public async Task DeleteMultipleRepairs(int carId)
         {
-            throw new NotImplementedException();
+            var repairs = await _context.Repairs.Where(x => x.CarId == carId).ToListAsync();
+            if (repairs != null && repairs.Count > 0)
+            {
+                _context.Repairs.RemoveRange(repairs);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task<List<Repair>> GetAllRepairsByCarId(int carId)
         {
-            throw new NotImplementedException();
+            return _context.Repairs.Where(x => x.CarId == carId).ToListAsync();
         }
 
         public Task<Repair> GetCarRepairById(int carId, int repairId)
         {
-            throw new NotImplementedException();
+            return _context.Repairs.FirstOrDefaultAsync(x => x.Id == repairId && x.CarId == carId);
         }
 
-        public Task InsertMultipleRepairs(List<Repair> repairs)
+        public async Task InsertMultipleRepairs(List<Repair> repairs)
         {
-            throw new NotImplementedException();
+            if (repairs == null || repairs.Count < 1)
+                throw new ArgumentNullException(nameof(repairs), "Cannot insert repairs in db, because repairs is empty");
+
+            await _context.Repairs.AddRangeAsync(repairs);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Repair> InsertRepair(Repair repair)
+        public async Task<Repair> InsertRepair(Repair repair)
         {
-            throw new NotImplementedException();
+            if (repair == null)
+                throw new ArgumentNullException(nameof(repair), "Cannot insert repair in db, because repair is empty");
+
+            await _context.Repairs.AddAsync(repair);
+            await _context.SaveChangesAsync();
+            return repair;
         }
 
-        public Task UpdateRepair(int repairId, Repair repair)
+        public async Task UpdateRepair(int repairId, Repair newRepair)
         {
-            throw new NotImplementedException();
+            var repair = await _context.Repairs.FirstOrDefaultAsync(x => x.Id == repairId);
+            if (repair != null)
+            {
+                repair.Price = newRepair.Price;
+                repair.Name = newRepair.Name;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
