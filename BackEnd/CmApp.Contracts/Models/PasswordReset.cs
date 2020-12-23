@@ -10,7 +10,6 @@ namespace CmApp.Contracts.Models
         public DateTime ValidUntil { get; set; }
         public int UserId { get; set; }
 
-
         public virtual User User { get; set; }
     }
 }
