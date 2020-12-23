@@ -84,7 +84,7 @@ namespace CmApp.Controllers
                 var cars = await carRepository.GetAllUserCars(userId);
                 var result = new List<object>();
                 foreach (var car in cars)
-                    result.Add(new { value = car.Id, text = car.Make + " " + car.Model });
+                    result.Add(new { value = car.Id, text = car.Make + " " });
 
                 if (result.Count != 0)
                     return Ok(result);

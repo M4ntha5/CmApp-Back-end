@@ -34,9 +34,8 @@ namespace CmApp.Controllers
         {
             try
             {
-                // var jwt = await authService.Login(user);
-                // return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
-                return Ok();
+                var jwt = await authService.Login(user);
+                return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
             }
             catch (Exception ex)
             {
