@@ -141,33 +141,5 @@ namespace CmApp.BusinessLogic.Repositories
             }
             await _context.SaveChangesAsync();
         }
-
-
-
-        //v1
-        public Task DeleteCarMake(int makeId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Make>> GetAllMakes()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Make> GetMakeModels(string make)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Make> InsertCarMake(Make make)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateCarMake(Make make)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
