@@ -1,6 +1,7 @@
 ﻿using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Models;
 using CmApp.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
@@ -64,24 +65,42 @@ namespace CmApp.BusinessLogic.Repositories
             _context = context;
         }
 
-        public Task DeleteCarShipping(int carId)
+        public async Task DeleteCarShipping(int carId)
         {
-            throw new NotImplementedException();
+            var shipping = await _context.Shippings.FirstOrDefaultAsync(x => x.CarId == carId);
+            if (shipping != null)
+            {
+                _context.Shippings.Remove(shipping);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task<Shipping> GetShippingByCar(int carId)
         {
-            throw new NotImplementedException();
+            return _context.Shippings.FirstOrDefaultAsync(x => x.CarId == carId);
         }
 
-        public Task<Shipping> InsertShipping(Shipping shipping)
+        public async Task<Shipping> InsertShipping(Shipping shipping)
         {
-            throw new NotImplementedException();
+            if (shipping == null)
+                throw new ArgumentNullException(nameof(shipping), "Cannot insert shipping in db, because shipping is empty");
+
+            await _context.Shippings.AddAsync(shipping);
+            await _context.SaveChangesAsync();
+            return shipping;
         }
 
-        public Task UpdateCarShipping(int shippingId, Shipping shipping)
+        public async Task UpdateCarShipping(int shippingId, Shipping newShipping)
         {
-            throw new NotImplementedException();
+            var shipping = await _context.Shippings.FirstOrDefaultAsync(x => x.Id == shippingId);
+            if (shipping != null)
+            {
+                shipping.AuctionFee = newShipping.AuctionFee;
+                shipping.Customs = newShipping.Customs;
+                shipping.TransferFee = newShipping.TransferFee;
+                shipping.TransportationFee = newShipping.TransportationFee;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
