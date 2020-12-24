@@ -1,4 +1,4 @@
-﻿using CmApp.Contracts.Domains;
+﻿using CmApp.Contracts.DTO;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Models;
 using CmApp.Utils;
@@ -244,6 +244,17 @@ namespace CmApp.BusinessLogic.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public Task<List<CarStats>> GetCarStats(DateTime dateFrom, DateTime dateTo, string userEmail)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Car>> GetUserCars(int userId)
+        {
+            return _context.Cars.Where(x => x.UserId == userId).ToListAsync();
+        }
+
 
         public Task<List<string>> UploadImageToCar(int recordId, List<string> urls)
         {

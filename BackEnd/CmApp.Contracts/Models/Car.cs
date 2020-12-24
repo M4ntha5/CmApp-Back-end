@@ -1,4 +1,4 @@
-﻿using CmApp.Contracts.Domains;
+﻿using CmApp.Contracts.DTO;
 using CmApp.Contracts.Models;
 using System;
 using System.Collections.Generic;

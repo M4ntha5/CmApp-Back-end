@@ -1,5 +1,5 @@
 ﻿using CmApp.Contracts;
-using CmApp.Contracts.Domains;
+using CmApp.Contracts.DTO;
 using CmApp.Contracts.Interfaces.Services;
 using Newtonsoft.Json;
 using System;
@@ -68,16 +68,16 @@ namespace CmApp.BusinessLogic.Services
             }
         }
 
-        public async Task<double> CalculateResult(ExchangeInput input)
+        public async Task<decimal> CalculateResult(ExchangeInput input)
         {
             if (input == null || input.From == "" || input.To == "" || input.Amount < 1)
                 throw new BusinessException("Input data was in incorect format!");
 
             var rates = await GetSelectedExchangeRate(input.From);
-            double result = 0;
+            decimal result = 0;
             if (rates.Rates.ContainsKey(input.To))
             {
-                var rate = double.Parse(rates.Rates[input.To]);
+                var rate = decimal.Parse(rates.Rates[input.To]);
 
                 result = Math.Round(input.Amount * rate, 2);
             }

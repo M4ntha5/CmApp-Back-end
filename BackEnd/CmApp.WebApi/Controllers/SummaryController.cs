@@ -1,4 +1,4 @@
-﻿using CmApp.Contracts.Domains;
+﻿using CmApp.Contracts.DTO;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using CmApp.Contracts.Models;
@@ -17,15 +17,13 @@ namespace CmApp.Controllers
     {
         private readonly ISummaryRepository summaryRepository;
         private readonly ICarRepository carRepository;
-        private readonly IAggregateRepository aggregateRepository;
         private readonly ISummaryService summaryService;
 
         public SummaryController(ISummaryRepository summaryRepository, ICarRepository carRepository, 
-            IAggregateRepository aggregateRepository, ISummaryService summaryService)
+            ISummaryService summaryService)
         {
             this.summaryRepository = summaryRepository;
             this.carRepository = carRepository;
-            this.aggregateRepository = aggregateRepository;
             this.summaryService = summaryService;
         }
 
@@ -132,7 +130,7 @@ namespace CmApp.Controllers
                 if (authUserId != userId)
                     throw new Exception("You cannot access this resource");
 
-                var stats = await aggregateRepository.GetCarStats(inputData.DateFrom, inputData.DateTo, userEmail);
+                var stats = await carRepository.GetCarStats(inputData.DateFrom, inputData.DateTo, userEmail);
                 return Ok(stats);
             }
             catch (Exception ex)

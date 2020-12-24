@@ -48,7 +48,7 @@ namespace CmApp.WebApi.Controllers.v2
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm] NameDTO make)
+        public async Task<IActionResult> Post([FromBody] NameDTO make)
         {
             try
             {

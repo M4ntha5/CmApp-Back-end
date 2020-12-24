@@ -20,45 +20,25 @@ namespace CmApp.BusinessLogic.Services
             SummaryRepository = summaryRepository;
         }
 
-        public Task DeleteMultipleRepairs(int carId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Repair>> GetAllSelectedCarRepairs(int carId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Repair> GetSelectedCarRepairById(int carId, int repairid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task InsertCarRepairs(int carId, List<Repair> repairs)
-        {
-            throw new NotImplementedException();
-        }
-
-        /*public async Task<List<Repair>> GetAllSelectedCarRepairs(int carId)
+        public async Task<List<Repair>> GetAllSelectedCarRepairs(int carId)
         {
             var repairs = await RepairRepository.GetAllRepairsByCarId(carId);
 
-            if (repairs != null && repairs.Count > 0)
-                repairs[0].Total = repairs.Sum(x => x.Price);
+           /* if (repairs != null && repairs.Count > 0)
+                repairs[0].Total = repairs.Sum(x => x.Price);*/
 
             return repairs;
         }
         public async Task InsertCarRepairs(int carId, List<Repair> repairs)
         {
-            repairs.ForEach(x => { x.Car = carId; Math.Round(x.Price, 2); Math.Round(x.Total, 2); });
+            repairs.ForEach(x => { x.CarId = carId; Math.Round(x.Price, 2); });
             var repairsTotal = repairs.Sum(x => x.Price);
 
             await RepairRepository.InsertMultipleRepairs(repairs);
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
 
-            var total = Math.Round(summary.Total + repairsTotal, 2);
-            await SummaryRepository.InsertTotalByCar(summary.ID, total);
+           // var total = Math.Round(summary.Total + repairsTotal, 2);
+            //await SummaryRepository.InsertTotalByCar(summary.Id, total);
         }
         public async Task<Repair> GetSelectedCarRepairById(int carId, int repairid)
         {
@@ -73,8 +53,8 @@ namespace CmApp.BusinessLogic.Services
             var summary = await SummaryRepository.GetSummaryByCarId(carId);
             var repairs = await RepairRepository.GetAllRepairsByCarId(carId);
             var repairsTotal = repairs.Sum(x => x.Price);
-            await SummaryRepository.InsertTotalByCar(summary.ID, summary.Total - repairsTotal);
+            //await SummaryRepository.InsertTotalByCar(summary.ID, summary.Total - repairsTotal);
             await RepairRepository.DeleteMultipleRepairs(carId);
-        }*/
+        }
     }
 }

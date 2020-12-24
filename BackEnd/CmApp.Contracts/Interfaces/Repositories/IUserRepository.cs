@@ -1,4 +1,4 @@
-﻿using CmApp.Contracts.Domains;
+﻿using CmApp.Contracts.DTO;
 using CmApp.Contracts.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,11 +7,11 @@ namespace CmApp.Contracts.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        Task InsertUser(Contracts.Domains.User user);
+        Task InsertUser(Contracts.DTO.User user);
         Task<Models.User> GetUserById(int carId);
         Task BlockUser(int userId);
         Task UnblockUser(int userId);
-        Task UpdateUser(int userId, Contracts.Domains.UserDetails userData);
+        Task UpdateUser(int userId, Contracts.DTO.UserDetails userData);
         Task<List<Models.User>> GetAllUsers();
         Task<Models.User> GetUserByEmail(string email);
         Task ChangeEmailConfirmationFlag(int userId);

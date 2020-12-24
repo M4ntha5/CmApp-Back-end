@@ -1,7 +1,7 @@
 ﻿using CmApp.BusinessLogic.Repositories;
 using CmApp.BusinessLogic.Services;
 using CmApp.Contracts;
-using CmApp.Contracts.Domains;
+using CmApp.Contracts.DTO;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;

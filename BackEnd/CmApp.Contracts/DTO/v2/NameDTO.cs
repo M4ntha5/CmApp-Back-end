@@ -7,5 +7,6 @@ namespace CmApp.Contracts.DTO.v2
     public class NameDTO
     {
         public string Name { get; set; }
+        public ICollection<NameDTO> Models { get; set; }
     }
 }

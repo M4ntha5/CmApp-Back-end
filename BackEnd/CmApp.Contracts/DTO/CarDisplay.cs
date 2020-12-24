@@ -1,6 +1,6 @@
 ﻿using CmApp.Contracts.Models;
 
-namespace CmApp.Contracts.Domains
+namespace CmApp.Contracts.DTO
 {
     public class CarDisplay
     {

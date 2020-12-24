@@ -97,11 +97,11 @@ namespace CmApp.BusinessLogic.Repositories
         //v2
         public Task<List<Make>> GetMakes()
         {
-            return _context.Makes.Include(x=>x.Models).ToListAsync();
+            return _context.Makes.OrderBy(x => x.Name).ToListAsync();
         }
         public Task<Make> GetMake(int makeId)
         {
-            return _context.Makes.Include(x => x.Models).FirstOrDefaultAsync(x => x.Id == makeId);
+            return _context.Makes.FirstOrDefaultAsync(x => x.Id == makeId);
         }
         public Task InsertMake(NameDTO make)
         {

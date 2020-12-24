@@ -1,5 +1,6 @@
-﻿using CmApp.Contracts.Domains;
+﻿using CmApp.Contracts.DTO;
 using CmApp.Contracts.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,6 +14,8 @@ namespace CmApp.Contracts.Interfaces.Repositories
         Task DeleteCar(int carId);
         Task<Car> GetCarById(int carId);
         Task<List<Car>> GetAllUserCars(int userId);
+        Task<List<CarStats>> GetCarStats(DateTime dateFrom, DateTime dateTo, string userEmail);
+        Task<List<Car>> GetUserCars(int userId);
 
 
         Task<List<string>> UploadImageToCar(int recordId, List<string> urls);

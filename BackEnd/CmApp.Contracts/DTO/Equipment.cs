@@ -1,4 +1,4 @@
-﻿namespace CmApp.Contracts.Domains
+﻿namespace CmApp.Contracts.DTO
 {
     public class Equipment
     {

@@ -1,5 +1,5 @@
 ﻿using CmApp.Contracts;
-using CmApp.Contracts.Domains;
+using CmApp.Contracts.DTO;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using CmApp.Contracts.Models;
@@ -27,7 +27,7 @@ namespace CmApp.BusinessLogic.Services
             EmailRepository = emailRepository;
         }
 
-        public async Task<bool> Register(Contracts.Domains.User user)
+        public async Task<bool> Register(Contracts.DTO.User user)
         {
             user.Email = user.Email.ToLower();
             var response = await UserRepository.GetUserByEmail(user.Email);
@@ -40,7 +40,7 @@ namespace CmApp.BusinessLogic.Services
             return true; //insertedUser == null ? false : true;
         }
 
-        public async Task<JwtSecurityToken> Login(Contracts.Domains.User userData)
+        public async Task<JwtSecurityToken> Login(Contracts.DTO.User userData)
         {
             userData.Email = userData.Email.ToLower();
             var user = await UserRepository.GetUserByEmail(userData.Email);
@@ -173,7 +173,7 @@ namespace CmApp.BusinessLogic.Services
             //await EmailRepository.SendPasswordResetEmail(email, token);
         }
 
-        public async Task ResetPassword(Contracts.Domains.User user)
+        public async Task ResetPassword(Contracts.DTO.User user)
         {
             if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match");
@@ -196,7 +196,7 @@ namespace CmApp.BusinessLogic.Services
             await UserRepository.DeleteResetToken(resetDetails.Id);
         }
 
-        public async Task ResetPassword(int userId, Contracts.Domains.User user)
+        public async Task ResetPassword(int userId, Contracts.DTO.User user)
         {
             if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match");

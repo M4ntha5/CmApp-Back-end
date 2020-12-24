@@ -1,5 +1,4 @@
 ﻿using CmApp.Contracts;
-using CmApp.Contracts.Domains;
 using CmApp.Contracts.Models;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
@@ -9,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CmApp.Contracts.DTO;
 
 namespace CmApp.Controllers
 {
@@ -17,16 +17,13 @@ namespace CmApp.Controllers
     [ApiController]
     public class CarsController : ControllerBase
     {
-        private readonly ICarRepository carRepository;
-        private readonly IAggregateRepository aggregateRepository;
-        private readonly ICarService carService;
+        private readonly ICarRepository _carRepository;
+        private readonly ICarService _carService;
 
-        public CarsController(ICarRepository carRepository, IAggregateRepository aggregateRepository, 
-            ICarService carService)
+        public CarsController(ICarRepository carRepository, ICarService carService)
         {
-            this.carRepository = carRepository;
-            this.aggregateRepository = aggregateRepository;
-            this.carService = carService;
+            _carRepository = carRepository;
+            _carService = carService;
         }
 
 
@@ -37,8 +34,9 @@ namespace CmApp.Controllers
         {
             try
             {
-                var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
-                var cars = await aggregateRepository.GetUserCars(userEmail);
+                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+                var cars = await _carRepository.GetUserCars(userId);
                 return Ok(cars);
             }
             catch (Exception ex)
@@ -57,7 +55,7 @@ namespace CmApp.Controllers
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
 
-                var car = await carRepository.GetCarById(carId);
+                var car = await _carRepository.GetCarById(carId);
 
                 //if (car.User != userId)
                 //    throw new BusinessException("Car does not exist");
@@ -80,7 +78,7 @@ namespace CmApp.Controllers
             {
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                // car.User = userId;
-                var newCar = await carService.InsertCar(car);
+                var newCar = await _carService.InsertCar(car);
 
                 return Ok(newCar);
             }
@@ -98,7 +96,7 @@ namespace CmApp.Controllers
             try
             {
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                await carService.UpdateCar(userId, carId, car);
+                await _carService.UpdateCar(userId, carId, car);
                 return NoContent();
             }
             catch (Exception ex)
@@ -116,7 +114,7 @@ namespace CmApp.Controllers
             try
             {
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                await carService.DeleteCar(userId, carId);
+                await _carService.DeleteCar(userId, carId);
                 return NoContent();
             }
             catch (Exception ex)
@@ -133,7 +131,7 @@ namespace CmApp.Controllers
             try
             {
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                var cars = await carRepository.GetAllCars();
+                var cars = await _carRepository.GetAllCars();
                 return Ok(cars);
             }
             catch (Exception ex)
@@ -149,7 +147,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                await carService.InsertImages(carId, images);
+                await _carService.InsertImages(carId, images);
                 return NoContent();
             }
             catch (Exception ex)
@@ -165,7 +163,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                await carService.UpdateImages(carId, images);
+                await _carService.UpdateImages(carId, images);
                 return NoContent();
             }
             catch (Exception ex)
