@@ -108,7 +108,7 @@ namespace CmApp.BusinessLogic.Services
         private async Task<Car> InsertOtherCar(Car car)
         {
             if (car == null)
-                throw new BusinessException("Can not insert car, because car is empty!");
+                throw new BusinessException("Cannot insert car, because car is empty!");
 
             car.Vin = car.Vin.ToUpper();
 
@@ -118,7 +118,7 @@ namespace CmApp.BusinessLogic.Services
             //await InsertImages(insertedCar.Id, car.Base64images);
 
             //inserts empty tracking 
-            await TrackingRepository.InsertTracking(new Tracking { Car = insertedCar });
+            await TrackingRepository.InsertTracking(new Tracking { CarId = insertedCar.Id, Vin = insertedCar.Vin });
             return insertedCar;
         }
 
@@ -140,7 +140,7 @@ namespace CmApp.BusinessLogic.Services
 
 
             var carEntity = _mapper.Map<Car>(car);
-
+            carEntity.UserId = userId;
 
 
             var insertedCar = await InsertOtherCar(carEntity);

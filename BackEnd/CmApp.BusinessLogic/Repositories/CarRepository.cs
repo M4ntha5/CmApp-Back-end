@@ -215,6 +215,8 @@ namespace CmApp.BusinessLogic.Repositories
             if (car == null)
                 throw new ArgumentNullException(nameof(car), "Cannot insert car in db, because car is empty");
 
+            car.Tracking = new Tracking() { CarId = car.Id, Vin = car.Vin.ToUpper() };
+
             await _context.Cars.AddAsync(car);
             await _context.SaveChangesAsync();
             return car;

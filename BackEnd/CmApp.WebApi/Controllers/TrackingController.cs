@@ -1,4 +1,4 @@
-﻿using CmApp.Contracts.Domains;
+﻿using CmApp.Contracts.DTO;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using CmApp.Contracts.Models;
@@ -159,7 +159,7 @@ namespace CmApp.Controllers
 
         [HttpPut("images/status")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> SaveLastShowImagesStatus(int carId, [FromBody] Contracts.Domains.User data)
+        public async Task<IActionResult> SaveLastShowImagesStatus(int carId, [FromBody] Contracts.DTO.User data)
         {
             try
             {
