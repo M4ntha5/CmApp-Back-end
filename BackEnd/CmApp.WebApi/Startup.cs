@@ -1,8 +1,10 @@
 using System.Text;
+using AutoMapper;
 using CmApp.BusinessLogic.Repositories;
 using CmApp.BusinessLogic.Services;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
+using CmApp.Contracts.MappingProfiles;
 using CmApp.Contracts.Models;
 using CmApp.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,6 +38,12 @@ namespace CmApp.WebApi
                 
                 ;
 
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             services.AddScoped<ICarRepository, CarRepository>()
                     .AddScoped<IEmailRepository, EmailRepository>()

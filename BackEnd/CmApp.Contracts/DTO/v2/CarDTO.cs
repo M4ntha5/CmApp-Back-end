@@ -1,13 +1,10 @@
-﻿using CmApp.Contracts.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CmApp.Contracts.DTO.v2
 {
     public class CarDTO
     {
-        public int Id { get; set; }
         public string Vin { get; set; }
         public DateTime? ManufactureDate { get; set; }
         public string Series { get; set; }
@@ -23,11 +20,10 @@ namespace CmApp.Contracts.DTO.v2
         public string Interior { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int MakeId { get; set; }
-        public int UserId { get; set; }
+        public int ModelId { get; set; }
 
-
-        public ICollection<Equipment> Equipment { get; set; }
-        public ICollection<Repair> Repairs { get; set; }
+        public ICollection<EquipmentDTO> Equipment { get; set; }
+        public ICollection<RepairDTO> Repairs { get; set; }
         public ICollection<string> Images { get; set; }
     }
 }

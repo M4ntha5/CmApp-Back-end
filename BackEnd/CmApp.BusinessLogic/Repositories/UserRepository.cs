@@ -308,7 +308,7 @@ namespace CmApp.BusinessLogic.Repositories
             }
         }
 
-        public async Task InsertUser(Contracts.Domains.User user)
+        public async Task InsertUser(Contracts.DTO.User user)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user), "Cannot insert user in db, because user is empty");
@@ -353,7 +353,7 @@ namespace CmApp.BusinessLogic.Repositories
             }
         }
 
-        public async Task UpdateUser(int userId, Contracts.Domains.UserDetails userData)
+        public async Task UpdateUser(int userId, Contracts.DTO.UserDetails userData)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
             if(user != null)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CmApp.Contracts.DTO;
+using CmApp.Contracts.DTO.v2;
 
 namespace CmApp.Controllers
 {
@@ -72,13 +73,13 @@ namespace CmApp.Controllers
         // POST: api/Cars
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Post([FromBody] Car car)
+        public async Task<IActionResult> Post([FromBody] CarDTO car)
         {
             try
             {
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                // car.User = userId;
-                var newCar = await _carService.InsertCar(car);
+                var newCar = await _carService.InsertCar(userId, car);
 
                 return Ok(newCar);
             }

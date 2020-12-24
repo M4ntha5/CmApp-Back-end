@@ -1,4 +1,6 @@
-﻿using CmApp.Contracts.DTO;
+﻿using AutoMapper;
+using CmApp.Contracts.DTO;
+using CmApp.Contracts.DTO.v2;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using CmApp.Contracts.Models;
@@ -17,14 +19,16 @@ namespace CmApp.BusinessLogic.Services
         private readonly IScraperService WebScraper;
         private readonly IFileRepository FileRepository;
         private readonly ITrackingRepository TrackingRepository;
+        private readonly IMapper _mapper;
 
         public CarService(ICarRepository carRepository, IScraperService webScraper, 
-            IFileRepository fileRepository, ITrackingRepository trackingRepository)
+            IFileRepository fileRepository, ITrackingRepository trackingRepository, IMapper mapper)
         {
             CarRepository = carRepository;
             WebScraper = webScraper;
             FileRepository = fileRepository;
             TrackingRepository = trackingRepository;
+            _mapper = mapper;
         }   
 
         private async Task<Car> InsertCarDetailsFromScraper(Car car)
@@ -118,21 +122,31 @@ namespace CmApp.BusinessLogic.Services
             return insertedCar;
         }
 
-        public async Task<Car> InsertCar(Car car)
+        public async Task<Car> InsertCar(int userId, CarDTO car)
         {
-            var userCars = await CarRepository.GetAllUserCars(1);//car.User);
+            var userCars = await CarRepository.GetAllUserCars(userId);//car.User);
             var userVins = userCars.Select(x => x.Vin).ToList();
 
-            if (car.Make == null || car.Make.Name == "")
-                throw new BusinessException("Make not defined");
+            /*if (car.Make == null || car.Make.Name == "")
+                throw new BusinessException("Make not defined");*/
 
             if (userVins.Contains(car.Vin))
                 throw new BusinessException("There is already a car with this VIN number");
 
-            if ((car.Make.Name == "BMW" || car.Make.Name == "Mercedes-benz") )//&& car.Model.Name == "")
+            /*if ((car.Make.Name == "BMW" || car.Make.Name == "Mercedes-benz") )//&& car.Model.Name == "")
                 return await InsertCarDetailsFromScraper(car);
-            else
-                return await InsertOtherCar(car);
+            else*/
+
+
+
+            var carEntity = _mapper.Map<Car>(car);
+
+
+
+            var insertedCar = await InsertOtherCar(carEntity);
+
+
+            return insertedCar;
         }
         
         public async Task DeleteCar(int userId, int carId)
