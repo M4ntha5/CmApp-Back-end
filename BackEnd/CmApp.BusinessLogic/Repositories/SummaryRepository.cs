@@ -76,17 +76,17 @@ namespace CmApp.BusinessLogic.Repositories
 
         public async Task DeleteCarSummary(int carId)
         {
-            var summary = await _context.Summaries.FirstOrDefaultAsync(x => x.CarId == carId);
+           /* var summary = await _context.Summaries.FirstOrDefaultAsync(x => x.CarId == carId);
             if (summary != null)
             {
                 _context.Summaries.Remove(summary);
                 await _context.SaveChangesAsync();
-            }
+            }*/
         }
 
         public Task<Summary> GetSummaryByCarId(int carId)
         {
-            return _context.Summaries.FirstOrDefaultAsync(x => x.CarId == carId);
+            return null;// return _context.Summaries.FirstOrDefaultAsync(x => x.CarId == carId);
         }
 
         public async Task<Summary> InsertSummary(Summary summary)

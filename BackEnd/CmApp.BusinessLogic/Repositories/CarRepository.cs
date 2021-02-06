@@ -202,7 +202,11 @@ namespace CmApp.BusinessLogic.Repositories
 
         public Task<List<Car>> GetAllUserCars(int userId)
         {
-            return _context.Cars.Where(x => x.UserId == userId).ToListAsync();
+            return _context.Cars
+                .Include(x => x.Summary)
+                .Include(x => x.Make).ThenInclude(x => x.Models)
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
         }
 
         public Task<Car> GetCarById(int carId)
@@ -215,7 +219,7 @@ namespace CmApp.BusinessLogic.Repositories
             if (car == null)
                 throw new ArgumentNullException(nameof(car), "Cannot insert car in db, because car is empty");
 
-            car.Tracking = new Tracking() { CarId = car.Id, Vin = car.Vin.ToUpper() };
+            //car.Tracking = new Tracking() { CarId = car.Id, Vin = car.Vin.ToUpper() };
 
             await _context.Cars.AddAsync(car);
             await _context.SaveChangesAsync();
@@ -254,7 +258,12 @@ namespace CmApp.BusinessLogic.Repositories
 
         public Task<List<Car>> GetUserCars(int userId)
         {
-            return _context.Cars.Where(x => x.UserId == userId).ToListAsync();
+            return _context.Cars
+                .Include(x => x.Summary)
+                .Include(x => x.Make)
+                .Include(x => x.Model)
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
         }
 
 

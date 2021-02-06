@@ -21,6 +21,7 @@ namespace CmApp.Contracts.DTO.v2
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int MakeId { get; set; }
         public int ModelId { get; set; }
+        public decimal BoughtPrice { get; set; }
 
         public ICollection<EquipmentDTO> Equipment { get; set; }
         public ICollection<RepairDTO> Repairs { get; set; }

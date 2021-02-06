@@ -16,18 +16,22 @@ namespace CmApp.BusinessLogic.Services
     public class CarService : ICarService
     {
         private readonly ICarRepository CarRepository;
+        private readonly ISummaryRepository SummaryRepository;
+        private readonly IShippingRepository ShippingRepository;
         private readonly IScraperService WebScraper;
         private readonly IFileRepository FileRepository;
         private readonly ITrackingRepository TrackingRepository;
         private readonly IMapper _mapper;
 
-        public CarService(ICarRepository carRepository, IScraperService webScraper, 
-            IFileRepository fileRepository, ITrackingRepository trackingRepository, IMapper mapper)
+        public CarService(ICarRepository carRepository, IScraperService webScraper, ISummaryRepository summaryRepository,
+            IShippingRepository shippingRepository, IFileRepository fileRepository, ITrackingRepository trackingRepository, IMapper mapper)
         {
             CarRepository = carRepository;
+            SummaryRepository = summaryRepository;
             WebScraper = webScraper;
             FileRepository = fileRepository;
             TrackingRepository = trackingRepository;
+            ShippingRepository = shippingRepository;
             _mapper = mapper;
         }   
 
@@ -117,9 +121,20 @@ namespace CmApp.BusinessLogic.Services
 
             //await InsertImages(insertedCar.Id, car.Base64images);
 
-            //inserts empty tracking 
-            await TrackingRepository.InsertTracking(new Tracking { CarId = insertedCar.Id, Vin = insertedCar.Vin });
             return insertedCar;
+        }
+        public async Task<List<CarListDTO>> GetUserCars(int userId)
+        {
+            var cars = await CarRepository.GetUserCars(userId);
+
+            return cars.Select(x => new CarListDTO
+            {
+                Id = x.Id,
+                Make = x.Make.Name,
+                Model = x.Model.Name,
+                Vin = x.Vin,
+                Sold = x.Summary.IsSold,
+            }).ToList();
         }
 
         public async Task<Car> InsertCar(int userId, CarDTO car)
@@ -142,9 +157,22 @@ namespace CmApp.BusinessLogic.Services
             var carEntity = _mapper.Map<Car>(car);
             carEntity.UserId = userId;
 
-
             var insertedCar = await InsertOtherCar(carEntity);
 
+
+            //inserts empty tracking 
+            var tracking = await TrackingRepository.InsertTracking(new Tracking {Vin = car.Vin, CarId = insertedCar.Id });
+
+            var summary = await SummaryRepository.InsertSummary(new Summary
+            {
+                CarId = insertedCar.Id,
+                IsSold = false,
+                BoughtPrice = car.BoughtPrice,
+                CreatedAt = DateTime.Now
+            });
+            var shipping = await ShippingRepository.InsertShipping(new Shipping { CarId = insertedCar.Id });
+
+            
 
             return insertedCar;
         }

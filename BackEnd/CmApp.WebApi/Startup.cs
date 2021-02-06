@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace CmApp.WebApi
 {
@@ -140,7 +141,11 @@ namespace CmApp.WebApi
             });
 
 
-            services.AddMvcCore().AddNewtonsoftJson();
+            services.AddMvcCore()
+                .AddNewtonsoftJson(option =>
+                {
+                    option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
 
             services.AddControllers();
         }

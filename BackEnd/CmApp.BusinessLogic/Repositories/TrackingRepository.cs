@@ -112,12 +112,12 @@ namespace CmApp.BusinessLogic.Repositories
 
         public async Task DeleteCarTracking(int carId)
         {
-            var tracking = await _context.Trackings.FirstOrDefaultAsync(x => x.CarId == carId);
+            /*var tracking = await _context.Trackings.FirstOrDefaultAsync(x => x.CarId == carId);
             if(tracking != null)
             {
                 _context.Trackings.Remove(tracking);
                 await _context.SaveChangesAsync();
-            }
+            }*/
         }
 
         public async Task DeleteTrackingImages(int trackingId)
@@ -134,7 +134,7 @@ namespace CmApp.BusinessLogic.Repositories
 
         public Task<Tracking> GetTrackingByCar(int carId)
         {
-            return _context.Trackings.FirstOrDefaultAsync(x => x.CarId == carId);
+            return null;// return _context.Trackings.FirstOrDefaultAsync(x => x.CarId == carId);
         }
 
         public async Task<Tracking> InsertTracking(Tracking tracking)

@@ -14,5 +14,7 @@ namespace CmApp.Contracts.Interfaces.Services
         Task<List<string>> InsertImages(int carId, List<string> images);
         Task DeleteImages(int carId, List<string> images);
         Task UpdateImages(int carId, Images images);
+
+        Task<List<CarListDTO>> GetUserCars(int userId);
     }
 }

@@ -24,13 +24,15 @@ namespace CmApp.Contracts.Models
         public string Interior { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int MakeId { get; set; }
+        public int ModelId { get; set; }
         public int UserId { get; set; }
-        public int TrackingId { get; set; }
+        /*public int TrackingId { get; set; }
         public int ShippingId { get; set; }
-        public int SummaryId { get; set; }
+        public int SummaryId { get; set; }*/
 
 
         public virtual Make Make { get; set; }
+        public virtual Model Model { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<Equipment> Equipment { get; set; }
         public virtual ICollection<Repair> Repairs { get; set; }

@@ -37,7 +37,7 @@ namespace CmApp.Controllers
             {
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-                var cars = await _carRepository.GetUserCars(userId);
+                var cars = await _carService.GetUserCars(userId);
                 return Ok(cars);
             }
             catch (Exception ex)

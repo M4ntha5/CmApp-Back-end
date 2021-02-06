@@ -7,5 +7,6 @@
         public int MakeId { get; set; }
 
         public virtual Make Make { get; set; }
+
     }
 }

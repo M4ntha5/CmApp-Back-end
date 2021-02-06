@@ -13,7 +13,6 @@ namespace CmApp.Contracts.Models
         public bool IsSold { get; set; } = false;
         public int CarId { get; set; }
 
-
         public virtual Car Car { get; set; }
     }
 }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CmApp.Contracts.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20201120205037_Initial")]
-    partial class Initial
+    [Migration("20210206141234_Initial1")]
+    partial class Initial1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace CmApp.Contracts.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Car", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Car", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,11 +52,14 @@ namespace CmApp.Contracts.Migrations
                     b.Property<string>("Interior")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("MakeId")
+                    b.Property<int>("MakeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ManufactureDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("ModelId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Power")
                         .HasColumnType("nvarchar(max)");
@@ -70,30 +73,52 @@ namespace CmApp.Contracts.Migrations
                     b.Property<string>("Transmission")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Vin")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MakeId");
 
+                    b.HasIndex("ModelId")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Cars");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Equipment", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.CarImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CarId")
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("CarImages");
+                });
+
+            modelBuilder.Entity("CmApp.Contracts.Models.Equipment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CarId")
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
@@ -109,32 +134,7 @@ namespace CmApp.Contracts.Migrations
                     b.ToTable("Equipment");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.ImageUrl", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("CarId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TrackingId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarId");
-
-                    b.HasIndex("TrackingId");
-
-                    b.ToTable("Urls");
-                });
-
-            modelBuilder.Entity("CmApp.Contracts.Entities.Make", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Make", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -149,14 +149,14 @@ namespace CmApp.Contracts.Migrations
                     b.ToTable("Makes");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Model", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Model", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("MakeId")
+                    b.Property<int>("MakeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -169,7 +169,7 @@ namespace CmApp.Contracts.Migrations
                     b.ToTable("Models");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.PasswordReset", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.PasswordReset", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -179,7 +179,7 @@ namespace CmApp.Contracts.Migrations
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ValidUntil")
@@ -192,14 +192,14 @@ namespace CmApp.Contracts.Migrations
                     b.ToTable("PasswordResets");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Repair", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Repair", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CarId")
+                    b.Property<int>("CarId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -215,10 +215,12 @@ namespace CmApp.Contracts.Migrations
                     b.ToTable("Repairs");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Shipping", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Shipping", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<decimal?>("AuctionFee")
                         .HasColumnType("decimal(18,2)");
@@ -226,8 +228,8 @@ namespace CmApp.Contracts.Migrations
                     b.Property<string>("AuctionFeeCurrency")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BaseCurrency")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("Customs")
                         .HasColumnType("decimal(18,2)");
@@ -249,16 +251,24 @@ namespace CmApp.Contracts.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CarId")
+                        .IsUnique();
+
                     b.ToTable("Shippings");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Summary", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Summary", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<decimal>("BoughtPrice")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -274,13 +284,18 @@ namespace CmApp.Contracts.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CarId")
+                        .IsUnique();
+
                     b.ToTable("Summaries");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Tracking", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Tracking", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("AirBag")
                         .HasColumnType("nvarchar(max)");
@@ -290,6 +305,9 @@ namespace CmApp.Contracts.Migrations
 
                     b.Property<string>("Branch")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Color")
                         .HasColumnType("nvarchar(max)");
@@ -353,10 +371,33 @@ namespace CmApp.Contracts.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CarId")
+                        .IsUnique();
+
                     b.ToTable("Trackings");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.User", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.TrackingImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("TrackingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrackingId");
+
+                    b.ToTable("TrackingImages");
+                });
+
+            modelBuilder.Entity("CmApp.Contracts.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -410,79 +451,104 @@ namespace CmApp.Contracts.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Car", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Car", b =>
                 {
-                    b.HasOne("CmApp.Contracts.Entities.Make", "Make")
+                    b.HasOne("CmApp.Contracts.Models.Make", "Make")
                         .WithMany()
-                        .HasForeignKey("MakeId");
+                        .HasForeignKey("MakeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("CmApp.Contracts.Entities.User", "User")
+                    b.HasOne("CmApp.Contracts.Models.Model", "Model")
+                        .WithOne("Car")
+                        .HasForeignKey("CmApp.Contracts.Models.Car", "ModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CmApp.Contracts.Models.User", "User")
                         .WithMany("Cars")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Equipment", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.CarImage", b =>
                 {
-                    b.HasOne("CmApp.Contracts.Entities.Car", "Car")
-                        .WithMany("Equipment")
-                        .HasForeignKey("CarId");
-                });
-
-            modelBuilder.Entity("CmApp.Contracts.Entities.ImageUrl", b =>
-                {
-                    b.HasOne("CmApp.Contracts.Entities.Car", null)
-                        .WithMany("Urls")
-                        .HasForeignKey("CarId");
-
-                    b.HasOne("CmApp.Contracts.Entities.Tracking", null)
+                    b.HasOne("CmApp.Contracts.Models.Car", "Car")
                         .WithMany("Images")
-                        .HasForeignKey("TrackingId");
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Model", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Equipment", b =>
                 {
-                    b.HasOne("CmApp.Contracts.Entities.Make", "Make")
+                    b.HasOne("CmApp.Contracts.Models.Car", "Car")
+                        .WithMany("Equipment")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CmApp.Contracts.Models.Model", b =>
+                {
+                    b.HasOne("CmApp.Contracts.Models.Make", "Make")
                         .WithMany("Models")
-                        .HasForeignKey("MakeId");
+                        .HasForeignKey("MakeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.PasswordReset", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.PasswordReset", b =>
                 {
-                    b.HasOne("CmApp.Contracts.Entities.User", "User")
+                    b.HasOne("CmApp.Contracts.Models.User", "User")
                         .WithMany("PasswordResets")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Repair", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Repair", b =>
                 {
-                    b.HasOne("CmApp.Contracts.Entities.Car", "Car")
+                    b.HasOne("CmApp.Contracts.Models.Car", "Car")
                         .WithMany("Repairs")
-                        .HasForeignKey("CarId");
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Shipping", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Shipping", b =>
                 {
-                    b.HasOne("CmApp.Contracts.Entities.Car", "Car")
+                    b.HasOne("CmApp.Contracts.Models.Car", "Car")
                         .WithOne("Shipping")
-                        .HasForeignKey("CmApp.Contracts.Entities.Shipping", "Id")
+                        .HasForeignKey("CmApp.Contracts.Models.Shipping", "CarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Summary", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Summary", b =>
                 {
-                    b.HasOne("CmApp.Contracts.Entities.Car", "Car")
+                    b.HasOne("CmApp.Contracts.Models.Car", "Car")
                         .WithOne("Summary")
-                        .HasForeignKey("CmApp.Contracts.Entities.Summary", "Id")
+                        .HasForeignKey("CmApp.Contracts.Models.Summary", "CarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CmApp.Contracts.Entities.Tracking", b =>
+            modelBuilder.Entity("CmApp.Contracts.Models.Tracking", b =>
                 {
-                    b.HasOne("CmApp.Contracts.Entities.Car", "Car")
+                    b.HasOne("CmApp.Contracts.Models.Car", "Car")
                         .WithOne("Tracking")
-                        .HasForeignKey("CmApp.Contracts.Entities.Tracking", "Id")
+                        .HasForeignKey("CmApp.Contracts.Models.Tracking", "CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CmApp.Contracts.Models.TrackingImage", b =>
+                {
+                    b.HasOne("CmApp.Contracts.Models.Tracking", "Tracking")
+                        .WithMany("Images")
+                        .HasForeignKey("TrackingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

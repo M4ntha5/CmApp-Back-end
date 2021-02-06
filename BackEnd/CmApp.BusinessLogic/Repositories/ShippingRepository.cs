@@ -67,17 +67,17 @@ namespace CmApp.BusinessLogic.Repositories
 
         public async Task DeleteCarShipping(int carId)
         {
-            var shipping = await _context.Shippings.FirstOrDefaultAsync(x => x.CarId == carId);
+            /*var shipping = await _context.Shippings.FirstOrDefaultAsync(x => x.CarId == carId);
             if (shipping != null)
             {
                 _context.Shippings.Remove(shipping);
                 await _context.SaveChangesAsync();
-            }
+            }*/
         }
 
         public Task<Shipping> GetShippingByCar(int carId)
         {
-            return _context.Shippings.FirstOrDefaultAsync(x => x.CarId == carId);
+            return null;// return _context.Shippings.FirstOrDefaultAsync(x => x.CarId == carId);
         }
 
         public async Task<Shipping> InsertShipping(Shipping shipping)
