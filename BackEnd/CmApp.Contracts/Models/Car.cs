@@ -23,12 +23,10 @@ namespace CmApp.Contracts.Models
         public string Color { get; set; }
         public string Interior { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public string DefaultImage { get; set; }
         public int MakeId { get; set; }
         public int ModelId { get; set; }
         public int UserId { get; set; }
-        /*public int TrackingId { get; set; }
-        public int ShippingId { get; set; }
-        public int SummaryId { get; set; }*/
 
 
         public virtual Make Make { get; set; }

@@ -185,6 +185,38 @@ namespace CmApp.BusinessLogic.Repositories
             _context = context;
         }
 
+        public async Task InsertCar(Car car)
+        {
+            if (car == null)
+                throw new ArgumentNullException(nameof(car), "Cannot insert car in db, because car is empty");
+
+            await _context.Cars.AddAsync(car);
+            await _context.SaveChangesAsync();       
+        }
+        public Task<List<Car>> GetUserCars(int userId)
+        {
+            return _context.Cars
+                .Include(x => x.Summary)
+                .Include(x => x.Repairs)
+                .Include(x => x.Shipping)
+                .Include(x => x.Make)
+                .Include(x => x.Model)
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
+        }
+        public async Task UpdateCarDefaultImage(int carId, string image)
+        {
+            var car = await _context.Cars.FirstOrDefaultAsync(x => x.Id == carId);
+            if (car == null)
+                throw new BusinessException("Cannot update default car image, because such car not found");
+            car.DefaultImage = image;
+            await _context.SaveChangesAsync();
+        }
+
+
+
+
+
         public async Task DeleteCar(int carId)
         {
             var car = await _context.Cars.FirstOrDefaultAsync(x => x.Id == carId);
@@ -214,17 +246,7 @@ namespace CmApp.BusinessLogic.Repositories
             return _context.Cars.FirstOrDefaultAsync(x => x.Id == carId);
         }
 
-        public async Task<Car> InsertCar(Car car)
-        {
-            if (car == null)
-                throw new ArgumentNullException(nameof(car), "Cannot insert car in db, because car is empty");
 
-            //car.Tracking = new Tracking() { CarId = car.Id, Vin = car.Vin.ToUpper() };
-
-            await _context.Cars.AddAsync(car);
-            await _context.SaveChangesAsync();
-            return car;
-        }
 
         public async Task UpdateCar(int carId, Car newCar)
         {
@@ -256,14 +278,10 @@ namespace CmApp.BusinessLogic.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<Car>> GetUserCars(int userId)
+
+        public Task<bool> CheckIfUserAlreadyHasCarWithSuchVin(int userId, string vin)
         {
-            return _context.Cars
-                .Include(x => x.Summary)
-                .Include(x => x.Make)
-                .Include(x => x.Model)
-                .Where(x => x.UserId == userId)
-                .ToListAsync();
+            return _context.Cars.AnyAsync(x => x.UserId == userId && x.Vin.ToUpper() == vin.ToUpper());
         }
 
 

@@ -56,7 +56,7 @@ namespace CmApp.Contracts.MappingProfiles
                     opt => opt.MapFrom(src => src.Transmission))
                 .ForMember(dest =>
                     dest.Vin,
-                    opt => opt.MapFrom(src => src.Vin))
+                    opt => opt.MapFrom(src => src.Vin.ToUpper()))
                 .ReverseMap();
 
         }

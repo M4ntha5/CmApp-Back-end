@@ -1,4 +1,5 @@
 ﻿using CmApp.Contracts.DTO;
+using CmApp.Contracts.DTO.v2;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using CmApp.Contracts.Models;
@@ -17,6 +18,34 @@ namespace CmApp.BusinessLogic.Services
             SummaryRepository = summaryRepository;
             ExternalAPIService = externalAPIService;
         }
+
+        public async Task InsertCarSummary(int carId, SummaryDTO summary)
+        {
+            decimal convertedPrice = summary.BoughtPrice;
+            if (summary.BoughtPriceCurrency != summary.BaseCurrency)
+            {
+                var input = new ExchangeInput
+                {
+                    Amount = summary.BoughtPrice,
+                    From = summary.BoughtPriceCurrency,
+                    To = summary.BaseCurrency
+                };
+                convertedPrice = await ExternalAPIService.CalculateResult(input);
+            }
+            var summaryEntity = new Summary
+            {
+                CreatedAt = DateTime.Now,
+                BoughtPrice = Math.Round(convertedPrice, 2),
+                CarId = carId,
+                IsSold = false,
+            };
+
+            await SummaryRepository.InsertSummary(summaryEntity);
+        }
+
+
+
+
 
         public async Task UpdateSoldSummary(int carId, Summary summary)
         {
@@ -39,26 +68,6 @@ namespace CmApp.BusinessLogic.Services
             var oldSummary = await SummaryRepository.GetSummaryByCarId(carId);
             await SummaryRepository.UpdateCarSoldSummary(oldSummary.Id, summary);
         }
-        public async Task<Summary> InsertCarSummary(int carId, Summary summary)
-        {
-            /*if (summary.SelectedCurrency == "" || summary.BaseCurrency == "")
-                throw new BusinessException("Currency not set");*/
-
-            // summary.Car = carId;
-            //if (summary.SelectedCurrency != summary.BaseCurrency)
-            //{
-                var input = new ExchangeInput
-                {
-                    Amount = summary.BoughtPrice,
-                    From = "EUR", //summary.SelectedCurrency,
-                    To = "EUR", //summary.BaseCurrency
-                };
-                var convertedPrice = await ExternalAPIService.CalculateResult(input);
-                summary.BoughtPrice = (decimal)Math.Round(convertedPrice, 2);
-            //}
-
-            var newSummary = await SummaryRepository.InsertSummary(summary);
-            return newSummary;
-        }
+        
     }
 }

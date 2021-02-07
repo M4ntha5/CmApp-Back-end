@@ -4,6 +4,7 @@ using CmApp.Contracts.DTO.v2;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using CmApp.Contracts.Models;
+using CmApp.Utils;
 using image4ioDotNetSDK.Models;
 using System;
 using System.Collections.Generic;
@@ -17,15 +18,22 @@ namespace CmApp.BusinessLogic.Services
     {
         private readonly ICarRepository CarRepository;
         private readonly ISummaryRepository SummaryRepository;
+        private readonly ISummaryService SummaryService;
+        private readonly IUserRepository UserRepository;
+
         private readonly IShippingRepository ShippingRepository;
         private readonly IScraperService WebScraper;
         private readonly IFileRepository FileRepository;
         private readonly ITrackingRepository TrackingRepository;
         private readonly IMapper _mapper;
 
-        public CarService(ICarRepository carRepository, IScraperService webScraper, ISummaryRepository summaryRepository,
-            IShippingRepository shippingRepository, IFileRepository fileRepository, ITrackingRepository trackingRepository, IMapper mapper)
+        public CarService(ICarRepository carRepository, IScraperService webScraper, 
+            ISummaryRepository summaryRepository, IShippingRepository shippingRepository, 
+            IFileRepository fileRepository, ITrackingRepository trackingRepository, IMapper mapper,
+            ISummaryService summaryService, IUserRepository userRepository)
         {
+            SummaryService = summaryService;
+            UserRepository = userRepository;
             CarRepository = carRepository;
             SummaryRepository = summaryRepository;
             WebScraper = webScraper;
@@ -99,30 +107,16 @@ namespace CmApp.BusinessLogic.Services
             carEntity.Vin = car.Vin.ToUpper();
 
             //inserting vehicle data
-            var insertedCar = await CarRepository.InsertCar(carEntity);
+            await CarRepository.InsertCar(carEntity);
 
             //await InsertImages(insertedCar.Id, car.Base64images);
 
             //inserts empty tracking 
-            await TrackingRepository.InsertTracking(new Tracking { Car = insertedCar });
-            return insertedCar;
+            //await TrackingRepository.InsertTracking(new Tracking { Car = insertedCar });
+            return null;
 
         }
 
-        private async Task<Car> InsertOtherCar(Car car)
-        {
-            if (car == null)
-                throw new BusinessException("Cannot insert car, because car is empty!");
-
-            car.Vin = car.Vin.ToUpper();
-
-            //inserting vehicle data
-            var insertedCar = await CarRepository.InsertCar(car);
-
-            //await InsertImages(insertedCar.Id, car.Base64images);
-
-            return insertedCar;
-        }
         public async Task<List<CarListDTO>> GetUserCars(int userId)
         {
             var cars = await CarRepository.GetUserCars(userId);
@@ -133,48 +127,114 @@ namespace CmApp.BusinessLogic.Services
                 Make = x.Make.Name,
                 Model = x.Model.Name,
                 Vin = x.Vin,
+                DefaultImage = x.DefaultImage,
+                Total = GetCarTotalSpent(x),
                 Sold = x.Summary.IsSold,
+                Profit = GetCarProfit(x),
+                SoldWithin = GetSoldWithin(x),
             }).ToList();
         }
-
-        public async Task<Car> InsertCar(int userId, CarDTO car)
+        private static decimal GetCarTotalSpent(Car car)
         {
-            var userCars = await CarRepository.GetAllUserCars(userId);//car.User);
-            var userVins = userCars.Select(x => x.Vin).ToList();
+            var repairsCost = car.Repairs != null ? car.Repairs.Sum(x => x.Price) : 0;
+            var shippingCostSum =
+                car.Shipping.AuctionFee + car.Shipping.Customs +
+                car.Shipping.TransferFee + car.Shipping.TransportationFee;
+            var shippingCost = shippingCostSum ?? 0;
+            var totalSpent = car.Summary.BoughtPrice + repairsCost + shippingCost;
+            return totalSpent;
+        }
 
-            /*if (car.Make == null || car.Make.Name == "")
-                throw new BusinessException("Make not defined");*/
+        private static decimal GetCarProfit(Car car)
+        {
+            if (!car.Summary.IsSold)
+                return default;
+            var totalSpent = GetCarTotalSpent(car);
+            var profit = car.Summary.SoldPrice.Value - totalSpent;
 
-            if (userVins.Contains(car.Vin))
-                throw new BusinessException("There is already a car with this VIN number");
+            return profit;
+        }
+        private static string GetSoldWithin(Car car)
+        {
+            if (!car.Summary.IsSold)
+                return default;
+            var time = car.Summary.SoldDate.Value.Subtract(car.Summary.CreatedAt);
+            string message;
+            if (time.Days > 0)
+            {
+                if (time.Days == 1)
+                    message = $"Sold within {time.Days} day";
+                else
+                    message = $"Sold within {time.Days} days";
+            }              
+            else
+            {
+                if (time.Hours == 1)
+                    message = $"Sold within {time.Hours} hour";
+                else
+                    message = $"Sold within {time.Hours} hours";
+            }
+            return message;
+        }
 
-            /*if ((car.Make.Name == "BMW" || car.Make.Name == "Mercedes-benz") )//&& car.Model.Name == "")
-                return await InsertCarDetailsFromScraper(car);
-            else*/
+        public async Task InsertCar(int userId, CarDTO car)
+        {
+            var user = await UserRepository.GetUserById(userId);
+            if (user == null)
+                throw new BusinessException("Cannot add car because such user not found");
+            if (await CarRepository.CheckIfUserAlreadyHasCarWithSuchVin(userId, car.Vin))
+                throw new BusinessException("You already have a car with such VIN number");
 
+            //var carEntity = _mapper.Map<Car>(car);
+            var carEntity = new Car
+            {
+                CreatedAt = DateTime.Now,
+                Vin = car.Vin.ToUpper(),
+                UserId = userId,
+                //!!!!!! temporary !!!!!!!!!!!!!!
+                DefaultImage = Settings.DefaultImageUrl,
+                BodyType = car.BodyType,
+                Color = car.Color,
+                Displacement = car.Displacement,
+                Drive = car.Drive,
+                Engine = car.Engine,
+                FuelType = car.FuelType,
+                Interior = car.Interior,
+                MakeId = car.MakeId,
+                ManufactureDate = car.ManufactureDate,
+                ModelId = car.ModelId,
+                Transmission = car.Transmission,
+                Power = car.Power,
+                Series = car.Series,
+                Steering = car.Steering
+            };
 
+            //inserting vehicle data
+            await CarRepository.InsertCar(carEntity);
+            //inserting images
 
-            var carEntity = _mapper.Map<Car>(car);
-            carEntity.UserId = userId;
+            /*var insertedImages = await InsertImages(carEntity.Id, car.Images);
 
-            var insertedCar = await InsertOtherCar(carEntity);
+            //setting default image to the first one of a list
+            if (insertedImages.Count < 1)
+                carEntity.DefaultImage = Settings.DefaultImageUrl;
+            else
+                carEntity.DefaultImage = car.Images.FirstOrDefault();
 
+            await CarRepository.UpdateCarDefaultImage(carEntity.Id, carEntity.DefaultImage);*/
 
             //inserts empty tracking 
-            var tracking = await TrackingRepository.InsertTracking(new Tracking {Vin = car.Vin, CarId = insertedCar.Id });
+            await TrackingRepository.InsertTracking(new Tracking { Vin = car.Vin, CarId = carEntity.Id });
 
-            var summary = await SummaryRepository.InsertSummary(new Summary
+            await SummaryService.InsertCarSummary(carEntity.Id, new SummaryDTO
             {
-                CarId = insertedCar.Id,
-                IsSold = false,
                 BoughtPrice = car.BoughtPrice,
-                CreatedAt = DateTime.Now
+                BoughtPriceCurrency = car.BoughtPriceCurrency,
+                BaseCurrency = user.Currency,
+                CarId = carEntity.Id
             });
-            var shipping = await ShippingRepository.InsertShipping(new Shipping { CarId = insertedCar.Id });
 
-            
-
-            return insertedCar;
+            await ShippingRepository.InsertShipping(new Shipping { CarId = carEntity.Id });
         }
         
         public async Task DeleteCar(int userId, int carId)

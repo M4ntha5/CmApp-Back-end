@@ -1,4 +1,5 @@
 ﻿using CmApp.Contracts.DTO;
+using CmApp.Contracts.DTO.v2;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using CmApp.Contracts.Models;
@@ -54,7 +55,7 @@ namespace CmApp.Controllers
         // POST: /api/cars/{carId}/summary
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Post(int carId, [FromBody] Summary summary)
+        public async Task<IActionResult> Post(int carId, [FromBody] SummaryDTO summary)
         {
             try
             {
@@ -64,8 +65,8 @@ namespace CmApp.Controllers
                /* if (car.User != userId)
                     throw new Exception("Car does not exist");*/
 
-                var newSummary = await summaryService.InsertCarSummary(carId, summary);
-                return Ok(newSummary);
+                await summaryService.InsertCarSummary(carId, summary);
+                return Ok();
             }
             catch (Exception ex)
             {

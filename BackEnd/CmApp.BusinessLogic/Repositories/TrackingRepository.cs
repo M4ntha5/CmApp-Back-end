@@ -139,18 +139,11 @@ namespace CmApp.BusinessLogic.Repositories
 
         public async Task<Tracking> InsertTracking(Tracking tracking)
         {
-            try
-            {
-                if (tracking == null)
-                    throw new ArgumentNullException(nameof(tracking), "Cannot insert tracking in db, because tracking is empty");
+            if (tracking == null)
+                throw new ArgumentNullException(nameof(tracking), "Cannot insert tracking in db, because tracking is empty");
 
-                await _context.Trackings.AddAsync(tracking);
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                var ae = ex.Message;
-            }
+            await _context.Trackings.AddAsync(tracking);
+            await _context.SaveChangesAsync();
             
             return tracking;
         }

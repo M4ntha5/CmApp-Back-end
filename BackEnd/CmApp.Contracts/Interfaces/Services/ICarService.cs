@@ -8,7 +8,11 @@ namespace CmApp.Contracts.Interfaces.Services
 {
     public interface ICarService
     {
-        Task<Car> InsertCar(int userId, CarDTO car);
+        Task InsertCar(int userId, CarDTO car);
+
+
+
+
         Task DeleteCar(int userId, int carId);
         Task UpdateCar(int userId, int carId, Car car);
         Task<List<string>> InsertImages(int carId, List<string> images);

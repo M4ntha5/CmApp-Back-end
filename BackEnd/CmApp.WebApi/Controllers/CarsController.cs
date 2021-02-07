@@ -78,10 +78,9 @@ namespace CmApp.Controllers
             try
             {
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-               // car.User = userId;
-                var newCar = await _carService.InsertCar(userId, car);
+                await _carService.InsertCar(userId, car);
 
-                return Ok(newCar);
+                return Ok();
             }
             catch (Exception ex)
             {

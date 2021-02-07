@@ -13,7 +13,8 @@ namespace CmApp.Contracts.DTO.v2
         public string DefaultImage { get; set; }
         public decimal Total { get; set; }
         public bool Sold { get; set; }
-        public decimal Profit { get; set; }
+        public string SoldWithin { get; set; }
+        public decimal? Profit { get; set; }
 
     }
 }

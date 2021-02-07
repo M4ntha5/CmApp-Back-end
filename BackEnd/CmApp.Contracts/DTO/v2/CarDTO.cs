@@ -22,9 +22,11 @@ namespace CmApp.Contracts.DTO.v2
         public int MakeId { get; set; }
         public int ModelId { get; set; }
         public decimal BoughtPrice { get; set; }
+        public string BoughtPriceCurrency { get; set; }
+
 
         public ICollection<EquipmentDTO> Equipment { get; set; }
         public ICollection<RepairDTO> Repairs { get; set; }
-        public ICollection<string> Images { get; set; }
+        public List<string> Images { get; set; }
     }
 }

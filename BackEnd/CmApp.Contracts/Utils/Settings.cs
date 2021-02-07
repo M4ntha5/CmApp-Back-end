@@ -10,7 +10,7 @@ namespace CmApp.Utils
         public static Guid ProjectId { get; set; } = Guid.Parse("9b932d71-5bb4-4579-9d69-c61e6dbca245");
         public static string ApiKey { get; set; } = "euHlhRE-TGmz4Y5gtmNeoFm1L5e_Xkun";
         public static string CaptchaApiKey { get; set; } = "1d53bbbfbc8e66ffbfef9b172fa5d183";
-        public static string DefaultImageUrl { get; set; } = "https://cdn.image4.io/cmapp//272f3362-1457-4aa9-89c4-491c5994149e.jpg";
+        public static string DefaultImageUrl { get; set; } = "https://cdn.image4.io/cmapp/f_auto/272f3362-1457-4aa9-89c4-491c5994149e.jpg";
         public static string WelcomeEmailTemplateId { get; set; } = "d-ad30b9067e184a9e894774a0d2273fd0";
         public static string PasswordResetEmailTemplateId { get; set; } = "d-b08639c3bb1c4804ba69a2a09d3b5123";
         public static string EmailConfirmationTemplateId { get; set; } = "d-99633e1621ec45a6bc60c31cc0491f39";

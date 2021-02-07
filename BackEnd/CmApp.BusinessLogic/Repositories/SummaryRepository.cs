@@ -74,6 +74,23 @@ namespace CmApp.BusinessLogic.Repositories
             _context = context;
         }
 
+        public async Task InsertSummary(Summary summary)
+        {
+            if (summary == null)
+                throw new ArgumentNullException(nameof(summary), "Cannot insert summary in db, because summary is empty");
+
+            await _context.Summaries.AddAsync(summary);
+            await _context.SaveChangesAsync();
+        }
+
+
+
+
+
+
+
+
+
         public async Task DeleteCarSummary(int carId)
         {
            /* var summary = await _context.Summaries.FirstOrDefaultAsync(x => x.CarId == carId);
@@ -89,15 +106,7 @@ namespace CmApp.BusinessLogic.Repositories
             return null;// return _context.Summaries.FirstOrDefaultAsync(x => x.CarId == carId);
         }
 
-        public async Task<Summary> InsertSummary(Summary summary)
-        {
-            if (summary == null)
-                throw new ArgumentNullException(nameof(summary), "Cannot insert summary in db, because summary is empty");
-
-            await _context.Summaries.AddAsync(summary);
-            await _context.SaveChangesAsync();
-            return summary;
-        }
+        
 
         public async Task UpdateCarSoldSummary(int summaryId, Summary summaryDetails)
         {
