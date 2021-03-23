@@ -239,24 +239,20 @@ namespace CmApp.Services
 
 
 
-        public Task InsertEquipment(string carId, string data)
+        public Task InsertEquipment(string carId, List<EquipmentDTO> data)
         {
-            var lines = data.Split('\n').ToList();
             var equipment = new List<Equipment>();
-            foreach (var line in lines)
+            foreach (var line in data)
             {
-                var lineParts = line.Split(' ').ToList();
-                if (lineParts.Count >= 2)
-                {
-                    var code = lineParts[0];
-                    var nameEn = lineParts[1];
+  
+                    var code = line.Code;
+                    var nameEn = line.NameEn;
                     equipment.Add(new Equipment
                     {
                         Code = code,
                         Name = nameEn
                     });
-                }
-
+                
             }
             return CarRepository.UpdateCarEquipment(carId, equipment);
         }
