@@ -15,5 +15,7 @@ namespace CmApp.Contracts
         Task<List<string>> UploadImageToCar(string recordId, List<string> urls);
         Task<List<CarDisplay>> GetAllUserCars(string userId);
         Task DeleteAllCarImages(string recordId);
+
+        Task UpdateCarEquipment(string carId, List<Equipment> equipment);
     }
 }

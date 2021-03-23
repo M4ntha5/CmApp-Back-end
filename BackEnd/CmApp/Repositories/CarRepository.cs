@@ -181,5 +181,19 @@ namespace CmApp.Repositories
             await repo.DeleteOneAsync(makeId);
         }
 
+        public async Task UpdateCarEquipment(string carId, List<Equipment> equipment)
+        {
+            var repo = new CodeMashRepository<CarEntity>(Client);
+
+            var update = Builders<CarEntity>.Update
+                .Set("equipment", equipment);
+
+            await repo.UpdateOneAsync(
+                carId,
+                update,
+                new DatabaseUpdateOneOptions()
+            );
+        }
+
     }
 }

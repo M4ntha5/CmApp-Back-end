@@ -171,5 +171,21 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Route("/api/cars/{carId}/equipment")]
+        [HttpPost]
+        [Authorize(Roles = "user")]
+        public async Task<IActionResult> AddEquipment(string carId, [FromBody] string data)
+        {
+            try
+            {
+                await carService.InsertEquipment(carId, data);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

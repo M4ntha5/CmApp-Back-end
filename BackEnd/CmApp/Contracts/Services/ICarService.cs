@@ -13,5 +13,8 @@ namespace CmApp.Contracts
         Task<List<string>> InsertImages(string carId, List<string> images);
         Task DeleteImages(string carId, List<string> images);
         Task UpdateImages(string carId, Images images);
+
+
+        Task InsertEquipment(string carId, string data);
     }
 }

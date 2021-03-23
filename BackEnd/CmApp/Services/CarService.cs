@@ -235,5 +235,30 @@ namespace CmApp.Services
             }
             await CarRepository.UploadImageToCar(carId, urls);
         }
+
+
+
+
+        public Task InsertEquipment(string carId, string data)
+        {
+            var lines = data.Split('\n').ToList();
+            var equipment = new List<Equipment>();
+            foreach (var line in lines)
+            {
+                var lineParts = line.Split(' ').ToList();
+                if (lineParts.Count >= 2)
+                {
+                    var code = lineParts[0];
+                    var nameEn = lineParts[1];
+                    equipment.Add(new Equipment
+                    {
+                        Code = code,
+                        Name = nameEn
+                    });
+                }
+
+            }
+            return CarRepository.UpdateCarEquipment(carId, equipment);
+        }
     }
 }
