@@ -15,6 +15,6 @@ namespace CmApp.Contracts
         Task UpdateImages(string carId, Images images);
 
 
-        Task InsertEquipment(string carId, List<EquipmentDTO> data);
+        Task InsertEquipment(string carId, List<Equipment> data);
     }
 }

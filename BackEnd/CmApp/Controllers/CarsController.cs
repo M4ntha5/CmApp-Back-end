@@ -175,7 +175,7 @@ namespace CmApp.Controllers
         [Route("/api/cars/{carId}/equipment")]
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> AddEquipment(string carId, [FromBody] List<EquipmentDTO> data)
+        public async Task<IActionResult> AddEquipment(string carId, [FromBody] List<Equipment> data)
         {
             try
             {
@@ -189,10 +189,4 @@ namespace CmApp.Controllers
         }
         
     }
-}
-
-public class EquipmentDTO
-{
-    public string Code { get; set; }
-    public string NameEn { get; set; }
 }
