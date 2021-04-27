@@ -14,7 +14,7 @@ namespace CmApp.Repositories
     public class ExternalAPIService : IExternalAPIService
     {
         //base currency allways EUR
-        private readonly string Url = "https://api.exchangeratesapi.io/v1/latest";
+        private readonly string Url = "http://api.exchangeratesapi.io/v1/latest";
 
         private async Task<ExchangeRate> GetLatestForeignExchanges()
         {
@@ -26,7 +26,8 @@ namespace CmApp.Repositories
             client.DefaultRequestHeaders.Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            HttpResponseMessage response = await client.GetAsync(Url + $"?access_key={Settings.ExchangeApiKey}");
+            var url = Url + $"?access_key={Settings.ExchangeApiKey}";
+            HttpResponseMessage response = await client.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
