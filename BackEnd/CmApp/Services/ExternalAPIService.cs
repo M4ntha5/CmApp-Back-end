@@ -44,7 +44,7 @@ namespace CmApp.Repositories
         }
         public async Task<ExchangeRate> GetSelectedExchangeRate(string name)
         {
-            var url = Url + $"?access_key={Settings.ExchangeApiKey}" + "$base=" + name.ToUpper();
+            var url = Url + $"?access_key={Settings.ExchangeApiKey}&base={name.ToUpper()}";
             HttpClient client = new HttpClient
             {
                 BaseAddress = new Uri(url)
