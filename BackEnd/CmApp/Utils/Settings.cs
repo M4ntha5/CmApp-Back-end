@@ -6,6 +6,7 @@ namespace CmApp.Utils
     {
         public static string Image4IoApiKey { get; set; } 
         public static string Image4IoSecret { get; set; } 
+        public static string ExchangeApiKey { get; set; }
 
         public static Guid ProjectId { get; set; }
         public static string ApiKey { get; set; }
