@@ -18,12 +18,12 @@ namespace CmApp.Contracts.Models
         public string Salt { get; set; }
         public bool Blocked { get; set; } = false;
         public bool Deleted { get; set; } = false;
-        public string Role { get; set; } = "user";
         public string Currency { get; set; } = "EUR";
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public ICollection<Car> Cars { get; set; }
         public ICollection<PasswordReset> PasswordResets { get; set; }
+        public ICollection<UserRole> Roles { get; set; }
 
     }
 }
