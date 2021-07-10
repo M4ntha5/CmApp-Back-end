@@ -24,6 +24,10 @@ namespace CmApp.Contracts.Models
         public string Interior { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string DefaultImage { get; set; }
+        public decimal BoughtPrice { get; set; }
+        public decimal? SoldPrice { get; set; }
+        public DateTime? SoldDate { get; set; }
+        public bool IsSold { get; set; }
         public int MakeId { get; set; }
         public int ModelId { get; set; }
         public int UserId { get; set; }
@@ -36,7 +40,5 @@ namespace CmApp.Contracts.Models
         public virtual ICollection<Repair> Repairs { get; set; }
         public virtual ICollection<CarImage> Images { get; set; }
         public virtual Tracking Tracking { get; set; }
-        public virtual Shipping Shipping { get; set; }
-        public virtual Summary Summary { get; set; }
     }
 }

@@ -129,7 +129,7 @@ namespace CmApp.BusinessLogic.Services
                 Vin = x.Vin,
                 DefaultImage = x.DefaultImage,
                 Total = GetCarTotalSpent(x),
-                Sold = x.Summary.IsSold,
+                Sold = x.IsSold,
                 Profit = GetCarProfit(x),
                 SoldWithin = GetSoldWithin(x),
             }).ToList();

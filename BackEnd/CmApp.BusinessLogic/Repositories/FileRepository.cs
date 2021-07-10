@@ -120,7 +120,7 @@ namespace CmApp.BusinessLogic.Repositories
             return urls;
         }*/
 
-        public async Task<List<string>> ListFolder(string folder)
+        public async Task<IEnumerable<string>> ListFolder(string folder)
         {
             var response = await ImagesClient.ListFolderAsync(
                 new ListFolderRequest()
@@ -128,7 +128,7 @@ namespace CmApp.BusinessLogic.Repositories
                     Path = folder
                 });
 
-            var urls = response.Images.Select(x => x.Url).ToList();
+            var urls = response.Images.Select(x => x.Url);
             return urls;
         }
 
@@ -178,7 +178,7 @@ namespace CmApp.BusinessLogic.Repositories
             var names = file;
             // converting one of the file to string
             var source = names.ToString();
-            //parsing formated string json
+            //parsing formatted string json
             dynamic data = JObject.Parse(source);
             //accessing json fields
             string fileId = data.id;
