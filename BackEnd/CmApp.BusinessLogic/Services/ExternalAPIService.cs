@@ -14,19 +14,19 @@ namespace CmApp.BusinessLogic.Services
     public class ExternalAPIService : IExternalAPIService
     {
         //base currency allways EUR
-        private readonly string Url = "https://api.exchangeratesapi.io/latest";
+        private readonly string _url = "https://api.exchangeratesapi.io/latest";
 
         private async Task<ExchangeRate> GetLatestForeignExchanges()
         {
             HttpClient client = new HttpClient
             {
-                BaseAddress = new Uri(Url)
+                BaseAddress = new Uri(_url)
             };
 
             client.DefaultRequestHeaders.Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            HttpResponseMessage response = await client.GetAsync(Url);
+            HttpResponseMessage response = await client.GetAsync(_url);
 
             if (response.IsSuccessStatusCode)
             {
@@ -43,7 +43,7 @@ namespace CmApp.BusinessLogic.Services
         }
         public async Task<ExchangeRate> GetSelectedExchangeRate(string name)
         {
-            var url = Url + "?base=" + name.ToUpper();
+            var url = _url + "?base=" + name.ToUpper();
             HttpClient client = new HttpClient
             {
                 BaseAddress = new Uri(url)

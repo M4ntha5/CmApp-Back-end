@@ -17,14 +17,14 @@ namespace CmApp.BusinessLogic.Services.v2
 {
     public class AuthService : IAuthService
     { 
-        //private readonly IUserRepository UserRepository;
-        private readonly IEmailRepository EmailRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IEmailRepository _emailRepository;
         private readonly Context _context;
 
         public AuthService(Context context, IUserRepository userRepository, IEmailRepository emailRepository)
         {
-            //UserRepository = userRepository;
-            EmailRepository = emailRepository;
+            _userRepository = userRepository;
+            _emailRepository = emailRepository;
             _context = context;
         }
 
@@ -35,7 +35,7 @@ namespace CmApp.BusinessLogic.Services.v2
             if (userExists)
                 throw new BusinessException("User with this email already exists!");
 
-            await UserRepository.InsertUser(user);
+            await _userRepository.InsertUser(user);
             //await EmailRepository.SendEmailConfirmationEmail(insertedUser.Email, insertedUser.ID.ToString());
 
             return true; //insertedUser == null ? false : true;
@@ -67,9 +67,10 @@ namespace CmApp.BusinessLogic.Services.v2
             );
             if (hashedPass == user.Password)
             {
-                if (user.Roles.Contains("user"))
+                var currRoles = user.Roles.Select(x => x.Role?.Name).ToList();
+                if (currRoles.Contains("user"))
                     return GenerateDefaultToken(user);
-                if (user.Role == "admin")
+                if (currRoles.Contains("admin"))
                     return GenerateAdminToken(user);
             }
             else
@@ -90,7 +91,7 @@ namespace CmApp.BusinessLogic.Services.v2
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, user.Role),
+                //new Claim(ClaimTypes.Role, user.Roles),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
@@ -120,7 +121,7 @@ namespace CmApp.BusinessLogic.Services.v2
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, user.Role),
+                //new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
@@ -139,18 +140,18 @@ namespace CmApp.BusinessLogic.Services.v2
 
         public async Task ConfirmUserEmail(int token)
         {
-            var user = await UserRepository.GetUserById(token);
+            var user = _userRepository.GetUserById(token);
             if (user == null || user.Deleted)
                 throw new BusinessException("No such a user!");
             if (user.EmailConfirmed)
                 throw new BusinessException("Email already confirmed!");
 
-            await UserRepository.ChangeEmailConfirmationFlag(user.Id);
-            await EmailRepository.SendWelcomeEmail(user.Email);
+            await _userRepository.ChangeEmailConfirmationFlag(user.Id);
+            await _emailRepository.SendWelcomeEmail(user.Email);
         }
         public async Task CreatePasswordResetToken(string email)
         {
-            var user = await UserRepository.GetUserByEmail(email);
+            var user = _userRepository.GetUserByEmail(email);
             if (user == null)
                 throw new BusinessException("User with this email not registered");
             if (!user.EmailConfirmed)
@@ -171,7 +172,7 @@ namespace CmApp.BusinessLogic.Services.v2
                 User = user
             };
 
-            await UserRepository.InsertPasswordReset(entity);
+            await _userRepository.InsertPasswordReset(entity);
             //await EmailRepository.SendPasswordResetEmail(email, token);
         }
 
@@ -183,7 +184,7 @@ namespace CmApp.BusinessLogic.Services.v2
             byte[] bytes = Encoding.Default.GetBytes(user.Token);
             var token = Encoding.UTF8.GetString(bytes);
 
-            var resetDetails = await UserRepository.GetPasswordResetByToken(token);
+            var resetDetails = await _userRepository.GetPasswordResetByToken(token);
 
             if (resetDetails == null)
                 throw new BusinessException("Error handling your password change. Please try again");
@@ -194,8 +195,8 @@ namespace CmApp.BusinessLogic.Services.v2
             if (resetDetails.Token != user.Token)
                 throw new BusinessException("Error changing your password. Please try again");
 
-            await UserRepository.ChangePassword(resetDetails.User.Id, user.Password);
-            await UserRepository.DeleteResetToken(resetDetails.Id);
+            await _userRepository.ChangePassword(resetDetails.User.Id, user.Password);
+            await _userRepository.DeleteResetToken(resetDetails.Id);
         }
 
         public async Task ResetPassword(int userId, Contracts.DTO.User user)
@@ -203,17 +204,17 @@ namespace CmApp.BusinessLogic.Services.v2
             if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match");
 
-            await UserRepository.ChangePassword(userId, user.Password);
+            await _userRepository.ChangePassword(userId, user.Password);
         }
 
         public async Task<UserDetails> GetSelectedUser(int userId)
         {
-            var user = await UserRepository.GetUserById(userId);
+            var user = _userRepository.GetUserById(userId);
             var userDetails = new UserDetails
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
-                BornDate = user.BornDate.Value,
+                BornDate = user.BornDate,
                 Country = user.Country,
                 Currency = user.Currency,
                 LastName = user.LastName,
@@ -224,7 +225,7 @@ namespace CmApp.BusinessLogic.Services.v2
 
         public async Task UpdateUserDetails(int userId, UserDetails user)
         {
-            await UserRepository.UpdateUser(userId, user);
+            await _userRepository.UpdateUser(userId, user);
         }
     }
 }

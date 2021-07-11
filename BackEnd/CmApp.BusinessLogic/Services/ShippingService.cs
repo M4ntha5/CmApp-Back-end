@@ -10,7 +10,7 @@ namespace CmApp.BusinessLogic.Services
 {
     public class ShippingService : IShippingService
     {
-        private readonly IExternalAPIService ExternalAPIService;
+       /* private readonly IExternalAPIService ExternalAPIService;
         private readonly IShippingRepository ShippingRepository;
         private readonly ISummaryRepository SummaryRepository;
 
@@ -119,7 +119,7 @@ namespace CmApp.BusinessLogic.Services
             }
 
             return shipping;
-        }
+        }*/
 
     }
 }

@@ -10,7 +10,7 @@ namespace CmApp.BusinessLogic.Services
 {
     public class SummaryService : ISummaryService
     {
-        private readonly ISummaryRepository SummaryRepository;
+     /*   private readonly ISummaryRepository SummaryRepository;
         private readonly IExternalAPIService ExternalAPIService;
 
         public SummaryService(ISummaryRepository summaryRepository, IExternalAPIService externalAPIService)
@@ -52,7 +52,7 @@ namespace CmApp.BusinessLogic.Services
             // summary.Car = carId;
             summary.SoldDate = DateTime.UtcNow;
             var time = summary.SoldDate.Value.Subtract(summary.CreatedAt);
-            /*string message;
+            string message;
             if (time.Days > 0)
                 if (time.Days == 1)
                     message = $"Sold within {time.Days} day";
@@ -64,10 +64,10 @@ namespace CmApp.BusinessLogic.Services
             else
                 message = $"Sold within {time.Hours} hours";
 
-            summary.SoldWithin = message;*/
+            summary.SoldWithin = message;
             var oldSummary = await SummaryRepository.GetSummaryByCarId(carId);
             await SummaryRepository.UpdateCarSoldSummary(oldSummary.Id, summary);
         }
-        
+        */
     }
 }

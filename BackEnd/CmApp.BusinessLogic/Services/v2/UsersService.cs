@@ -1,33 +1,31 @@
-﻿using CmApp.Contracts.Interfaces.Repositories;
-using CmApp.Contracts.Models;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Org.BouncyCastle.Asn1.X509;
+using CmApp.Contracts.Models;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.EntityFrameworkCore;
 
-namespace CmApp.BusinessLogic.Repositories
+namespace CmApp.BusinessLogic.Services.v2
 {
-    public class UserRepository : IUserRepository
+    public class UsersService : IUsersService
     {
         private readonly Context _context;
 
-        public UserRepository(Context context)
+        public UsersService(Context context)
         {
             _context = context;
         }
 
-        public async Task BlockUser(int userId)
+        public Task BlockUser(int userId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            if(user != null)
-            {
-                user.Blocked = true;
-                await _context.SaveChangesAsync();
-            }
+            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+            if (user == null)
+                throw new BusinessException("Cannot block user, because such user not found");
+            
+            user.Blocked = true;
+            return _context.SaveChangesAsync();
         }
 
         public Task ChangeEmailConfirmationFlag(int userId)
@@ -35,17 +33,16 @@ namespace CmApp.BusinessLogic.Repositories
             var user = _context.Users.FirstOrDefault(x => x.Id == userId);
             if (user == null)
                 throw new BusinessException("Cannot confirm email, because user not found");
-           
+
             user.EmailConfirmed = true;
             return _context.SaveChangesAsync();
         }
 
-        public async Task ChangePassword(int userId, string password)
+        public Task ChangePassword(int userId, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-
+            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
             if (user == null)
-                throw new BusinessException("Such user does not exist");
+                throw new BusinessException("Cannot change password, because such user not found");
 
             byte[] salt = new byte[128 / 8];
             using (var rng = RandomNumberGenerator.Create())
@@ -65,17 +62,31 @@ namespace CmApp.BusinessLogic.Repositories
 
             user.Password = hashedPass;
             user.Salt = Convert.ToBase64String(salt);
+            return _context.SaveChangesAsync();
+        }
+
+        public async Task AddRoleToUser(int userId, int roleId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if (user == null)
+                throw new BusinessException("Cannot add role, because user not found");
+
+            await _context.UserRoles.AddAsync(new UserRole()
+            {
+                RoleId = roleId,
+                UserId = userId
+            });
+            
             await _context.SaveChangesAsync();
         }
 
+
         public async Task ChangeUserRole(int userId, string role)
         {
-            throw new NotImplementedException();
-            
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
             if(user != null)
             {
-               // user.Role = role;
+                //user.Role = role;
                 await _context.SaveChangesAsync();
             }
         }
@@ -83,21 +94,21 @@ namespace CmApp.BusinessLogic.Repositories
         public async Task DeleteResetToken(int resetId)
         {
             var resetToken = await _context.PasswordResets.FirstOrDefaultAsync(x => x.Id == resetId);
-            if(resetToken != null)
-            {
-                _context.Remove(resetToken);
-                await _context.SaveChangesAsync();
-            }
+            if (resetToken == null)
+                throw new BusinessException("Cannot delete token, because token not found");
+            
+            _context.Remove(resetToken);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteUser(int userId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            if(user != null)
-            {
-                user.Deleted = true;
-                await _context.SaveChangesAsync();
-            }
+            if (user == null)
+                throw new BusinessException("Cannot delete user, because user not found");
+            
+            user.Deleted = true;
+            await _context.SaveChangesAsync();
         }
 
         public Task<List<User>> GetAllUsers()
@@ -109,28 +120,15 @@ namespace CmApp.BusinessLogic.Repositories
         {
             return _context.PasswordResets.FirstOrDefaultAsync(x => x.Token == token);
         }
-        public IQueryable<string> GetUserRoles(int userId)
+
+        public Task<User> GetUserByEmail(string email)
         {
-            return _context.UserRoles
-                .Include(x => x.Role)
-                .Where(x => x.UserId == userId && x.Role != null)
-                .Select(x => x.Role.Name)
-                .AsQueryable();
+            return _context.Users.FirstOrDefaultAsync(x => x.EmailConfirmed && x.Email == email);
         }
 
-        public bool CheckIfPasswordResetTokenExists(string token)
+        public Task<User> GetUserById(int userId)
         {
-            return _context.PasswordResets.Any(x => x.Token == token);
-        }
-
-        public User GetUserByEmail(string email)
-        {
-            return _context.Users.FirstOrDefault(x => x.EmailConfirmed && x.Email == email);
-        }
-
-        public User GetUserById(int userId)
-        {
-            return _context.Users.FirstOrDefault(x => x.Id == userId);
+            return _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
         }
 
         public async Task InsertPasswordReset(PasswordReset resetEntity)
@@ -142,7 +140,7 @@ namespace CmApp.BusinessLogic.Repositories
             }
         }
 
-        public Task InsertUser(Contracts.DTO.User user)
+        public async Task InsertUser(Contracts.DTO.User user)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user), "Cannot insert user in db, because user is empty");
@@ -156,7 +154,7 @@ namespace CmApp.BusinessLogic.Repositories
                 rng.GetBytes(salt);
             }
 
-            var hashedPass = Convert.ToBase64String(
+            string hashedPass = Convert.ToBase64String(
                 KeyDerivation.Pbkdf2(
                     password: user.Password,
                     salt: salt,
@@ -174,8 +172,7 @@ namespace CmApp.BusinessLogic.Repositories
                 Currency = user.Currency
             };
 
-           _context.Users.Add(entity);
-           return _context.SaveChangesAsync();
+           await _context.Users.AddAsync(entity);
         }
 
         public async Task UnblockUser(int userId)

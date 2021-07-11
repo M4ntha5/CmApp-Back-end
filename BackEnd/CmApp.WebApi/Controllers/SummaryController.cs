@@ -31,7 +31,7 @@ namespace CmApp.Controllers
 
 
         // GET: /api/cars/{carId}/summary
-        [HttpGet]
+     /*   [HttpGet]
         [Authorize(Roles = "user")]
         public async Task<IActionResult> Get(int carId)
         {
@@ -39,9 +39,9 @@ namespace CmApp.Controllers
             {
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-                var car = await carRepository.GetCarById(carId);
-               /* if (car.User != userId)
-                    throw new Exception("Car does not exist");*/
+                var car = carRepository.GetCarById(carId);
+                if (car.User != userId)
+                    throw new Exception("Car does not exist");
 
                 var summary = await summaryRepository.GetSummaryByCarId(carId);
                 return Ok(summary);
@@ -62,8 +62,8 @@ namespace CmApp.Controllers
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-               /* if (car.User != userId)
-                    throw new Exception("Car does not exist");*/
+                if (car.User != userId)
+                    throw new Exception("Car does not exist");
 
                 await summaryService.InsertCarSummary(carId, summary);
                 return Ok();
@@ -84,8 +84,8 @@ namespace CmApp.Controllers
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-               /* if (car.User != userId)
-                    throw new Exception("Car does not exist");*/
+                if (car.User != userId)
+                    throw new Exception("Car does not exist");
 
                 await summaryService.UpdateSoldSummary(carId, summary);
                 return NoContent();
@@ -106,8 +106,8 @@ namespace CmApp.Controllers
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepository.GetCarById(carId);
-               /* if (car.User != userId)
-                    throw new Exception("Car does not exist");*/
+                if (car.User != userId)
+                    throw new Exception("Car does not exist");
 
                 await summaryRepository.DeleteCarSummary(carId);
                 return NoContent();
@@ -138,6 +138,6 @@ namespace CmApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }*/
     }
 }

@@ -16,13 +16,11 @@ namespace CmApp.BusinessLogic.Services.v2
 {
     public class CarsService : ICarsService
     {
-        private readonly IScraperService _scraperService;
         private readonly IMapper _mapper;
         private readonly Context _context;
 
-        public CarsService(Context context, IScraperService webScraper, IMapper mapper)
+        public CarsService(Context context, IMapper mapper)
         {
-            _scraperService = webScraper;
             _mapper = mapper;
             _context = context;
         }

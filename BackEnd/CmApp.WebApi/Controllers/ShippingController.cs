@@ -18,7 +18,7 @@ namespace CmApp.Controllers
         private readonly ICarRepository carRepo;
         private readonly IShippingService shippingService;
 
-        public ShippingController(IShippingRepository shippingRepository, ICarRepository carRepo, 
+       /* public ShippingController(IShippingRepository shippingRepository, ICarRepository carRepo, 
             IShippingService shippingService)
         {
             this.shippingRepository = shippingRepository;
@@ -37,8 +37,8 @@ namespace CmApp.Controllers
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-               /* if (car.User != userId)
-                    throw new Exception("Car does not exist");*/
+                if (car.User != userId)
+                    throw new Exception("Car does not exist");
 
                 var shipping = await shippingRepository.GetShippingByCar(carId);
                 return Ok(shipping);
@@ -61,8 +61,8 @@ namespace CmApp.Controllers
                 var userCurrency = HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                 //shipping.BaseCurrency = userCurrency;
                 var car = await carRepo.GetCarById(carId);
-                /*if (car.User != userId)
-                    throw new Exception("Car does not exist");*/
+                if (car.User != userId)
+                    throw new Exception("Car does not exist");
 
                 var newShipping = await shippingService.InsertShipping(carId, shipping);
                 return Ok(newShipping);
@@ -85,8 +85,8 @@ namespace CmApp.Controllers
                 var userCurrency = HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                 //shipping.BaseCurrency = userCurrency;
                 var car = await carRepo.GetCarById(carId);
-              /*  if (car.User != userId)
-                    throw new Exception("Car does not exist");*/
+                if (car.User != userId)
+                    throw new Exception("Car does not exist");
 
                 await shippingService.UpdateShipping(carId, shipping);
                 return NoContent();
@@ -107,8 +107,8 @@ namespace CmApp.Controllers
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
                 var car = await carRepo.GetCarById(carId);
-               /* if (car.User != userId)
-                    throw new Exception("Car does not exist");*/
+                if (car.User != userId)
+                    throw new Exception("Car does not exist");
 
                 await shippingRepository.DeleteCarShipping(carId);
                 return NoContent();
@@ -118,6 +118,6 @@ namespace CmApp.Controllers
                 return BadRequest(ex.Message);
             }
 
-        }
+        }*/
     }
 }

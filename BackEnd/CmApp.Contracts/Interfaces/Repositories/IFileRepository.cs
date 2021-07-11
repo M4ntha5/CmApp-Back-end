@@ -16,7 +16,7 @@ namespace CmApp.Contracts.Interfaces.Repositories
         Task<string> GetFileUrl(string fileId);
 
         Task<List<string>> InsertCarImages(int carId, List<UploadImageRequest.File> files);
-        Task<List<string>> ListFolder(string folder);
+        IEnumerable<string> ListFolder(string folder);
         Task<bool> DeleteImage(string pathToImage);
         Task<bool> DeleteFolder(string folder);
 

@@ -11,206 +11,111 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace CmApp.BusinessLogic.Services
 {
     public class CarService : ICarService
     {
-        private readonly ICarRepository CarRepository;
-        private readonly ISummaryRepository SummaryRepository;
-        private readonly ISummaryService SummaryService;
-        private readonly IUserRepository UserRepository;
+        private readonly ICarRepository _carRepository;
+        private readonly IUserRepository _userRepository;
+        
+        private readonly IScraperService _webScraper;
+        private readonly IFileRepository _fileRepository;
 
-        private readonly IShippingRepository ShippingRepository;
-        private readonly IScraperService WebScraper;
-        private readonly IFileRepository FileRepository;
-        private readonly ITrackingRepository TrackingRepository;
         private readonly IMapper _mapper;
 
-        public CarService(ICarRepository carRepository, IScraperService webScraper, 
-            ISummaryRepository summaryRepository, IShippingRepository shippingRepository, 
-            IFileRepository fileRepository, ITrackingRepository trackingRepository, IMapper mapper,
-            ISummaryService summaryService, IUserRepository userRepository)
+        public CarService(ICarRepository carRepository, IScraperService webScraper,
+            IFileRepository fileRepository, IMapper mapper, IUserRepository userRepository)
         {
-            SummaryService = summaryService;
-            UserRepository = userRepository;
-            CarRepository = carRepository;
-            SummaryRepository = summaryRepository;
-            WebScraper = webScraper;
-            FileRepository = fileRepository;
-            TrackingRepository = trackingRepository;
-            ShippingRepository = shippingRepository;
+            _userRepository = userRepository;
+            _carRepository = carRepository;
+            _webScraper = webScraper;
+            _fileRepository = fileRepository;
             _mapper = mapper;
-        }   
-
-        private async Task<Car> InsertCarDetailsFromScraper(Car car)
-        {
-            if (car == null || car.Vin == "" || car.Vin == null)
-                throw new BusinessException("Vin number cannot be null or empty!");
-            if (car.Make.Name != "BMW" && car.Make.Name != "Mercedes-benz")
-                throw new BusinessException("Bad vin for this make!");
-
-            //matching parameters to entity
-            var parResults = WebScraper.GetVehicleInfo(car.Vin, car.Make.Name);
-
-            Car carEntity = new Car
-            {
-                Make = car.Make,                //default for this scraper
-            };
-
-            foreach (var param in parResults)
-            {
-                if (param.Key == "Prod. Date" || param.Key == "Production Date")
-                    carEntity.ManufactureDate = Convert.ToDateTime(param.Value);
-                /*else if (param.Key == "Type" || param.Key == "Model")
-                    carEntity.Make.Name = param.Value;*/
-                else if (param.Key == "Series")
-                    carEntity.Series = param.Value;
-                else if (param.Key == "Body Type")
-                    carEntity.BodyType = param.Value;
-                else if (param.Key == "Steering")
-                    carEntity.Steering = param.Value;
-                else if (param.Key == "Engine")
-                    carEntity.Engine = param.Value;
-                else if (param.Key == "Displacement")
-                    carEntity.Displacement = decimal.Parse(param.Value);
-                else if (param.Key == "Power")
-                    carEntity.Power = param.Value;
-                else if (param.Key == "Drive")
-                    carEntity.Drive = param.Value;
-                else if (param.Key == "Transmission")
-                    carEntity.Transmission = param.Value;
-                else if (param.Key == "Colour")
-                    carEntity.Color = param.Value;
-                else if (param.Key == "Upholstery")
-                    carEntity.Interior = param.Value;
-            }
-            if (carEntity.Drive == "HECK")
-                carEntity.Drive = "Rear wheel drive";
-            else if (carEntity.Drive == "ALLR")
-                carEntity.Drive = "All wheel drive";
-            //making first letter upper
-            if (carEntity.BodyType.ToLower().Contains("Coup".ToLower()))
-                carEntity.BodyType = "Coupe";
-            else if (carEntity.BodyType == "SAV")
-                carEntity.BodyType = "SUV";
-            else if (carEntity.BodyType == "LIM")
-                carEntity.BodyType = "Limousine";
-
-            var eqResults = WebScraper.GetVehicleEquipment(car.Vin, car.Make.Name);
-            var equipment = new List<Contracts.Models.Equipment>();
-
-            foreach (var eq in eqResults)
-                equipment.Add(new Contracts.Models.Equipment() { Code = eq.Key, Name = eq.Value });
-
-            carEntity.Equipment = equipment;
-            carEntity.Vin = car.Vin.ToUpper();
-
-            //inserting vehicle data
-            await CarRepository.InsertCar(carEntity);
-
-            //await InsertImages(insertedCar.Id, car.Base64images);
-
-            //inserts empty tracking 
-            //await TrackingRepository.InsertTracking(new Tracking { Car = insertedCar });
-            return null;
-
         }
 
-        public async Task<List<CarListDTO>> GetUserCars(int userId)
+        public Task<List<CarListDTO>> GetUserCars(int userId)
         {
-            var cars = await CarRepository.GetUserCars(userId);
-
-            return cars.Select(x => new CarListDTO
-            {
-                Id = x.Id,
-                Make = x.Make.Name,
-                Model = x.Model.Name,
-                Vin = x.Vin,
-                DefaultImage = x.DefaultImage,
-                Total = GetCarTotalSpent(x),
-                Sold = x.IsSold,
-                Profit = GetCarProfit(x),
-                SoldWithin = GetSoldWithin(x),
-            }).ToList();
+            var cars = _carRepository.GetUserCars(userId);
+            return cars
+                .Select(x => new CarListDTO 
+                {
+                    Id = x.Id,
+                    Make = x.Make.Name,
+                    Model = x.Model.Name,
+                    Vin = x.Vin,
+                    DefaultImage = x.DefaultImage,
+                    Total = GetCarTotalSpent(x),
+                    Sold = x.IsSold,
+                    Profit = GetCarProfit(x),
+                    SoldWithin = GetSoldWithin(x),
+                })
+                .ToListAsync();
         }
         private static decimal GetCarTotalSpent(Car car)
         {
-            var repairsCost = car.Repairs != null ? car.Repairs.Sum(x => x.Price) : 0;
-            var shippingCostSum =
-                car.Shipping.AuctionFee + car.Shipping.Customs +
-                car.Shipping.TransferFee + car.Shipping.TransportationFee;
-            var shippingCost = shippingCostSum ?? 0;
-            var totalSpent = car.Summary.BoughtPrice + repairsCost + shippingCost;
-            return totalSpent;
+            var repairsTotal = car.Repairs.Count > 0 ? car.Repairs.Sum(x => x.Price) : 0;
+            return repairsTotal + car.BoughtPrice;
         }
 
-        private static decimal GetCarProfit(Car car)
+        private static decimal? GetCarProfit(Car car)
         {
-            if (!car.Summary.IsSold)
-                return default;
+            if (!car.IsSold || car.SoldPrice == null)
+                return null;
             var totalSpent = GetCarTotalSpent(car);
-            var profit = car.Summary.SoldPrice.Value - totalSpent;
+            var profit = car.SoldPrice - totalSpent;
 
             return profit;
         }
         private static string GetSoldWithin(Car car)
         {
-            if (!car.Summary.IsSold)
+            if (!car.IsSold || car.SoldDate == null)
                 return default;
-            var time = car.Summary.SoldDate.Value.Subtract(car.Summary.CreatedAt);
+            var time = car.SoldDate.Value.Subtract(car.CreatedAt);
             string message;
             if (time.Days > 0)
-            {
-                if (time.Days == 1)
-                    message = $"Sold within {time.Days} day";
-                else
-                    message = $"Sold within {time.Days} days";
-            }              
+                message = time.Days == 1 ? $"Sold within {time.Days} day" : $"Sold within {time.Days} days";
             else
-            {
-                if (time.Hours == 1)
-                    message = $"Sold within {time.Hours} hour";
-                else
-                    message = $"Sold within {time.Hours} hours";
-            }
+                message = time.Hours == 1 ? $"Sold within {time.Hours} hour" : $"Sold within {time.Hours} hours";
+            
             return message;
         }
 
-        public async Task InsertCar(int userId, CarDTO car)
+        public Task InsertCar(int userId, CarDTO car)
         {
-            var user = await UserRepository.GetUserById(userId);
+            var user = _userRepository.GetUserById(userId);
             if (user == null)
                 throw new BusinessException("Cannot add car because such user not found");
-            if (await CarRepository.CheckIfUserAlreadyHasCarWithSuchVin(userId, car.Vin))
+            if (_carRepository.CheckIfUserAlreadyHasCarWithSuchVin(userId, car.Vin))
                 throw new BusinessException("You already have a car with such VIN number");
 
             //var carEntity = _mapper.Map<Car>(car);
             var carEntity = new Car
             {
-                CreatedAt = DateTime.Now,
                 Vin = car.Vin.ToUpper(),
                 UserId = userId,
-                //!!!!!! temporary !!!!!!!!!!!!!!
-                DefaultImage = Settings.DefaultImageUrl,
-                BodyType = car.BodyType,
-                Color = car.Color,
-                Displacement = car.Displacement,
-                Drive = car.Drive,
-                Engine = car.Engine,
-                FuelType = car.FuelType,
-                Interior = car.Interior,
                 MakeId = car.MakeId,
-                ManufactureDate = car.ManufactureDate,
                 ModelId = car.ModelId,
-                Transmission = car.Transmission,
-                Power = car.Power,
+                BoughtPrice = car.BoughtPrice,
+                DefaultImage = Settings.DefaultImageUrl,
+                ManufactureDate = car.ManufactureDate,
                 Series = car.Series,
-                Steering = car.Steering
+                BodyType = car.BodyType,
+                Steering = car.Steering,
+                FuelType = car.FuelType,
+                Engine = car.Engine,
+                Displacement = car.Displacement,
+                Power = car.Power,
+                Drive = car.Drive,
+                Transmission = car.Transmission,
+                Color = car.Color,
+                Interior = car.Interior,
+                CreatedAt = DateTime.Now,
             };
-
-            //inserting vehicle data
-            await CarRepository.InsertCar(carEntity);
+            return _carRepository.InsertCar(carEntity);
+            
+            
             //inserting images
 
             /*var insertedImages = await InsertImages(carEntity.Id, car.Images);
@@ -224,42 +129,27 @@ namespace CmApp.BusinessLogic.Services
             await CarRepository.UpdateCarDefaultImage(carEntity.Id, carEntity.DefaultImage);*/
 
             //inserts empty tracking 
-            await TrackingRepository.InsertTracking(new Tracking { Vin = car.Vin, CarId = carEntity.Id });
-
-            await SummaryService.InsertCarSummary(carEntity.Id, new SummaryDTO
-            {
-                BoughtPrice = car.BoughtPrice,
-                BoughtPriceCurrency = car.BoughtPriceCurrency,
-                BaseCurrency = user.Currency,
-                CarId = carEntity.Id
-            });
-
-            await ShippingRepository.InsertShipping(new Shipping { CarId = carEntity.Id });
         }
         
-        public async Task DeleteCar(int userId, int carId)
+        public Task DeleteCar(int userId, int carId)
         {
-            var car = await CarRepository.GetCarById(carId);
-            // if (car.User != userId)
-            //     throw new BusinessException("Car does not exist");
+            return _carRepository.DeleteCar(carId);
+            
+            //await FileRepository.DeleteFolder("/cars/" + carId);
 
-            var tracking = await TrackingRepository.GetTrackingByCar(carId);
-            await CarRepository.DeleteCar(car.Id);
-            await FileRepository.DeleteFolder("/cars/" + carId);
-
-            await FileRepository.DeleteFolder("/tracking/" + tracking.Id);
+            //await FileRepository.DeleteFolder("/tracking/" + tracking.Id);
         }
 
-        public async Task UpdateCar(int userId, int carId, Car car)
+        public Task UpdateCar(int userId, int carId, Car car)
         {
             // if (car.User != userId)
             //     throw new BusinessException("Car does not exist");
 
-            var list = car.Equipment.Select(x => x.Code).ToList().Distinct().Count();
+            /*var list = car.Equipment.Select(x => x.Code).ToList().Distinct().Count();
             if (car.Equipment.Count != list)
                 throw new BusinessException("Car cannot have multiple equipment with the same code!");
-
-            await CarRepository.UpdateCar(carId, car);
+            */
+            return _carRepository.UpdateCar(carId, car);
         }
 
         public async Task<List<string>> InsertImages(int carId, List<string> images)
@@ -267,9 +157,9 @@ namespace CmApp.BusinessLogic.Services
             if (images != null && images.Count > 0)
             {
                 //deletes form cloud
-                await FileRepository.DeleteFolder("/cars/" + carId);
+                await _fileRepository.DeleteFolder("/cars/" + carId);
                 //deletes from db
-                await CarRepository.DeleteAllCarImages(carId);
+                await _carRepository.DeleteAllCarImages(carId);
 
                 var imgsList = new List<UploadImageRequest.File>();
 
@@ -278,22 +168,22 @@ namespace CmApp.BusinessLogic.Services
                     new UploadImageRequest.File()
                     {
                         FileName = count++ + ".jpeg",
-                        Data = new MemoryStream(FileRepository.Base64ToByteArray(x.Split(',')[1]))
+                        Data = new MemoryStream(_fileRepository.Base64ToByteArray(x.Split(',')[1]))
                     }
                 ));
 
                 //inserts to cloud 
-                var insertedUrls = await FileRepository.InsertCarImages(carId, imgsList);
+                var insertedUrls = await _fileRepository.InsertCarImages(carId, imgsList);
                 //inserts to db
-                await CarRepository.UploadImageToCar(carId, insertedUrls);
+                await _carRepository.UploadImageToCar(carId, insertedUrls);
                 return insertedUrls;
             }
             else
             {
                 //deletes form cloud
-                await FileRepository.DeleteFolder("/cars/" + carId);
+                await _fileRepository.DeleteFolder("/cars/" + carId);
                 //deletes from db
-                await CarRepository.DeleteAllCarImages(carId);
+                await _carRepository.DeleteAllCarImages(carId);
                 return null;
             }
         }
@@ -305,7 +195,7 @@ namespace CmApp.BusinessLogic.Services
                 foreach (var img in images)
                 {
                     var path = img.Split("cmapp")[1];
-                    await FileRepository.DeleteImage(path);
+                    await _fileRepository.DeleteImage(path);
                 }
             }
         }
@@ -333,18 +223,18 @@ namespace CmApp.BusinessLogic.Services
                     new UploadImageRequest.File()
                     {
                         FileName = count++ + ".jpeg",
-                        Data = new MemoryStream(FileRepository.Base64ToByteArray(x.Split(',')[1]))
+                        Data = new MemoryStream(_fileRepository.Base64ToByteArray(x.Split(',')[1]))
                     }
                 ));
 
                 //inserts to cloud 
-                var insertedUrls = await FileRepository.InsertCarImages(carId, imgsList);
+                var insertedUrls = await _fileRepository.InsertCarImages(carId, imgsList);
                 if (insertedUrls != null)
                 {
                     insertedUrls.ForEach(x => urls.Add(x));
                 }
             }
-            await CarRepository.UploadImageToCar(carId, urls);
+            await _carRepository.UploadImageToCar(carId, urls);
         }
     }
 }

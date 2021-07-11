@@ -1,28 +1,26 @@
-﻿using CmApp.Contracts;
+﻿using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using CmApp.Contracts.DTO;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace CmApp.Controllers
+namespace CmApp.WebApi.Controllers
 {
     [Route("api/users")]
     [Authorize(Roles = "user, admin", AuthenticationSchemes = "user, admin")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepository UserRepository;
-        private readonly IAuthService AuthService;
+        private readonly IUserRepository _userRepository;
+        private readonly IAuthService _authService;
 
         public UsersController(IUserRepository userRepository, IAuthService authService)
         {
-            UserRepository = userRepository;
-            AuthService = authService;
+            _userRepository = userRepository;
+            _authService = authService;
         }
 
 
@@ -38,7 +36,7 @@ namespace CmApp.Controllers
                 if (role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                var users = await UserRepository.GetAllUsers();
+                var users = await _userRepository.GetAllUsers();
 
                 return Ok(users);
             }
@@ -52,7 +50,7 @@ namespace CmApp.Controllers
         // GET: api/Users/5
         [HttpGet("{userId}")]
         [Authorize(Roles = "user, admin")]
-        public async Task<IActionResult> Get(int userId)
+        public IActionResult Get(int userId)
         {
             try
             {
@@ -62,7 +60,7 @@ namespace CmApp.Controllers
                 if (int.Parse(authUserId) != userId && role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                var user = await AuthService.GetSelectedUser(userId);
+                var user = _authService.GetSelectedUser(userId);
                 return Ok(user);
             }
             catch (Exception ex)
@@ -85,7 +83,7 @@ namespace CmApp.Controllers
                 if (int.Parse(authUserId) != userId && role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                await AuthService.UpdateUserDetails(userId, user);
+                await _authService.UpdateUserDetails(userId, user);
                 return NoContent();
             }
             catch (Exception ex)
@@ -107,8 +105,8 @@ namespace CmApp.Controllers
                 if (int.Parse(authUserId) != userId && role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                await UserRepository.BlockUser(userId);
-                return Ok("Selected user scuccessfully blocked!");
+                await _userRepository.BlockUser(userId);
+                return Ok("Selected user successfully blocked!");
             }
             catch (Exception ex)
             {
@@ -129,8 +127,8 @@ namespace CmApp.Controllers
                 if (int.Parse(authUserId) != userId && role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                await UserRepository.UnblockUser(userId);
-                return Ok("Selected user scuccessfully unblocked!");
+                await _userRepository.UnblockUser(userId);
+                return Ok("Selected user successfully unblocked!");
             }
             catch (Exception ex)
             {
@@ -150,8 +148,8 @@ namespace CmApp.Controllers
                 if (int.Parse(authUserId) != userId && role != "admin")
                     throw new Exception("You can not access this resource!");
 
-                await UserRepository.DeleteUser(userId);
-                return Ok("Selected user scuccessfully deleted!");
+                await _userRepository.DeleteUser(userId);
+                return Ok("Selected user successfully deleted!");
             }
             catch (Exception ex)
             {
@@ -171,8 +169,8 @@ namespace CmApp.Controllers
                 if (int.Parse(authUserId) != userId && userRole != "admin")
                     throw new Exception("You can not access this resource!");
 
-                await UserRepository.ChangeUserRole(userId, data.Role);
-                return Ok("Role sccessfully changed!");
+                await _userRepository.ChangeUserRole(userId, data.Role);
+                return Ok("Role successfully changed!");
             }
             catch (Exception ex)
             {
@@ -191,8 +189,8 @@ namespace CmApp.Controllers
                 if (int.Parse(authUserId) != userId)
                     throw new Exception("You can not access this resource!");
 
-                await AuthService.ResetPassword(userId, data);
-                return Ok("Password sccessfully changed!");
+                await _authService.ResetPassword(userId, data);
+                return Ok("Password successfully changed!");
             }
             catch (Exception ex)
             {

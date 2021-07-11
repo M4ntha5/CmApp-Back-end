@@ -18,65 +18,57 @@ namespace CmApp.BusinessLogic.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IUserRepository UserRepository;
-        private readonly IEmailRepository EmailRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IEmailRepository _emailRepository;
 
         public AuthService(IUserRepository userRepository, IEmailRepository emailRepository)
         {
-            UserRepository = userRepository;
-            EmailRepository = emailRepository;
+            _userRepository = userRepository;
+            _emailRepository = emailRepository;
         }
 
-        public async Task<bool> Register(Contracts.DTO.User user)
+        public Task Register(Contracts.DTO.User user)
         {
             user.Email = user.Email.ToLower();
-            var response = await UserRepository.GetUserByEmail(user.Email);
+            var response = _userRepository.GetUserByEmail(user.Email);
             if (response != null)
                 throw new BusinessException("User with this email already exists!");
 
-            await UserRepository.InsertUser(user);
+            return _userRepository.InsertUser(user);
             //await EmailRepository.SendEmailConfirmationEmail(insertedUser.Email, insertedUser.ID.ToString());
 
-            return true; //insertedUser == null ? false : true;
+            //return true; //insertedUser == null ? false : true;
         }
 
-        public async Task<JwtSecurityToken> Login(Contracts.DTO.User userData)
+        public JwtSecurityToken Login(Contracts.DTO.User userData)
         {
             userData.Email = userData.Email.ToLower();
-            var user = await UserRepository.GetUserByEmail(userData.Email);
+            var user = _userRepository.GetUserByEmail(userData.Email);
             if (user == null)
                 throw new BusinessException("Such user does not exist");
             //check if email confirmed
             if (!user.EmailConfirmed)
-                throw new BusinessException("You must confirm your email, before loging in!");
+                throw new BusinessException("You must confirm your email, before login in!");
             if (user.Blocked)
-                throw new BusinessException("Your accout has been blocked, please contact system administrator");
+                throw new BusinessException("Your account has been blocked, please contact system administrator");
 
-            if (user != null)
-            {
-                string hashedPass = Convert.ToBase64String(
-                    KeyDerivation.Pbkdf2(
-                        password: userData.Password,
-                        salt: Convert.FromBase64String(user.Salt),
-                        prf: KeyDerivationPrf.HMACSHA1,
-                        iterationCount: 10000,
-                        numBytesRequested: 256 / 8
-                    )
-                );
-                if (hashedPass == user.Password)
-                {
-                    if (user.Role == "user")
-                        return GenerateDefaultToken(user);
-                    if (user.Role == "admin")
-                        return GenerateAdminToken(user);
-                }
-                else
-                    throw new BusinessException("Incorrect password!");
-            }
-            return null;
+     
+            var hashedPass = Convert.ToBase64String(
+                KeyDerivation.Pbkdf2(
+                    password: userData.Password,
+                    salt: Convert.FromBase64String(user.Salt),
+                    prf: KeyDerivationPrf.HMACSHA1,
+                    iterationCount: 10000,
+                    numBytesRequested: 256 / 8
+                )
+            );
+            if (hashedPass == user.Password)
+                return GenerateToken(user);
+    
+            throw new BusinessException("Incorrect password!");
         }
 
-        public JwtSecurityToken GenerateDefaultToken(Contracts.Models.User user)
+        public JwtSecurityToken GenerateToken(Contracts.Models.User user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Settings.UserKey));
@@ -85,10 +77,12 @@ namespace CmApp.BusinessLogic.Services
             var signingCredentials = new SigningCredentials(
                 symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
 
+            var userRoles = _userRepository.GetUserRoles(user.Id);
+            var joinedRoles = string.Join(',', userRoles);
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(ClaimTypes.Role, joinedRoles),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
@@ -106,19 +100,18 @@ namespace CmApp.BusinessLogic.Services
             return token;
         }
 
-        public JwtSecurityToken GenerateAdminToken(Contracts.Models.User user)
+        /*public Task<JwtSecurityToken> GenerateAdminToken(Contracts.Models.User user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(Settings.AdminKey));
-
-
+            
             var signingCredentials = new SigningCredentials(
                 symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
 
             // add claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, user.Role),
+                //new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.UserData, user.Currency)
@@ -132,35 +125,43 @@ namespace CmApp.BusinessLogic.Services
                 signingCredentials: signingCredentials,
                 claims: claims
                 );
-            return token;
-        }
+            return Task.FromResult(token);
+        }*/
 
         public async Task ConfirmUserEmail(int token)
         {
-            var user = await UserRepository.GetUserById(token);
+            var user = _userRepository.GetUserById(token);
             if (user == null || user.Deleted)
                 throw new BusinessException("No such a user!");
             if (user.EmailConfirmed)
                 throw new BusinessException("Email already confirmed!");
 
-            await UserRepository.ChangeEmailConfirmationFlag(user.Id);
-            await EmailRepository.SendWelcomeEmail(user.Email);
+            await _userRepository.ChangeEmailConfirmationFlag(user.Id);
+            await _emailRepository.SendWelcomeEmail(user.Email);
         }
         public async Task CreatePasswordResetToken(string email)
         {
-            var user = await UserRepository.GetUserByEmail(email);
+            var user = _userRepository.GetUserByEmail(email);
             if (user == null)
                 throw new BusinessException("User with this email not registered");
             if (!user.EmailConfirmed)
                 throw new BusinessException("User with this email not registered");
 
-            Random random = new Random();
+            var random = new Random();
 
-            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-            var token = new string(Enumerable.Repeat(chars, 64)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
+            //recreate token until unique
+            var exists = true;
+            string token = string.Empty;
+            while (exists)
+            {
+                token = new string(Enumerable.Repeat(chars, 64)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
 
+                exists = _userRepository.CheckIfPasswordResetTokenExists(token);
+            }
+            
             //reset token will be valid for 2 hours
             var entity = new PasswordReset
             {
@@ -169,8 +170,8 @@ namespace CmApp.BusinessLogic.Services
                 User = user
             };
 
-            await UserRepository.InsertPasswordReset(entity);
-            //await EmailRepository.SendPasswordResetEmail(email, token);
+            await _userRepository.InsertPasswordReset(entity);
+            //await _emailRepository.SendPasswordResetEmail(email, token);
         }
 
         public async Task ResetPassword(Contracts.DTO.User user)
@@ -181,7 +182,7 @@ namespace CmApp.BusinessLogic.Services
             byte[] bytes = Encoding.Default.GetBytes(user.Token);
             var token = Encoding.UTF8.GetString(bytes);
 
-            var resetDetails = await UserRepository.GetPasswordResetByToken(token);
+            var resetDetails = await _userRepository.GetPasswordResetByToken(token);
 
             if (resetDetails == null)
                 throw new BusinessException("Error handling your password change. Please try again");
@@ -192,26 +193,26 @@ namespace CmApp.BusinessLogic.Services
             if (resetDetails.Token != user.Token)
                 throw new BusinessException("Error changing your password. Please try again");
 
-            await UserRepository.ChangePassword(resetDetails.User.Id, user.Password);
-            await UserRepository.DeleteResetToken(resetDetails.Id);
+            await _userRepository.ChangePassword(resetDetails.User.Id, user.Password);
+            await _userRepository.DeleteResetToken(resetDetails.Id);
         }
 
-        public async Task ResetPassword(int userId, Contracts.DTO.User user)
+        public Task ResetPassword(int userId, Contracts.DTO.User user)
         {
             if (user.Password != user.Password2)
                 throw new BusinessException("Passwords do not match");
 
-            await UserRepository.ChangePassword(userId, user.Password);
+            return _userRepository.ChangePassword(userId, user.Password);
         }
 
-        public async Task<UserDetails> GetSelectedUser(int userId)
+        public UserDetails GetSelectedUser(int userId)
         {
-            var user = await UserRepository.GetUserById(userId);
+            var user = _userRepository.GetUserById(userId);
             var userDetails = new UserDetails
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
-                BornDate = user.BornDate.Value,
+                BornDate = user.BornDate,
                 Country = user.Country,
                 Currency = user.Currency,
                 LastName = user.LastName,
@@ -220,9 +221,9 @@ namespace CmApp.BusinessLogic.Services
             return userDetails;
         }
 
-        public async Task UpdateUserDetails(int userId, UserDetails user)
+        public Task UpdateUserDetails(int userId, UserDetails user)
         {
-            await UserRepository.UpdateUser(userId, user);
+            return _userRepository.UpdateUser(userId, user);
         }
 
     }

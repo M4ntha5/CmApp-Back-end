@@ -9,55 +9,55 @@ namespace CmApp.BusinessLogic.Services
 {
     public class TrackingService : ITrackingService
     {
-        private readonly ITrackingRepository TrackingRepository;
-        private readonly ICarRepository CarRepository;
-        private readonly IScraperService ScraperService;
+        private readonly ITrackingRepository _trackingRepository;
+        private readonly ICarRepository _carRepository;
+        private readonly IScraperService _scraperService;
 
         public TrackingService(ITrackingRepository trackingRepository, ICarRepository carRepository, 
             IScraperService scraperService)
         {
-            TrackingRepository = trackingRepository;
-            CarRepository = carRepository;
-            ScraperService = scraperService;
+            _trackingRepository = trackingRepository;
+            _carRepository = carRepository;
+            _scraperService = scraperService;
         }
 
         public async Task UpdateTracking(int carId, Tracking tracking)
         {
            // tracking.Car = carId;
-            var oldTracking = await TrackingRepository.GetTrackingByCar(carId);
-            await TrackingRepository.UpdateCarTracking(oldTracking.Id, tracking);
+            var oldTracking = await _trackingRepository.GetTrackingByCar(carId);
+            await _trackingRepository.UpdateCarTracking(oldTracking.Id, tracking);
         }
 
         public async Task<Tracking> LookForTrackingData(int carId)
         {
-            var car = await CarRepository.GetCarById(carId);
-            var tracking = await TrackingRepository.GetTrackingByCar(carId);
+            var car = _carRepository.GetCarById(carId);
+            var tracking = await _trackingRepository.GetTrackingByCar(carId);
             if (tracking == null)
-                tracking = await TrackingRepository.InsertTracking(new Tracking { }); //Car = carId });
+                tracking = await _trackingRepository.InsertTracking(new Tracking { }); //Car = carId });
 
-            var updatedTracking = await ScraperService.TrackingScraper(car, tracking.Id);
+            var updatedTracking = await _scraperService.TrackingScraper(car, tracking.Id);
             return updatedTracking;
         }
         public async Task<List<string>> LookForTrackingImages(int carId)
         {
-            var car = await CarRepository.GetCarById(carId);
-            var tracking = await TrackingRepository.GetTrackingByCar(carId);
+            var car = _carRepository.GetCarById(carId);
+            var tracking = await _trackingRepository.GetTrackingByCar(carId);
             if (tracking == null)
                 throw new BusinessException("Tracking images for this car not found. Try again later");
 
-            var trackingImages = await ScraperService.GetTrackingImagesUrls(car);
+            var trackingImages = await _scraperService.GetTrackingImagesUrls(car);
             //inserts atlantic image urls
-            await TrackingRepository.UploadImageToTracking(tracking.Id, trackingImages);
+            await _trackingRepository.UploadImageToTracking(tracking.Id, trackingImages);
             return trackingImages;
         }
 
         public async Task SaveLastShowImagesStatus(int carId, bool status)
         {
-            var tracking = await TrackingRepository.GetTrackingByCar(carId);
+            var tracking = await _trackingRepository.GetTrackingByCar(carId);
             if (tracking == null)
                 throw new BusinessException("Tracking images for this car not found. Try again later");
 
-            await TrackingRepository.UpdateImageShowStatus(tracking.Id, status);
+            await _trackingRepository.UpdateImageShowStatus(tracking.Id, status);
         }
 
         //bring back if needed

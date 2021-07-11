@@ -5,7 +5,7 @@ namespace CmApp.Contracts.Interfaces.Repositories
 {
     public interface ISummaryRepository
     {
-        Task InsertSummary(Summary summary);
+      /*  Task InsertSummary(Summary summary);
 
 
 
@@ -13,6 +13,6 @@ namespace CmApp.Contracts.Interfaces.Repositories
 
         Task<Summary> GetSummaryByCarId(int carId);
         Task DeleteCarSummary(int carId);
-        Task UpdateCarSoldSummary(int summaryId, Summary summary);
+        Task UpdateCarSoldSummary(int summaryId, Summary summary);*/
     }
 }

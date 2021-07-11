@@ -6,9 +6,9 @@ namespace CmApp.Contracts.Interfaces.Services
 {
     public interface ISummaryService
     {
-        Task InsertCarSummary(int carId, SummaryDTO summary);
+      /*  Task InsertCarSummary(int carId, SummaryDTO summary);
 
 
-        Task UpdateSoldSummary(int carId, Summary summary);
+        Task UpdateSoldSummary(int carId, Summary summary);*/
     }
 }

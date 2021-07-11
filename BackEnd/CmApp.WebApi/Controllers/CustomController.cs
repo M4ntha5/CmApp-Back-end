@@ -1,36 +1,32 @@
-﻿using CmApp.Contracts;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using CmApp.Contracts.DTO;
-using CmApp.Contracts.Models;
 using CmApp.Contracts.Interfaces.Repositories;
 using CmApp.Contracts.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace CmApp.Controllers
+namespace CmApp.WebApi.Controllers
 {
     [Authorize(Roles = "user, admin", AuthenticationSchemes = "user, admin")]
     [ApiController]
     public class CustomController : ControllerBase
     {
-        private readonly ICarRepository carRepository;
-        private readonly IExternalAPIService externalAPI;
-        private readonly IFileRepository fileRepository;
-        private readonly IMakeRepository carMakesRepository;
+        private readonly ICarRepository _carRepository;
+        private readonly IExternalAPIService _externalApi;
+        private readonly IFileRepository _fileRepository;
+        private readonly IMakeRepository _carMakesRepository;
 
-        public CustomController(ICarRepository carRepository, IExternalAPIService externalAPI, 
+        public CustomController(ICarRepository carRepository, IExternalAPIService externalApi, 
             IFileRepository fileRepository, IMakeRepository carMakesRepository)
         {
-            this.carRepository = carRepository;
-            this.externalAPI = externalAPI;
-            this.fileRepository = fileRepository;
-            this.carMakesRepository = carMakesRepository;
+            _carRepository = carRepository;
+            _externalApi = externalApi;
+            _fileRepository = fileRepository;
+            _carMakesRepository = carMakesRepository;
         }
 
       /*  [HttpGet]
@@ -81,7 +77,7 @@ namespace CmApp.Controllers
             try
             {
                 var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                var cars = await carRepository.GetAllUserCars(userId);
+                var cars = await _carRepository.GetAllUserCars(userId);
                 var result = new List<object>();
                 foreach (var car in cars)
                     result.Add(new { value = car.Id, text = car.Make + " " });
@@ -104,12 +100,9 @@ namespace CmApp.Controllers
         {
             try
             {
-                var fileInfo = fileRepository.GetFileId(image);
+                var (fileId, fileType) = _fileRepository.GetFileId(image);
 
-                var fileId = fileInfo.Item1;
-                var fileType = fileInfo.Item2;
-
-                var fileUrl = await fileRepository.GetFileUrl(fileId);
+                var fileUrl = await _fileRepository.GetFileUrl(fileId);
                 return Ok(fileUrl);
             }
             catch (Exception ex)
@@ -124,18 +117,18 @@ namespace CmApp.Controllers
         {
             try
             {
-                var fileInfo = fileRepository.GetFileId(image);
+                var fileInfo = _fileRepository.GetFileId(image);
 
                 var fileId = fileInfo.Item1;
                 var fileType = fileInfo.Item2;
 
-                var stream = await fileRepository.GetFile(fileId);
+                var stream = await _fileRepository.GetFile(fileId);
 
                 var mem = new MemoryStream();
                 await stream.CopyToAsync(mem);
 
-                var bytes = fileRepository.StreamToByteArray(mem);
-                var base64 = fileRepository.ByteArrayToBase64String(bytes);
+                var bytes = _fileRepository.StreamToByteArray(mem);
+                var base64 = _fileRepository.ByteArrayToBase64String(bytes);
 
                 base64 = "data:" + fileType + ";base64," + base64;
 
@@ -154,7 +147,7 @@ namespace CmApp.Controllers
         {
             try
             {
-                var countries = await externalAPI.GetAllCountries();
+                var countries = await _externalApi.GetAllCountries();
                 return Ok(countries);
             }
             catch (Exception ex)
@@ -172,7 +165,7 @@ namespace CmApp.Controllers
             try
             {
                 //all rates names
-                var names = await externalAPI.GetAvailableCurrencies();
+                var names = await _externalApi.GetAvailableCurrencies();
                 return Ok(names);
             }
             catch (Exception ex)
@@ -190,7 +183,7 @@ namespace CmApp.Controllers
             try
             {
                 //calculates result here
-                var result = await externalAPI.CalculateResult(input);
+                var result = await _externalApi.CalculateResult(input);
                 return Ok(result);
             }
             catch (Exception ex)

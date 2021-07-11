@@ -1,17 +1,16 @@
-﻿using CmApp.Contracts;
-using CmApp.Contracts.Models;
-using CmApp.Contracts.Interfaces.Repositories;
-using CmApp.Contracts.Interfaces.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CmApp.Contracts.DTO;
 using CmApp.Contracts.DTO.v2;
+using CmApp.Contracts.Interfaces.Repositories;
+using CmApp.Contracts.Interfaces.Services;
+using CmApp.Contracts.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace CmApp.Controllers
+namespace CmApp.WebApi.Controllers
 {
     [Route("/api/cars")]
     [Authorize(Roles = "user, admin", AuthenticationSchemes = "user, admin")]
@@ -49,18 +48,11 @@ namespace CmApp.Controllers
         // GET: api/Cars/5
         [HttpGet("{carId}")]
         [Authorize(Roles = "user")]
-        public async Task<IActionResult> Get(int carId)
+        public IActionResult Get(int carId)
         {
             try
             {
-                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                var role = HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-
-                var car = await _carRepository.GetCarById(carId);
-
-                //if (car.User != userId)
-                //    throw new BusinessException("Car does not exist");
-
+                var car = _carRepository.GetCarById(carId);
                 return Ok(car);
             }
             catch (Exception ex)
@@ -130,7 +122,6 @@ namespace CmApp.Controllers
         {
             try
             {
-                var userId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var cars = await _carRepository.GetAllCars();
                 return Ok(cars);
             }

@@ -10,6 +10,5 @@ namespace CmApp.Contracts.DTO
         public string Model { get; set; }
         public string Vin { get; set; }
         public string CarImg { get; set; } = "";
-        public Summary Summary { get; set; } = new Summary();
     }
 }

@@ -17,16 +17,16 @@ namespace CmApp.BusinessLogic.Services
 {
     public class ScraperService : IScraperService
     {
-        private readonly string MDecoderEndpoint = "https://www.mdecoder.com/decode/";
-        private readonly string MBDecoderEndpoint = "https://www.mbdecoder.com/decode/";
-        private readonly string AtlanticExpressEndpoint = "https://www.atlanticexpresscorp.com/services/tracking/?num=";
+        private readonly string _mDecoderEndpoint = "https://www.mdecoder.com/decode/";
+        private readonly string _mbDecoderEndpoint = "https://www.mbdecoder.com/decode/";
+        private readonly string _atlanticExpressEndpoint = "https://www.atlanticexpresscorp.com/services/tracking/?num=";
 
         // private readonly IFileRepository FileRepository = new FileRepository();
-        private readonly ITrackingRepository TrackingRepo;
+        private readonly ITrackingRepository _trackingRepo;
 
         public ScraperService(ITrackingRepository trackingRepo)
         {
-            TrackingRepo = trackingRepo;
+            _trackingRepo = trackingRepo;
         }
 
         public Dictionary<string, string> GetVehicleInfo(string vin, string make)
@@ -110,7 +110,7 @@ namespace CmApp.BusinessLogic.Services
         {
             try
             {
-                var website = MDecoderEndpoint + vin;
+                var website = _mDecoderEndpoint + vin;
 
                 HttpClient http = new HttpClient();
                 var response = await http.GetByteArrayAsync(website);
@@ -137,7 +137,7 @@ namespace CmApp.BusinessLogic.Services
         {
             try
             {
-                var website = MBDecoderEndpoint + vin;
+                var website = _mbDecoderEndpoint + vin;
 
                 HttpClient http = new HttpClient();
                 var response = await http.GetByteArrayAsync(website);
@@ -165,7 +165,7 @@ namespace CmApp.BusinessLogic.Services
         {
             try
             {
-                var website = AtlanticExpressEndpoint + car.Vin;
+                var website = _atlanticExpressEndpoint + car.Vin;
                 var result = await GetPrimarySiteDocument(website);
 
                 if (result == null)
@@ -224,8 +224,8 @@ namespace CmApp.BusinessLogic.Services
                     Car = car,
                 };
 
-                await TrackingRepo.UpdateCarTracking(trackingId, trackingEntity);
-                var tracking = await TrackingRepo.GetTrackingByCar(car.Id);
+                await _trackingRepo.UpdateCarTracking(trackingId, trackingEntity);
+                var tracking = await _trackingRepo.GetTrackingByCar(car.Id);
                 return tracking;
             }
             catch (Exception ex)
@@ -238,7 +238,7 @@ namespace CmApp.BusinessLogic.Services
         {
             try
             {
-                var website = AtlanticExpressEndpoint + car.Vin;
+                var website = _atlanticExpressEndpoint + car.Vin;
                 var result = await GetPrimarySiteDocument(website);
 
                 //check if captcha exists
