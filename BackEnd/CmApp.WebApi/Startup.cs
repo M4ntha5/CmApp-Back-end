@@ -101,7 +101,7 @@ namespace CmApp.WebApi
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = "shrouded-ocean-70036.herokuapp.com",
+                        //ValidIssuer = "shrouded-ocean-70036.herokuapp.com",
                         ValidAudience = "readers",
                         IssuerSigningKey = symmetricSecurityKeyDefault
                     };
@@ -113,7 +113,7 @@ namespace CmApp.WebApi
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = "shrouded-ocean-70036.herokuapp.com",
+                        //ValidIssuer = "shrouded-ocean-70036.herokuapp.com",
                         ValidAudience = "readers",
                         IssuerSigningKey = symmetricSecurityKeyAdmin
                     };
