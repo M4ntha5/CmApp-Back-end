@@ -75,9 +75,10 @@ namespace CmApp.Repositories
                 .Include(x => x.Vin)
                 .Include(x => x.Urls);
 
+            var sort = Builders<CarEntity>.Sort.Descending("created");
             var filter = Builders<CarEntity>.Filter.Eq("user", ObjectId.Parse(userId));
 
-            var cars = await repo.FindAsync<CarDisplay>(filter, projection, null,
+            var cars = await repo.FindAsync<CarDisplay>(filter, projection, sort,
                 new DatabaseFindOptions());
 
             return cars.Items;
