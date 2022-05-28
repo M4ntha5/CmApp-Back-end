@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="CodeMash.Core" Version="2.0.144" />
     <PackageReference Include="image4io.DotNet" Version="1.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.18" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
