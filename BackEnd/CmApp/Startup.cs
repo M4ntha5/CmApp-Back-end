@@ -41,6 +41,8 @@ namespace CmApp
             Settings.AdminKey = Environment.GetEnvironmentVariable("TestUser");
             Settings.Image4IoApiKey = Environment.GetEnvironmentVariable("Image4IoApiKey");
             Settings.Image4IoSecret = Environment.GetEnvironmentVariable("Image4IoSecret");
+            Settings.ExchangeApiKey = Environment.GetEnvironmentVariable("ExchangeApiKey");
+            
 
             var symmetricSecurityKeyDefault = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.UserKey));
             var symmetricSecurityKeyAdmin = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.AdminKey));
