@@ -24,6 +24,7 @@ namespace CmApp.Contracts.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleId });
             /* modelBuilder.Entity<Car>(b =>
              {
                  b.HasOne(c => c.Shipping).WithOne(s => s.Car).HasForeignKey<Shipping>(x => x.Id);

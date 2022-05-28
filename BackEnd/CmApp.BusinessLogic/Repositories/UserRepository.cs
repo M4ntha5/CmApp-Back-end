@@ -125,7 +125,9 @@ namespace CmApp.BusinessLogic.Repositories
 
         public User GetUserByEmail(string email)
         {
-            return _context.Users.FirstOrDefault(x => x.EmailConfirmed && x.Email == email);
+            return _context.Users
+                .Include(x => x.Roles)
+                .FirstOrDefault(x => x.EmailConfirmed && x.Email == email);
         }
 
         public User GetUserById(int userId)

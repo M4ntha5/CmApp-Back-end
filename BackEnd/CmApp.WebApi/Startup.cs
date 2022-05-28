@@ -71,7 +71,7 @@ namespace CmApp.WebApi
             /*services.AddDbContext<Context>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("CmApp_Dev")));*/
             services.AddDbContext<Context>(options =>
-                    options.UseSqlServer("Data Source=(local);Initial Catalog=CmApp_Dev;Integrated Security=True"));
+                    options.UseSqlServer(Configuration.GetConnectionString("DB")));
             
 
             //Settings.ProjectId = Guid.Parse(Environment.GetEnvironmentVariable("ProjectId"));
@@ -101,7 +101,7 @@ namespace CmApp.WebApi
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        //ValidIssuer = "shrouded-ocean-70036.herokuapp.com",
+                        ValidIssuer = "localhost:8080",
                         ValidAudience = "readers",
                         IssuerSigningKey = symmetricSecurityKeyDefault
                     };
@@ -113,7 +113,7 @@ namespace CmApp.WebApi
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        //ValidIssuer = "shrouded-ocean-70036.herokuapp.com",
+                        ValidIssuer = "localhost:8080",
                         ValidAudience = "readers",
                         IssuerSigningKey = symmetricSecurityKeyAdmin
                     };
@@ -156,9 +156,10 @@ namespace CmApp.WebApi
             app.UseCors(builder =>
             {
                 builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowAnyOrigin();
+                //.WithOrigins("http://localhost:5000", "https://localhost:5001");
             });
 
             if (env.IsDevelopment())
